@@ -68,13 +68,16 @@ typedef struct
 {
     //
     //
-    uint16_t id;
+    uint8_t id;
     //
     //
-    uint16_t key;
+    uint8_t key;
     //
     //
-    uint32_t data;
+    uint16_t data_0;
+    //
+    //
+    uint32_t data_1;
 } hobd_can_command_msg;
 
 
@@ -83,14 +86,35 @@ typedef struct
 {
     //
     //
-    uint16_t id;
+    uint8_t cmd_id;
     //
     //
-    uint16_t key;
+    uint8_t key;
     //
     //
-    uint32_t data;
+    uint16_t data_0;
+    //
+    //
+    uint32_t data_1;
 } hobd_can_response_msg;
+
+
+//
+typedef struct
+{
+    //
+    //
+    uint8_t table_id;
+    //
+    //
+    uint8_t offset;
+    //
+    //
+    uint32_t last_update;
+    //
+    //
+    uint16_t value;
+} hobd_can_dtable_register_msg;
 
 
 

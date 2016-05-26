@@ -61,24 +61,24 @@
 int main( void )
 {
 
-    LED_init();
-    LED_off();
+    led_init();
+    led_off();
 
-    SW_init();
-    SW_enable_pullup();
+    sw_init();
+    sw_enable_pullup();
 
 
 
     while( 1 )
     {
-        if( SW_get_state() == ON )
+        if( sw_get_state() == ON )
         {
-            LED_on();
+            led_on();
             delay_ms( 10 );
         }
         else
         {
-            LED_off();
+            led_off();
         }
     }
 

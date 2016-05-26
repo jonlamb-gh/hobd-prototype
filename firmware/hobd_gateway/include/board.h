@@ -103,15 +103,15 @@ typedef uint8_t BOOL;
 #define SW_STATUS_0 (5)
 
 
-#define LED_init() (LED_PORT_DDR |= (1 << LED_STATUS_0))
-#define LED_on() (LED_PORT_OUT &= 0b11101111)
-#define LED_off() (LED_PORT_OUT |= 0b00010000)
-#define LED_toggle() (LED_PORT_OUT ^= (1 << LED_STATUS_0))
+#define led_init() (LED_PORT_DDR |= (1 << LED_STATUS_0))
+#define led_on() (LED_PORT_OUT &= 0b11101111)
+#define led_off() (LED_PORT_OUT |= 0b00010000)
+#define led_toggle() (LED_PORT_OUT ^= (1 << LED_STATUS_0))
 
 
-#define SW_init() (SW_PORT_DDR &= ~(1 << SW_STATUS_0))
-#define SW_enable_pullup() (SW_PORT_OUT |= (1 << SW_STATUS_0))
-#define SW_get_state() (!(SW_PORT_IN & (1 << SW_STATUS_0)))
+#define sw_init() (SW_PORT_DDR &= ~(1 << SW_STATUS_0))
+#define sw_enable_pullup() (SW_PORT_OUT |= (1 << SW_STATUS_0))
+#define sw_get_state() (!(SW_PORT_IN & (1 << SW_STATUS_0)))
 
 
 
