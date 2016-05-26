@@ -40,6 +40,19 @@
 // static global types/macros
 // *****************************************************
 
+//
+#define NUM_ECU_DTABLES (3)
+
+
+
+
+// *****************************************************
+// static global data
+// *****************************************************
+
+//
+static diagnostic_table ecu_tables[NUM_ECU_DTABLES];
+
 
 
 
@@ -47,12 +60,28 @@
 // static declarations
 // *****************************************************
 
+//
+static void init( void );
+
 
 
 
 // *****************************************************
 // static definitions
 // *****************************************************
+
+//
+static void init( void )
+{
+    // zero globals
+    memset( ecu_tables, 0, sizeof(ecu_tables) );
+
+    led_init();
+    led_off();
+
+    sw_init();
+    sw_enable_pullup();
+}
 
 
 
@@ -62,11 +91,12 @@
 // *****************************************************
 int main( void )
 {
-    led_init();
-    led_off();
+    // init
+    init();
 
-    sw_init();
-    sw_enable_pullup();
+
+
+
 
     while( 1 )
     {
