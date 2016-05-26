@@ -61,17 +61,17 @@ PROJECTNAME=hobd-gateway
 # (list all files to compile, e.g. 'a.c b.cpp as.S'):
 # Use .cc, .cpp or .C suffix for C++ files, use .S
 # (NOT .s !!!) for assembly source code files.
-PRJSRC= src/timer8_drv.c \
-	src/timer16_drv.c \
-	src/uart_drv.c \
-	src/uart_lib.c \
-	src/rtc_drv.c \
-	src/can_drv.c \
-	src/can_lib.c \
+PRJSRC= bsp/src/timer8_drv.c \
+	bsp/src/timer16_drv.c \
+	bsp/src/uart_drv.c \
+	bsp/src/uart_lib.c \
+	bsp/src/rtc_drv.c \
+	bsp/src/can_drv.c \
+	bsp/src/can_lib.c \
 	src/main.c
 
 # additional includes (e.g. -I/path/to/mydir)
-INC=-Iinclude
+INC=-Iinclude -Ibsp/include
 
 # libraries to link in (e.g. -lmylib)
 LIBS=-lm
