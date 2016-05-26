@@ -36,7 +36,7 @@
 
 
 
-//
+// TODO - add hobd rx error counter ? or update timestamp ?
 typedef struct
 {
     //

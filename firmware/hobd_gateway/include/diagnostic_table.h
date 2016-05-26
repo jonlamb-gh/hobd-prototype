@@ -50,7 +50,7 @@ typedef struct
 //
 void dtable_update(
         const uint8_t * const packet,
-        const uint32_t rx_timestamp,
+        const uint32_t timestamp,
         diagnostic_table * const dtable );
 
 
