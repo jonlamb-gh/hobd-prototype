@@ -36,7 +36,7 @@
 
 
 
-// TODO - add hobd rx error counter ? or update timestamp ?
+//
 typedef struct
 {
     //
@@ -50,13 +50,10 @@ typedef struct
     uint8_t node_id;
     //
     //
-    uint8_t state : 4;
+    uint8_t state;
     //
     //
-    uint8_t reserved_0 : 4;
-    //
-    //
-    uint8_t reserved_1;
+    uint8_t counter;
     //
     //
     uint16_t error_register;
@@ -64,6 +61,36 @@ typedef struct
     //
     uint16_t warning_register;
 } hobd_can_heartbeat_msg;
+
+
+//
+typedef struct
+{
+    //
+    //
+    uint16_t id;
+    //
+    //
+    uint16_t key;
+    //
+    //
+    uint32_t data;
+} hobd_can_command_msg;
+
+
+//
+typedef struct
+{
+    //
+    //
+    uint16_t id;
+    //
+    //
+    uint16_t key;
+    //
+    //
+    uint32_t data;
+} hobd_can_response_msg;
 
 
 
