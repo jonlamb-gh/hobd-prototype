@@ -39,7 +39,7 @@ volatile uint32_t rtc_milliseconds;
 BOOL rtc_running = OFF;
 
 //------------------------------------------------------------------------------
-//  @fn wait_for
+//  @fn delay_ms
 //!
 //! Wait_for (delay or loop) milli-seconds using "tics" from an RTC_TIMER.
 //!
@@ -53,7 +53,7 @@ BOOL rtc_running = OFF;
 //! @return  none
 //!
 //------------------------------------------------------------------------------
-void wait_for(uint16_t ms_count)
+void delay_ms(uint16_t ms_count)
 {
 uint32_t temp;
 uint16_t i;

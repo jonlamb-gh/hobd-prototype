@@ -36,7 +36,15 @@ int main( void )
 
     while( 1 )
     {
-
+        if( SW_get_state() == ON )
+        {
+            LED_on();
+            delay_ms( 10 );
+        }
+        else
+        {
+            LED_off();
+        }
     }
 
 

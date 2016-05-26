@@ -63,7 +63,7 @@ extern BOOL rtc_running;
 //!
 //! @return  none
 //!
-extern void wait_for(uint16_t ms_count);
+extern void delay_ms(uint16_t ms_count);
 
 //------------------------------------------------------------------------------
 //  @fn rtc_int_init
