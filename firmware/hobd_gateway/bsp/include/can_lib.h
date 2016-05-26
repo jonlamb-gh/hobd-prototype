@@ -105,9 +105,6 @@ typedef  struct{
 } st_cmd_t;
 
 
-typedef st_cmd_t CAN_MESSAGE_T;
-
-
 
 //_____ D E C L A R A T I O N S ________________________________________________
 

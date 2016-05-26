@@ -30,6 +30,7 @@
 #include "hobd.h"
 #include "hobd_can.h"
 #include "diagnostic_table.h"
+#include "can_communication.h"
 
 
 
