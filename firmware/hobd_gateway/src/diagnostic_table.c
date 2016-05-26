@@ -1,6 +1,6 @@
 /**
- * @file main.c
- * @brief Main.
+ * @file diagnostic_table.c
+ * @brief TODO.
  *
  */
 
@@ -9,25 +9,8 @@
 
 #include <stdlib.h>
 #include <avr/io.h>
-#include <avr/interrupt.h>
-#include <avr/wdt.h>
-#include <avr/pgmspace.h>
 
-//
-#include "board.h"
-
-// BSP utilities
-#include "timer8_drv.h"
-#include "timer16_drv.h"
-#include "uart_drv.h"
-#include "uart_lib.h"
-#include "rtc_drv.h"
-#include "can_drv.h"
-#include "can_lib.h"
-
-//
 #include "hobd.h"
-#include "hobd_can.h"
 #include "diagnostic_table.h"
 
 
@@ -55,33 +38,27 @@
 
 
 // *****************************************************
-// main
+// public definitions
 // *****************************************************
-int main( void )
+
+//
+void dtable_update(
+        const uint8_t * const packet,
+        const uint32_t rx_timestamp,
+        diagnostic_table * const dtable )
 {
+    // cast response
+    const hobd_table_response * const resp =
+            (hobd_table_response*) packet;
 
-    LED_init();
-    LED_off();
+    // set table ID
+    dtable->id = resp->table;
 
-    SW_init();
-    SW_enable_pullup();
+    // update timestamp
+    dtable->last_update = rx_timestamp;
 
+    // register offset position
+    dtable->register_offset = resp->register_offset;
 
-
-    while( 1 )
-    {
-        if( SW_get_state() == ON )
-        {
-            LED_on();
-            delay_ms( 10 );
-        }
-        else
-        {
-            LED_off();
-        }
-    }
-
-
-
-   return 0;
+    // TODO
 }

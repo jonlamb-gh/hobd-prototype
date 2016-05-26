@@ -79,6 +79,10 @@ extern void delay_ms(uint16_t ms_count);
 //!
 extern void rtc_int_init(void);
 
+
+
+uint32_t get_timestamp( void );
+
 //______________________________________________________________________________
 
 #endif  // _RTC_DRV_H_

@@ -207,3 +207,17 @@ ISR(TIMER2_COMP_vect)
 }
 
 #endif // RTC_TIMER
+
+
+
+uint32_t get_timestamp( void )
+{
+    uint32_t timestamp = 0;
+
+    // atomic get
+    disable_interrupt();
+    timestamp = rtc_milliseconds;
+    enable_interrupt();
+
+    return timestamp;
+}

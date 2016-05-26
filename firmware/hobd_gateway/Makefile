@@ -68,6 +68,7 @@ PRJSRC= bsp/src/timer8_drv.c \
 	bsp/src/rtc_drv.c \
 	bsp/src/can_drv.c \
 	bsp/src/can_lib.c \
+	src/diagnostic_table.c\
 	src/main.c
 
 # additional includes (e.g. -I/path/to/mydir)
@@ -257,7 +258,7 @@ $(TRG): $(OBJDEPS)
 
 #### Generating hex files ####
 # hex files from elf
-#####  Generating a gdb initialisation file    #####
+#####  Generating a gdb initialization file    #####
 .out.hex:
 	$(OBJCOPY) -j .text                    \
 		-j .data                       \
@@ -269,7 +270,7 @@ $(TRG): $(OBJDEPS)
 		-O $(HEXFORMAT) $< $@
 
 
-#####  Generating a gdb initialisation file    #####
+#####  Generating a gdb initialization file    #####
 ##### Use by launching simulavr and avr-gdb:   #####
 #####   avr-gdb -x gdbinit-myproject           #####
 gdbinit: $(GDBINITFILE)

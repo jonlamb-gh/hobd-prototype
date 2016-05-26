@@ -65,6 +65,18 @@
 #define HOBD_INIT_COMMAND_DATA (0xF0)
 
 
+//
+#define HOBD_TABLE_0 (0x00)
+
+
+//
+#define HOBD_TABLE_16 (0x10)
+
+
+//
+#define HOBD_TABLE_32 (0x20)
+
+
 
 
 //
