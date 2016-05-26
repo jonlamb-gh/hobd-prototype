@@ -70,6 +70,7 @@ PRJSRC= bsp/src/timer8_drv.c \
 	bsp/src/can_lib.c \
 	src/diagnostic_table.c \
 	src/can_communication.c \
+	src/hobd_communication.c \
 	src/main.c
 
 # additional includes (e.g. -I/path/to/mydir)
