@@ -25,11 +25,11 @@ uint8_t cancomm_init( void );
 
 
 //
-uint8_t cancomm_send( const can_frame_s * const frame );
+uint8_t cancomm_send( const can_frame * const frame );
 
 
 //
-uint8_t cancomm_recv( can_frame_s * const frame );
+uint8_t cancomm_recv( can_frame * const frame );
 
 
 

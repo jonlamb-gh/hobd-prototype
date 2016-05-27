@@ -27,6 +27,18 @@
 
 
 //
+#define HOBD_CAN_ID_COMMAND (0x200)
+
+
+//
+#define HOBD_CAN_ID_RESPONSE (0x201)
+
+
+//
+#define HOBD_CAN_ID_DTABLE_REGISTER (0x250)
+
+
+//
 #define HOBD_CAN_HEARTBEAT_STATE_INIT (0x00)
 
 

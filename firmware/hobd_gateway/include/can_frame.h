@@ -39,7 +39,7 @@ typedef struct
     //
     //
     uint8_t data[CAN_FRAME_DLC_MAX];
-} can_frame_s;
+} can_frame;
 
 
 

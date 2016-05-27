@@ -210,7 +210,7 @@ ISR(TIMER2_COMP_vect)
 
 
 
-uint32_t get_timestamp( void )
+uint32_t rtc_get_ms( void )
 {
     uint32_t timestamp = 0;
 
