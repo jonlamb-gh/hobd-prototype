@@ -18,6 +18,41 @@
 
 
 
+#include <avr/io.h>
+#include <avr/interrupt.h>
+#include <avr/wdt.h>
+#include <avr/pgmspace.h>
+#include <stdint.h>
+
+
+
+
+//
+typedef uint8_t BOOL;
+
+
+//
+#define OFF (0)
+#define ON  (1)
+
+
+//
+#define MAX(a, b) ( (a)>(b) ? (a) : (b) )
+#define MIN(a, b) ( (a)<(b) ? (a) : (b) )
+
+
+//
+#define enable_interrupt() { asm ("sei"::) ; }
+
+
+//
+#define disable_interrupt() { asm ("cli"::) ; }
+
+
+//
+#define hard_reset() { WDTCR |= 1<<WDE;  while(1); }
+
+
 // chip
 #ifndef __AVR_AT90CAN128__
 #define __AVR_AT90CAN128__ 1
@@ -46,37 +81,37 @@
 
 
 //
-#define DEBUG_UART UART_1
-#define DIAGNOSTI_UART UART_0
+#define HOBD_UART UART_1
+#define DEBUG_UART UART_0
 
 
 //
 #define DEBUG_BAUDDRATE (57600UL)
-#define DIAGNOSTIC_BAUD (57600UL)
+#define HOBD_BAUDRATE (10400UL)
 
 
 //
 #define LED_PORT_IN PINE
 #define LED_PORT_DDR DDRE
 #define LED_PORT_OUT PORTE
-#define LED_STATUS_0 4
+#define LED_STATUS_0 (4)
 
 
 #define SW_PORT_IN PINE
 #define SW_PORT_DDR DDRE
 #define SW_PORT_OUT PORTE
-#define SW_STATUS_0 5
+#define SW_STATUS_0 (5)
 
 
-#define LED_init() (LED_PORT_DDR |= (1 << LED_STATUS_0))
-#define LED_on() (LED_PORT_OUT &= 0b11101111)
-#define LED_off() (LED_PORT_OUT |= 0b00010000)
-#define LED_toggle() (LED_PORT_OUT ^= (1 << LED_STATUS_0))
+#define led_init() (LED_PORT_DDR |= (1 << LED_STATUS_0))
+#define led_on() (LED_PORT_OUT &= 0b11101111)
+#define led_off() (LED_PORT_OUT |= 0b00010000)
+#define led_toggle() (LED_PORT_OUT ^= (1 << LED_STATUS_0))
 
 
-#define SW_init() (SW_PORT_DDR &= ~(1 << SW_STATUS_0))
-#define SW_enable_pullup() (SW_PORT_OUT |= (1 << SW_STATUS_0))
-#define SW_get_state() (!(SW_PORT_IN & (1 << SW_STATUS_0)))
+#define sw_init() (SW_PORT_DDR &= ~(1 << SW_STATUS_0))
+#define sw_enable_pullup() (SW_PORT_OUT |= (1 << SW_STATUS_0))
+#define sw_get_state() (!(SW_PORT_IN & (1 << SW_STATUS_0)))
 
 
 

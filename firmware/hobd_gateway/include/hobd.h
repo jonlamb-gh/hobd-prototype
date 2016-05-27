@@ -10,7 +10,7 @@
  *   -# wait 120 ms
  *   -# send wake up packet - no response is expected
  *     - send {0xFE, 0x04, 0xFF, 0xFF}
- *   -# send init command packet - expect a response
+ *   -# send initialization command packet - expect a response
  *     - send {0x72, 0x05, 0x00, 0xF0, 0x99}
  *     - expect {0x02, 0x04, 0x00, 0xFA}
  *
@@ -31,6 +31,14 @@
 #include <stdint.h>
 
 
+
+
+//
+#define HOBD_PACKET_SIZE_MAX (255)
+
+
+//
+#define HOBD_PACKET_TYPE_INVALID (0x00)
 
 
 //
@@ -63,6 +71,18 @@
 
 //
 #define HOBD_INIT_COMMAND_DATA (0xF0)
+
+
+//
+#define HOBD_TABLE_0 (0x00)
+
+
+//
+#define HOBD_TABLE_16 (0x10)
+
+
+//
+#define HOBD_TABLE_32 (0x20)
 
 
 
