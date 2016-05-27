@@ -34,6 +34,14 @@
 
 
 //
+#define HOBD_PACKET_SIZE_MAX (255)
+
+
+//
+#define HOBD_PACKET_TYPE_INVALID (0x00)
+
+
+//
 #define HOBD_PACKET_TYPE_QUERY (0x72)
 
 

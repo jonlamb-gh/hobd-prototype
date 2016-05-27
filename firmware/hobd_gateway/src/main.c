@@ -102,6 +102,10 @@ static diagnostic_table ecu_tables[NUM_ECU_DTABLES];
 
 
 //
+static uint8_t hobd_packet_buffer[HOBD_PACKET_SIZE_MAX];
+
+
+//
 static can_frame can_tx_heartbeat_frame;
 
 
@@ -167,6 +171,7 @@ static void init( void )
 
     // zero globals
     memset( ecu_tables, 0, sizeof(ecu_tables) );
+    memset( hobd_packet_buffer, 0, sizeof(hobd_packet_buffer) );
     zero_can_tx_frames();
     zero_can_rx_frames();
 

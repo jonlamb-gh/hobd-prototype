@@ -31,6 +31,9 @@ uint8_t hobdcomm_send( void );
 uint8_t hobdcomm_recv( void );
 
 
+// TODO - checksum function
+
+
 
 
 #endif	/* HOBD_COMMUNICATION_H */
