@@ -46,6 +46,10 @@
 #define HOBD_CAN_HEARTBEAT_STATE_OK (0x01)
 
 
+//
+#define HOBD_CAN_HEARTBEAT_WARN_CANBUS (1 << 7)
+
+
 
 
 //

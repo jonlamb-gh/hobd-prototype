@@ -155,19 +155,19 @@ static void init( void )
     // disable watchdog
     wdt_disable();
 
-    // enable watchdog, reset after 120 ms
-    wdt_enable( WDTO_120MS );
-
-    // reset watchdog
-    wdt_reset();
+    // init switch pin
+    sw_init();
+    sw_enable_pullup();
 
     // init LED pin
     led_init();
     led_off();
 
-    // init switch pin
-    sw_init();
-    sw_enable_pullup();
+    // enable watchdog, reset after 120 ms
+    wdt_enable( WDTO_120MS );
+
+    // reset watchdog
+    wdt_reset();
 
     // zero globals
     memset( ecu_tables, 0, sizeof(ecu_tables) );
@@ -179,10 +179,16 @@ static void init( void )
     SET_STATE( HOBD_CAN_HEARTBEAT_STATE_INIT );
 
     //
-    cancomm_init();
+    if( cancomm_init() != 0 )
+    {
+        SET_WARNING( HOBD_CAN_HEARTBEAT_WARN_CANBUS );
+    }
 
     //
-    (void) cancomm_send( &can_tx_heartbeat_frame );
+    if( cancomm_send( &can_tx_heartbeat_frame ) != 0 )
+    {
+        SET_WARNING( HOBD_CAN_HEARTBEAT_WARN_CANBUS );
+    }
 }
 
 
@@ -250,7 +256,10 @@ static void send_can_heartbeat( void )
         UPDATE_HEARTBEAT_COUNTER();
 
         // publish
-        (void) cancomm_send( &can_tx_heartbeat_frame );
+        if( cancomm_send( &can_tx_heartbeat_frame ) != 0 )
+        {
+            SET_WARNING( HOBD_CAN_HEARTBEAT_WARN_CANBUS );
+        }
     }
 }
 
@@ -291,6 +300,10 @@ int main( void )
         {
             led_off();
         }
+
+
+        // clear warnings
+        CLEAR_WARNING( HOBD_CAN_HEARTBEAT_WARN_CANBUS );
     }
 
    return 0;

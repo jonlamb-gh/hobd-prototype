@@ -23,6 +23,7 @@
 // *****************************************************
 // static global types/macros
 // *****************************************************
+#warning "need to handle blocking/waiting/error in senc/recv"
 
 
 
@@ -95,6 +96,15 @@ uint8_t cancomm_send( const can_frame * const frame )
     do
     {
         status = can_get_status( &cmd );
+
+        if( status == CAN_STATUS_ERROR )
+        {
+            // set error
+            ret = 1;
+
+            // force return now
+            status = CAN_STATUS_COMPLETED;
+        }
     }
     while( status != CAN_STATUS_COMPLETED );
 
