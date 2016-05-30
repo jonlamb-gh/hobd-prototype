@@ -129,6 +129,7 @@ CFLAGS=-I. $(INC) -g -mmcu=$(MCU) -O$(OPTLEVEL) \
 	-funsigned-bitfields -funsigned-char   \
 	-Wall               \
 	-DBUILD_TARGET_AVR \
+	-DBUILD_TYPE_DEBUG \
 	-Wa,-ahlms=$(firstword                  \
 	$(filter %.lst, $(<:.c=.lst)))
 

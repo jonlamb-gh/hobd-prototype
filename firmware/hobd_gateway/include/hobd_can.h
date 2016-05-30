@@ -30,6 +30,10 @@
 #define HOBD_CAN_ID_COMMAND (0x200)
 
 
+// ms
+#define HOBD_CAN_RX_INTERVAL_COMMAND (50)
+
+
 //
 #define HOBD_CAN_ID_RESPONSE (0x201)
 
@@ -48,6 +52,10 @@
 
 //
 #define HOBD_CAN_HEARTBEAT_WARN_CANBUS (1 << 7)
+
+
+//
+#define HOBD_CAN_HEARTBEAT_WARN_HOBDBUS (1 << 6)
 
 
 

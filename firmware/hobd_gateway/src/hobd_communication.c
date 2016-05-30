@@ -49,3 +49,20 @@
 // *****************************************************
 // public definitions
 // *****************************************************
+
+//
+uint8_t hobdcomm_init( void )
+{
+    uint8_t ret = 0;
+
+    // select UART
+	Uart_select( HOBD_UART );
+
+    //
+    if( uart_init( CONF_8BIT_NOPAR_1STOP, HOBD_BAUDRATE ) == 0 )
+    {
+        ret = 1;
+    }
+
+    return ret;
+}

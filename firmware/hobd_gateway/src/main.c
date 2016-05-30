@@ -34,6 +34,10 @@
 #include "can_communication.h"
 #include "hobd_communication.h"
 
+#ifdef BUILD_TYPE_DEBUG
+#warning "BUILD_TYPE_DEBUG"
+#endif
+
 
 
 
@@ -143,6 +147,14 @@ static void zero_can_rx_frames( void );
 static void send_can_heartbeat( void );
 
 
+//
+static void update_hobd_communications( void );
+
+
+//
+static void process_can_command( void );
+
+
 
 
 // *****************************************************
@@ -155,9 +167,13 @@ static void init( void )
     // disable watchdog
     wdt_disable();
 
-    // init switch pin
-    sw_init();
-    sw_enable_pullup();
+    // init on-board switch pin
+    sw0_init();
+    sw0_enable_pullup();
+
+    // init enclosure switch pin
+    sw1_init();
+    sw1_enable_pullup();
 
     // init LED pin
     led_init();
@@ -179,9 +195,18 @@ static void init( void )
     SET_STATE( HOBD_CAN_HEARTBEAT_STATE_INIT );
 
     //
+    rtc_int_init();
+
+    //
     if( cancomm_init() != 0 )
     {
         SET_WARNING( HOBD_CAN_HEARTBEAT_WARN_CANBUS );
+    }
+
+    //
+    if( hobdcomm_init() != 0 )
+    {
+        SET_WARNING( HOBD_CAN_HEARTBEAT_WARN_HOBDBUS );
     }
 
     //
@@ -189,6 +214,18 @@ static void init( void )
     {
         SET_WARNING( HOBD_CAN_HEARTBEAT_WARN_CANBUS );
     }
+
+    //
+    enable_interrupt();
+
+    //
+#ifdef BUILD_TYPE_DEBUG
+	Uart_select( DEBUG_UART );
+    uart_init( CONF_8BIT_NOPAR_1STOP, DEBUG_BAUDDRATE );
+    Uart_select( HOBD_UART );
+#endif
+
+    DEBUG_PUTS( "init : pass\r\n" );
 }
 
 
@@ -264,6 +301,55 @@ static void send_can_heartbeat( void )
 }
 
 
+//
+static void update_hobd_communications( void )
+{
+
+}
+
+
+//
+static void process_can_command( void )
+{
+    // time since last rx check
+    uint32_t delta = 0;
+    uint32_t now = 0;
+
+    // invalidate/clear the global frame
+    can_rx_command_frame.id = (uint32_t) HOBD_CAN_ID_COMMAND;
+    can_rx_command_frame.dlc = (uint8_t) sizeof(hobd_can_command_msg);
+    memset( (void*) can_rx_command_frame.data, 0, sizeof(can_rx_command_frame.data) );
+
+    // get current time
+    now = time_get_ms();
+
+    // get time since last rx check
+    delta = time_get_delta( can_rx_command_frame.timestamp, now );
+
+    // check for data if interval met/exceeded
+    if( delta >= HOBD_CAN_RX_INTERVAL_COMMAND )
+    {
+        // update last rx check timestamp, ms
+        can_rx_command_frame.timestamp = now;
+
+        // check for rx message
+        const uint8_t ret = cancomm_recv( &can_rx_command_frame );
+
+        if( ret == 2 )
+        {
+            // data received
+
+            // TODO
+            // handle command
+        }
+        else if( ret == 1 )
+        {
+            SET_WARNING( HOBD_CAN_HEARTBEAT_WARN_CANBUS );
+        }
+    }
+}
+
+
 
 
 // *****************************************************
@@ -283,16 +369,25 @@ int main( void )
         // reset watchdog
         wdt_reset();
 
-        // TODO
 
-        // send periodic heartbeat CAN frame
+
+        // TODO
+        // process ready commands and available HOBD messages
+        update_hobd_communications();
+
+
+        // TODO
+        // check and process available CAN command messages
+        process_can_command();
+
+
+
+
+        // send periodic CAN heartbeat message
         send_can_heartbeat();
 
-
-
-
         // testing switch/LED
-        if( sw_get_state() == ON )
+        if( (sw0_get_state() == ON) || (sw1_get_state() == ON) )
         {
             led_on();
         }
@@ -300,7 +395,6 @@ int main( void )
         {
             led_off();
         }
-
 
         // clear warnings
         CLEAR_WARNING( HOBD_CAN_HEARTBEAT_WARN_CANBUS );
