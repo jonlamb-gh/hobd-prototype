@@ -304,7 +304,51 @@ static void send_can_heartbeat( void )
 //
 static void update_hobd_communications( void )
 {
+    const uint8_t bytes_read = hobdcomm_recv( hobd_packet_buffer, sizeof(hobd_packet_buffer) );
 
+    const uint8_t packet_type = hobdcomm_is_valid_packet( hobd_packet_buffer, bytes_read );
+
+    //
+    if( packet_type == HOBD_PACKET_TYPE_RESPONSE )
+    {
+        // get rx timestamp - time after data was received
+        const uint32_t now = time_get_ms();
+
+        // cast header
+        const hobd_packet_header * const header =
+                (hobd_packet_header*) hobd_packet_buffer;
+
+        // process
+        if( header->subtype == HOBD_PACKET_SUBTYPE_TABLE_SUBGROUP )
+        {
+            // cast subtable query
+            const hobd_table_response * const resp =
+                    (hobd_table_response*) hobd_packet_buffer;
+
+            // diagnostic table array index to update
+            uint8_t table_index = I_TABLE_0;
+
+            //
+            if( resp->table == HOBD_TABLE_0 )
+            {
+                table_index = I_TABLE_0;
+            }
+            else if( resp->table == HOBD_TABLE_16 )
+            {
+                table_index = I_TABLE_16;
+            }
+            else if( resp->table == HOBD_TABLE_32 )
+            {
+                table_index = I_TABLE_32;
+            }
+
+            //
+            dtable_update(
+                        hobd_packet_buffer,
+                        now,
+                        &ecu_tables[ table_index ] );
+        }
+    }
 }
 
 

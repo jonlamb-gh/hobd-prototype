@@ -127,3 +127,36 @@ uint8_t hobdcomm_checksum( const uint8_t * const buffer, const uint8_t len )
 
     return (uint8_t) cs;
 }
+
+
+//
+uint8_t hobdcomm_is_valid_packet( const uint8_t * const buffer, const uint8_t len )
+{
+    uint8_t packet_type = HOBD_PACKET_TYPE_INVALID;
+
+    // cast header
+    const hobd_packet_header * const header =
+            (hobd_packet_header*) buffer;
+
+    // min size = 3 byte header plus 1 byte checksum
+    const uint8_t min_len = (uint8_t) (sizeof(*header) + 1);
+
+    //
+    if( (len >= min_len) && (header->size >= min_len) && (header->size <= len) )
+    {
+        if( header->type != HOBD_PACKET_TYPE_INVALID )
+        {
+            const uint8_t packet_checksum = buffer[ header->size - 1 ];
+
+            const uint8_t real_checksum = hobdcomm_checksum( buffer, header->size );
+
+            //
+            if( packet_checksum == real_checksum )
+            {
+                packet_type = header->type;
+            }
+        }
+    }
+
+    return packet_type;
+}
