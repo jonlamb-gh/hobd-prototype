@@ -72,6 +72,8 @@ uint8_t hobdcomm_init( void )
 //
 uint8_t hobdcomm_send( void )
 {
+    // TODO - handle half duplex logic so we don't receive our tx bytes
+
     return 0;
 }
 
@@ -86,11 +88,14 @@ uint8_t hobdcomm_recv(
     //
     Uart_select( HOBD_UART );
 
-    //
+    // while data is available
+    // assume we don't need more time than the watchdog allows
     while( uart_test_hit() != 0 )
     {
+        // read register
         const uint8_t rx_byte = (uint8_t) uart_getchar();
 
+        // copy into buffer if we have space
         if( (bytes_read < HOBD_PACKET_SIZE_MAX) && (bytes_read < max_len) )
         {
             buffer[ bytes_read ] = rx_byte;
@@ -141,18 +146,20 @@ uint8_t hobdcomm_is_valid_packet( const uint8_t * const buffer, const uint8_t le
     // min size = 3 byte header plus 1 byte checksum
     const uint8_t min_len = (uint8_t) (sizeof(*header) + 1);
 
-    //
+    // check packet length
     if( (len >= min_len) && (header->size >= min_len) && (header->size <= len) )
     {
+        // check packet type
         if( header->type != HOBD_PACKET_TYPE_INVALID )
         {
             const uint8_t packet_checksum = buffer[ header->size - 1 ];
 
             const uint8_t real_checksum = hobdcomm_checksum( buffer, header->size );
 
-            //
+            // check checksum
             if( packet_checksum == real_checksum )
             {
+                // valid
                 packet_type = header->type;
             }
         }
