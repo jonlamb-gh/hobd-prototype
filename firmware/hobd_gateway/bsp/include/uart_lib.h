@@ -24,6 +24,7 @@
 #define _UART_LIB_H_
 
 //_____ I N C L U D E S ________________________________________________________
+#include <stdarg.h>
 #include "board.h"
 #include "uart_drv.h"
 
@@ -108,6 +109,60 @@ extern uint8_t uart_getchar (void);
 //! @return (none)
 //!
 void uart_put_string (uint8_t *data_string);
+
+//------------------------------------------------------------------------------
+//  @fn uart_mini_printf
+//!
+//! Minimal "PRINTF" with variable argument list. Write several variables
+//! formatted by a format string to a file descriptor.
+//! Example:
+//! ========
+//! { u8_toto = 0xAA;
+//!   uart_mini_printf ("toto = %04d (0x%012X)\r\n", u8_toto, u8_toto);
+//!   /*   Expected:     toto = 0170 (0x0000000000AA)   &  Cr+Lf       */ }
+//!
+//! @warning "uart_init()" must be performed before
+//!
+//! @param argument list
+//!
+//!     The format string is interpreted like this:
+//!        ,---------------,---------------------------------------------------,
+//!        | Any character | Output as is                                      |
+//!        |---------------+---------------------------------------------------|
+//!        |     %c:       | interpret argument as character                   |
+//!        |     %s:       | interpret argument as pointer to string           |
+//!        |     %d:       | interpret argument as decimal (signed) S16        |
+//!        |     %ld:      | interpret argument as decimal (signed) S32        |
+//!        |     %u:       | interpret argument as decimal (unsigned) U16      |
+//!        |     %lu:      | interpret argument as decimal (unsigned) U32      |
+//!        |     %x:       | interpret argument as hex U16 (lower case chars)  |
+//!        |     %lx:      | interpret argument as hex U32 (lower case chars)  |
+//!        |     %X:       | interpret argument as hex U16 (upper case chars)  |
+//!        |     %lX:      | interpret argument as hex U32 (upper case chars)  |
+//!        |     %%:       | print a percent ('%') character                   |
+//!        '---------------'---------------------------------------------------'
+//!
+//!     Field width (in decimal) always starts with "0" and its maximum is
+//!     given by "DATA_BUF_LEN" defined in "uart_lib.h".
+//!        ,----------------------,-----------,--------------,-----------------,
+//!        |       Variable       | Writting  |  Printing    |    Comment      |
+//!        |----------------------+-----------+--------------|-----------------|
+//!        |                      |   %x      | aa           |        -        |
+//!        |  u8_xx = 0xAA        |   %04d    | 0170         |        -        |
+//!        |                      |   %012X   | 0000000000AA |        -        |
+//!        |----------------------+-----------+--------------|-----------------|
+//!        | u16_xx = -5678       |   %010d   | -0000005678  |        -        |
+//!        |----------------------+-----------+--------------|-----------------|
+//!        | u32_xx = -4100000000 |   %011lu  | 00194967296  |        -        |
+//!        |----------------------+-----------+--------------|-----------------|
+//!        |          -           |   %8x     | 8x           | Writting error! |
+//!        |----------------------+-----------+--------------|-----------------|
+//!        |          -           |   %0s     | 0s           | Writting error! |
+//!        '----------------------'-----------'--------------'-----------------'
+//!
+//! Return: 0 = O.K.
+//!
+uint8_t uart_mini_printf(char *format, ...);
 
 
 //______________________________________________________________________________

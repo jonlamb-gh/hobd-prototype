@@ -413,24 +413,17 @@ int main( void )
         // reset watchdog
         wdt_reset();
 
-
-
-        // TODO
+#warning "TODO - hobd command/response framework - currently only receiving is enabled"
         // process ready commands and available HOBD messages
         update_hobd_communications();
 
-
-        // TODO
         // check and process available CAN command messages
         process_can_command();
-
-
-
 
         // send periodic CAN heartbeat message
         send_can_heartbeat();
 
-        // testing switch/LED
+        // turn on the on-board LED if either switch is closed
         if( (sw0_get_state() == ON) || (sw1_get_state() == ON) )
         {
             led_on();
@@ -440,6 +433,7 @@ int main( void )
             led_off();
         }
 
+#warning "TODO - clear warnings after some time"
         // clear warnings
         CLEAR_WARNING( HOBD_CAN_HEARTBEAT_WARN_CANBUS );
     }

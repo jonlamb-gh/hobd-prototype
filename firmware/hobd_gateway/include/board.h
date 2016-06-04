@@ -41,6 +41,11 @@ typedef uint8_t BOOL;
 
 
 //
+#define FALSE (0)
+#define TRUE  (1)
+
+
+//
 #define MAX(a, b) ( (a)>(b) ? (a) : (b) )
 #define MIN(a, b) ( (a)<(b) ? (a) : (b) )
 
@@ -131,9 +136,11 @@ typedef uint8_t BOOL;
 
 //
 #ifdef BUILD_TYPE_DEBUG
-#define DEBUG_PUTS(x) {Uart_select( DEBUG_UART ); uart_put_string( (uint8_t*) x ); Uart_select( HOBD_UART );}
+#define DEBUG_PUTS(x) {Uart_select(DEBUG_UART); uart_put_string((uint8_t*) x); Uart_select(HOBD_UART);}
+#define DEBUG_PRINTF(...) {Uart_select(DEBUG_UART); uart_mini_printf(__VA_ARGS__); Uart_select(HOBD_UART);}
 #else
 #define DEBUG_PUTS(x)
+#define DEBUG_PRINTF(x)
 #endif
 
 
