@@ -28,6 +28,10 @@
 #define CANCOMM_STATE_ID_MAX (15)
 
 
+//
+#define CANCOMM_RX_TIMEOUT (4)
+
+
 
 
 //
