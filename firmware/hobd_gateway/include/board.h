@@ -24,6 +24,10 @@
 #include <avr/pgmspace.h>
 #include <stdint.h>
 
+#ifndef BUILD_TYPE_DEBUG
+#define BUILD_TYPE_DEBUG
+#endif
+
 
 
 
@@ -34,6 +38,11 @@ typedef uint8_t BOOL;
 //
 #define OFF (0)
 #define ON  (1)
+
+
+//
+#define FALSE (0)
+#define TRUE  (1)
 
 
 //
@@ -97,10 +106,16 @@ typedef uint8_t BOOL;
 #define LED_STATUS_0 (4)
 
 
-#define SW_PORT_IN PINE
-#define SW_PORT_DDR DDRE
-#define SW_PORT_OUT PORTE
-#define SW_STATUS_0 (5)
+#define SW0_PORT_IN PINE
+#define SW0_PORT_DDR DDRE
+#define SW0_PORT_OUT PORTE
+#define SW0_PIN (5)
+
+
+#define SW1_PORT_IN PINC
+#define SW1_PORT_DDR DDRC
+#define SW1_PORT_OUT PORTC
+#define SW1_PIN (6)
 
 
 #define led_init() (LED_PORT_DDR |= (1 << LED_STATUS_0))
@@ -109,10 +124,24 @@ typedef uint8_t BOOL;
 #define led_toggle() (LED_PORT_OUT ^= (1 << LED_STATUS_0))
 
 
-#define sw_init() (SW_PORT_DDR &= ~(1 << SW_STATUS_0))
-#define sw_enable_pullup() (SW_PORT_OUT |= (1 << SW_STATUS_0))
-#define sw_get_state() (!(SW_PORT_IN & (1 << SW_STATUS_0)))
+#define sw0_init() (SW0_PORT_DDR &= ~(1 << SW0_PIN))
+#define sw0_enable_pullup() (SW0_PORT_OUT |= (1 << SW0_PIN))
+#define sw0_get_state() (!(SW0_PORT_IN & (1 << SW0_PIN)))
 
+
+#define sw1_init() (SW1_PORT_DDR &= ~(1 << SW1_PIN))
+#define sw1_enable_pullup() (SW1_PORT_OUT |= (1 << SW1_PIN))
+#define sw1_get_state() (!(SW1_PORT_IN & (1 << SW1_PIN)))
+
+
+//
+#ifdef BUILD_TYPE_DEBUG
+#define DEBUG_PUTS(x) {Uart_select(DEBUG_UART); uart_put_string((uint8_t*) x); Uart_select(HOBD_UART);}
+#define DEBUG_PRINTF(...) {Uart_select(DEBUG_UART); uart_mini_printf(__VA_ARGS__); Uart_select(HOBD_UART);}
+#else
+#define DEBUG_PUTS(x)
+#define DEBUG_PRINTF(x)
+#endif
 
 
 

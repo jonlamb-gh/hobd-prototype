@@ -50,9 +50,19 @@
 // *****************************************************
 
 //
+void time_sleep_ms( const uint16_t interval )
+{
+    if( interval != 0 )
+    {
+        delay_ms( interval );
+    }
+}
+
+
+//
 uint32_t time_get_ms( void )
 {
-    return rtc_get_ms();
+    return (uint32_t) rtc_get_ms();
 }
 
 
