@@ -21,6 +21,16 @@
 
 
 //
+#define CANCOMM_STATE_ID_INVALID (0)
+
+
+//
+#define CANCOMM_STATE_ID_MAX (15)
+
+
+
+
+//
 uint8_t cancomm_init( void );
 
 

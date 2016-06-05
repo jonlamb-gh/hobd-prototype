@@ -17,13 +17,17 @@
 #include "can_frame.h"
 #include "can_communication.h"
 
+#warning "need to handle blocking/waiting/error in senc/recv"
+
 
 
 
 // *****************************************************
 // static global types/macros
 // *****************************************************
-#warning "need to handle blocking/waiting/error in senc/recv"
+
+//
+#define STATE_ID_TO_INDEX(x) ((x - 1))
 
 
 
@@ -31,6 +35,9 @@
 // *****************************************************
 // static global data
 // *****************************************************
+
+//
+static st_cmd_t global_state_array[CANCOMM_STATE_ID_MAX];
 
 
 
@@ -57,6 +64,8 @@
 uint8_t cancomm_init( void )
 {
     uint8_t ret = 0;
+
+    memset( global_state_array, 0, sizeof(global_state_array) );
 
     if( can_init( 0 ) == 0 )
     {
