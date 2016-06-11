@@ -312,6 +312,11 @@ static void update_hobd_communications( void )
 
     const uint8_t packet_type = hobdcomm_is_valid_packet( hobd_packet_buffer, bytes_read );
 
+    if( bytes_read != 0 )
+    {
+        DEBUG_PRINTF( "hobd_rx: %u\r\n", bytes_read );
+    }
+
     //
     if( packet_type == HOBD_PACKET_TYPE_RESPONSE )
     {
@@ -345,6 +350,8 @@ static void update_hobd_communications( void )
             {
                 table_index = I_TABLE_32;
             }
+
+            DEBUG_PRINTF( "table_sg HOBD_TABLE_%u\r\n", resp->table );
 
             //
             dtable_update(
