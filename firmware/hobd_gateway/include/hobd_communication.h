@@ -28,11 +28,17 @@ uint8_t hobdcomm_send( void );
 
 
 //
-uint8_t hobdcomm_recv( void );
+uint8_t hobdcomm_recv(
+        uint8_t * const buffer,
+        const uint8_t max_len );
 
 
-// TODO - checksum function
+//
+uint8_t hobdcomm_checksum( const uint8_t * const buffer, const uint8_t len );
 
+
+//
+uint8_t hobdcomm_is_valid_packet( const uint8_t * const buffer, const uint8_t len );
 
 
 

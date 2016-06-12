@@ -19,6 +19,10 @@
 
 
 //
+void time_sleep_ms( const uint16_t interval );
+
+
+//
 uint32_t time_get_ms( void );
 
 

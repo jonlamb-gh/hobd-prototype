@@ -11,6 +11,7 @@
 #include <string.h>
 #include <avr/io.h>
 
+#include "board.h"
 #include "uart_lib.h"
 #include "hobd.h"
 #include "hobd_communication.h"
@@ -49,3 +50,120 @@
 // *****************************************************
 // public definitions
 // *****************************************************
+
+//
+uint8_t hobdcomm_init( void )
+{
+    uint8_t ret = 0;
+
+    // select UART
+	Uart_select( HOBD_UART );
+
+    //
+    if( uart_init( CONF_8BIT_NOPAR_1STOP, HOBD_BAUDRATE ) == 0 )
+    {
+        ret = 1;
+    }
+
+    return ret;
+}
+
+
+//
+uint8_t hobdcomm_send( void )
+{
+    // TODO - handle half duplex logic so we don't receive our tx bytes
+
+    return 0;
+}
+
+
+//
+uint8_t hobdcomm_recv(
+        uint8_t * const buffer,
+        const uint8_t max_len )
+{
+    uint8_t bytes_read = 0;
+
+    //
+    Uart_select( HOBD_UART );
+
+    // while data is available
+    // assume we don't need more time than the watchdog allows
+    while( uart_test_hit() != 0 )
+    {
+        // read register
+        const uint8_t rx_byte = (uint8_t) uart_getchar();
+
+        // copy into buffer if we have space
+        if( (bytes_read < HOBD_PACKET_SIZE_MAX) && (bytes_read < max_len) )
+        {
+            buffer[ bytes_read ] = rx_byte;
+
+            bytes_read += 1;
+        }
+    }
+
+
+    return bytes_read;
+}
+
+
+//
+uint8_t hobdcomm_checksum( const uint8_t * const buffer, const uint8_t len )
+{
+    uint16_t cs =0;
+    uint8_t idx = 0;
+
+    for( idx = 0; idx < len; idx += 1 )
+    {
+        cs += (uint16_t) buffer[ idx ];
+    }
+
+    if( cs > 0x0100 )
+    {
+        cs = (0x0100 - (cs & 0x00FF));
+    }
+    else
+    {
+        cs = (0x0100 - cs);
+    }
+
+
+    return (uint8_t) cs;
+}
+
+
+//
+uint8_t hobdcomm_is_valid_packet( const uint8_t * const buffer, const uint8_t len )
+{
+    uint8_t packet_type = HOBD_PACKET_TYPE_INVALID;
+
+    // cast header
+    const hobd_packet_header * const header =
+            (hobd_packet_header*) buffer;
+
+    // min size = 3 byte header plus 1 byte checksum
+    const uint8_t min_len = (uint8_t) (sizeof(*header) + 1);
+
+    // check packet length
+    if( (len >= min_len) && (header->size >= min_len) && (header->size <= len) )
+    {
+        // check packet type
+        if( header->type != HOBD_PACKET_TYPE_INVALID )
+        {
+            const uint8_t packet_checksum = buffer[ header->size - 1 ];
+
+            const uint8_t real_checksum = hobdcomm_checksum( buffer, header->size );
+
+            // check checksum
+            if( packet_checksum == real_checksum )
+            {
+                // valid
+                packet_type = header->type;
+            }
+        }
+    }
+
+    return packet_type;
+}
