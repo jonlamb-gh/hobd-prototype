@@ -39,6 +39,9 @@ typedef struct
     //
     //
     uint8_t data[CAN_FRAME_DLC_MAX];
+    //
+    // used by the cancomm library to associate state
+    uint8_t state_id;
 } can_frame;
 
 
