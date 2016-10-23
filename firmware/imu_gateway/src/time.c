@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <avr/io.h>
+#include <inttypes.h>
 
 #include "rtc_drv.h"
 #include "time.h"
@@ -50,7 +51,8 @@
 // *****************************************************
 
 //
-void time_sleep_ms( const uint16_t interval )
+void time_sleep_ms(
+        const uint16_t interval )
 {
     if( interval != 0 )
     {

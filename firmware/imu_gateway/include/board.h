@@ -33,6 +33,7 @@
 
 
 #ifndef BOOL
+#include <inttypes.h>
 typedef uint8_t BOOL;
 #endif
 
@@ -99,8 +100,8 @@ typedef uint8_t BOOL;
 
 //
 #define DEBUG_BAUDDRATE (57600UL)
-#define GPS_BAUDRATE (10400UL)
-#define IMU_BAUDRATE (10400UL)
+#define GPS_BAUDRATE (115200UL)
+#define IMU_BAUDRATE (115200UL)
 
 
 //
@@ -140,11 +141,20 @@ typedef uint8_t BOOL;
 
 //
 #ifdef BUILD_TYPE_DEBUG
-#define DEBUG_PUTS(x) {Uart_select(DEBUG_UART); uart_put_string((uint8_t*) x); Uart_select(GPS_UART);}
-#define DEBUG_PRINTF(...) {Uart_select(DEBUG_UART); uart_mini_printf(__VA_ARGS__); Uart_select(GPS_UART);}
+#define DEBUG_PUTS( x ) \
+{ \
+    Uart_select( DEBUG_UART ); \
+    uart_put_string( (uint8_t*) x ); \
+}
+
+#define DEBUG_PRINTF(...) \
+{ \
+    Uart_select( DEBUG_UART ); \
+    uart_mini_printf( __VA_ARGS__ ); \
+}
 #else
-#define DEBUG_PUTS(x)
-#define DEBUG_PRINTF(x)
+#define DEBUG_PUTS( x )
+#define DEBUG_PRINTF( x )
 #endif
 
 

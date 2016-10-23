@@ -109,11 +109,16 @@ static void init( void )
     enable_interrupt();
 
     //
+    Uart_select( GPS_UART );
+    uart_init( CONF_8BIT_NOPAR_1STOP, GPS_BAUDRATE );
+
+    //
 #ifdef BUILD_TYPE_DEBUG
 	Uart_select( DEBUG_UART );
     uart_init( CONF_8BIT_NOPAR_1STOP, DEBUG_BAUDDRATE );
-    Uart_select( GPS_UART );
 #endif
+
+    time_sleep_ms( 5 );
 
     DEBUG_PUTS( "init : pass\r\n" );
 }

@@ -13,13 +13,14 @@
 
 
 
-#include <stdint.h>
+#include <inttypes.h>
 
 
 
 
 //
-void time_sleep_ms( const uint16_t interval );
+void time_sleep_ms(
+        const uint16_t interval );
 
 
 //
