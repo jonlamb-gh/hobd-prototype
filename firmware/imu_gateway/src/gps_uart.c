@@ -70,7 +70,7 @@ typedef struct
 // *****************************************************
 
 //
-static ring_buffer_s rx_buffer;
+static volatile ring_buffer_s rx_buffer;
 
 
 
@@ -88,7 +88,7 @@ static ring_buffer_s rx_buffer;
 
 //
 static void ring_buffer_init(
-        ring_buffer_s * const rb )
+        volatile ring_buffer_s * const rb )
 {
     if( rb != NULL )
     {
@@ -96,6 +96,34 @@ static void ring_buffer_init(
         rb->tail = 0;
         rb->error = 0;
     }
+}
+
+
+//
+static uint16_t ring_buffer_getc(
+        volatile ring_buffer_s * const rb )
+{
+    uint16_t ret = 0;
+#warning "TODO  - should this be atomic - ie disable interrupts during get?"
+    // no data available
+    if( rb->head == rb->tail )
+    {
+#warning "TODO  - define return codes/bits"
+        ret = 0;
+    }
+    else
+    {
+        // calculate new buffer index
+        const uint16_t new_tail = (uint16_t) (rb->tail + 1) & RX_BUFFER_MASK;
+
+        rb->tail = new_tail;
+
+        const uint8_t rx_data = rb->buffer[ new_tail ];
+
+        ret = (uint16_t) (rb->error << 8) + rx_data;
+    }
+
+    return ret;
 }
 
 
@@ -142,7 +170,7 @@ ISR( UART_RX_INTERRUPT )
 
     if( new_head == rx_buffer.tail )
     {
-#warning "TODO - handle overflow - see 'https://github.com/andygock/avr-uart' for reference"
+#warning "TODO - handle overflow condition - see 'https://github.com/andygock/avr-uart' for reference"
         // receive buffer overflow error
 //        error = UART_BUFFER_OVERFLOW >> 8;
     }
