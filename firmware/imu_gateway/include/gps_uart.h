@@ -19,7 +19,7 @@
 
 
 //
-// ...
+uint8_t gps_uart_init( void );
 
 
 
