@@ -69,6 +69,7 @@ PRJSRC= ../avrcan_at90can128/bsp/src/timer8_drv.c \
 	../avrcan_at90can128/bsp/src/can_drv.c \
 	../avrcan_at90can128/bsp/src/can_lib.c \
 	src/time.c \
+	src/gps_uart.c \
 	src/main.c
 
 # additional includes (e.g. -I/path/to/mydir)
