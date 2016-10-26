@@ -29,6 +29,12 @@ typedef struct
     //
     //
     hobd_gps_time2_s gps_time2;
+    //
+    //
+    hobd_gps_dop1_s gps_dop1;
+    //
+    //
+    hobd_gps_dop2_s gps_dop2;
 } gps_state_s;
 
 

@@ -237,7 +237,6 @@ static void gps_time_callback(
 {
     DEBUG_PUTS( "gps_time\r\n" );
 
-
     const uint32_t rx_timestamp = time_get_ms();
 
     const msg_gps_time_t * const gps_time = (const msg_gps_time_t*) msg;
@@ -258,9 +257,17 @@ static void dops_callback(
         uint8_t msg[],
         void *context )
 {
-    //const msg_dops_t * const dops = (const msg_dops_t*) msg;
-
     DEBUG_PUTS( "gps_dops\r\n" );
+
+    const msg_dops_t * const dops = (const msg_dops_t*) msg;
+    gps_state_s * const gps_state = (gps_state_s*) context;
+
+    gps_state->gps_dop1.time_of_week = dops->tow;
+    gps_state->gps_dop1.gdop = dops->gdop;
+    gps_state->gps_dop1.pdop = dops->pdop;
+    gps_state->gps_dop2.tdop = dops->tdop;
+    gps_state->gps_dop2.hdop = dops->hdop;
+    gps_state->gps_dop2.vdop = dops->vdop;
 }
 
 
