@@ -353,9 +353,15 @@ static void heading_callback(
         uint8_t msg[],
         void *context )
 {
-    //const msg_baseline_heading_t * const heading = (const msg_baseline_heading_t*) msg;
-
     DEBUG_PUTS( "gps_heading\r\n" );
+
+    gps_state_s * const gps_state = (gps_state_s*) context;
+    const msg_baseline_heading_t * const heading = (const msg_baseline_heading_t*) msg;
+
+    gps_state->heading1.time_of_week = heading->tow;
+    gps_state->heading1.heading = heading->heading;
+    gps_state->heading2.num_sats = heading->n_sats;
+    gps_state->heading2.flags = heading->flags;
 }
 
 

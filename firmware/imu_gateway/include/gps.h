@@ -65,6 +65,12 @@ typedef struct
     //
     //
     hobd_gps_vel_ecef3_s vel_ecef3;
+    //
+    //
+    hobd_gps_heading1_s heading1;
+    //
+    //
+    hobd_gps_heading2_s heading2;
 } gps_state_s;
 
 
