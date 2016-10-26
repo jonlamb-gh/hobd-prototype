@@ -27,6 +27,7 @@
 #include "can_lib.h"
 
 //
+#include "hobd.h"
 #include "time.h"
 #include "gps.h"
 
