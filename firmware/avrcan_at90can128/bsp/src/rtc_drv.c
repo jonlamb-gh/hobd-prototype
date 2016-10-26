@@ -70,6 +70,7 @@ uint8_t  j, k;
             if (rtc_tics == ((uint32_t)(ms_count)) ) break;  //-- EXIT if overflow (not right)
             enable_interrupt();
         }
+        enable_interrupt();
     }
     else    //-- No RTC, enabling something almost equivalent but not right.
     {

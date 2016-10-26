@@ -110,24 +110,21 @@ static void init( void )
     //
     rtc_int_init();
 
-    //
-    enable_interrupt();
-
-    //
-//    Uart_select( GPS_UART );
-//    uart_init( CONF_8BIT_NOPAR_1STOP, GPS_BAUDRATE );
+    // init GPS UART/module
 #warning "TODO - handle gps init status"
     const uint8_t gps_status = gps_init( &gps_state );
 
-    //
 #ifdef BUILD_TYPE_DEBUG
-	Uart_select( DEBUG_UART );
+    Uart_select( DEBUG_UART );
     uart_init( CONF_8BIT_NOPAR_1STOP, DEBUG_BAUDDRATE );
 #endif
 
+    // enable interrupts
+    enable_interrupt();
+
     time_sleep_ms( 5 );
 
-    DEBUG_PUTS( "init : pass\r\n" );
+    DEBUG_PUTS( "init : pass\n" );
 }
 
 

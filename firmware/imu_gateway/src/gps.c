@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <avr/io.h>
+#include <avr/interrupt.h>
 #include <inttypes.h>
 #include <math.h>
 
@@ -33,17 +34,18 @@
 
 // GPS is on UART1
 #define UART_RX_INTERRUPT USART1_RX_vect
-#define UART_STATUS UCSR1A
-#define UART_CONTROL UCSR1B
+#define UART_UCSRA UCSR1A
+#define UART_UCSRB UCSR1B
+#define UART_UCSRC UCSR1C
 #define UART_DATA UDR1
 
 
 //
-#define gps_uart_enable() (UART_CONTROL |= (_BV(RXEN1) | _BV(TXEN1) | _BV(RXCIE1)))
+#define gps_uart_enable() (UART_UCSRB |= (_BV(RXEN1) | _BV(TXEN1) | _BV(RXCIE1)))
 
 
 //
-#define gps_uart_disable() (UART_CONTROL &= ~(_BV(RXEN1) | _BV(TXEN1) | _BV(RXCIE1)))
+#define gps_uart_disable() (UART_UCSRB &= ~(_BV(RXEN1) | _BV(TXEN1) | _BV(RXCIE1)))
 
 
 
@@ -77,7 +79,7 @@ static sbp_msg_callbacks_node_t heading_node;
 // *****************************************************
 
 //
-static uint8_t hw_init( void );
+static void hw_init( void );
 
 
 // prototype defined by libsbp
@@ -153,7 +155,7 @@ static void heading_callback(
 ISR( UART_RX_INTERRUPT )
 {
     // read UART status register and UART data register
-    const uint8_t status  = UART_STATUS;
+    const uint8_t status  = UART_UCSRA;
     const uint8_t data = UART_DATA;
 
     // read error status
@@ -167,25 +169,17 @@ ISR( UART_RX_INTERRUPT )
 
 
 //
-static uint8_t hw_init( void )
+static void hw_init( void )
 {
-    uint8_t ret = 0;
-
     Uart_select( GPS_UART );
 
     Uart_clear();
 
-    if( Uart_set_baudrate( GPS_BAUDRATE ) == 0 )
-    {
-        ret = 1;
-    }
-    else
-    {
-        Uart_hw_init( CONF_8BIT_NOPAR_1STOP );
-        gps_uart_enable();
-    }
+    Uart_set_ubrr( GPS_BAUDRATE );
 
-    return ret;
+    Uart_hw_init( CONF_8BIT_NOPAR_1STOP );
+
+    gps_uart_enable();
 }
 
 
@@ -224,7 +218,7 @@ static void heartbeat_callback(
 {
     const msg_heartbeat_t * const heartbeat = (const msg_heartbeat_t*) msg;
 
-    DEBUG_PRINTF( "gps_heartbeat : flags 0x%X\r\n", heartbeat->flags );
+    DEBUG_PRINTF( "gps_heartbeat : flags 0x%X\n", heartbeat->flags );
 }
 
 
@@ -235,7 +229,7 @@ static void gps_time_callback(
         uint8_t msg[],
         void *context )
 {
-    DEBUG_PUTS( "gps_time\r\n" );
+    DEBUG_PUTS( "gps_time\n" );
 
     const uint32_t rx_timestamp = time_get_ms();
 
@@ -257,7 +251,7 @@ static void dops_callback(
         uint8_t msg[],
         void *context )
 {
-    DEBUG_PUTS( "gps_dops\r\n" );
+    DEBUG_PUTS( "gps_dops\n" );
 
     gps_state_s * const gps_state = (gps_state_s*) context;
     const msg_dops_t * const dops = (const msg_dops_t*) msg;
@@ -278,7 +272,7 @@ static void pos_ecef_callback(
         uint8_t msg[],
         void *context )
 {
-    DEBUG_PUTS( "gps_pos_ecef\r\n" );
+    DEBUG_PUTS( "gps_pos_ecef\n" );
 
     gps_state_s * const gps_state = (gps_state_s*) context;
     const msg_pos_ecef_t * const pos_ecef = (const msg_pos_ecef_t*) msg;
@@ -309,7 +303,7 @@ static void baseline_ecef_callback(
         uint8_t msg[],
         void *context )
 {
-    DEBUG_PUTS( "gps_baseline_ecef\r\n" );
+    DEBUG_PUTS( "gps_baseline_ecef\n" );
 
     gps_state_s * const gps_state = (gps_state_s*) context;
     const msg_baseline_ecef_t * const baseline_ecef = (const msg_baseline_ecef_t*) msg;
@@ -331,7 +325,7 @@ static void vel_ecef_callback(
         uint8_t msg[],
         void *context )
 {
-    DEBUG_PUTS( "gps_vel_ecef\r\n" );
+    DEBUG_PUTS( "gps_vel_ecef\n" );
 
     gps_state_s * const gps_state = (gps_state_s*) context;
     const msg_vel_ecef_t * const vel_ecef = (const msg_vel_ecef_t*) msg;
@@ -353,7 +347,7 @@ static void heading_callback(
         uint8_t msg[],
         void *context )
 {
-    DEBUG_PUTS( "gps_heading\r\n" );
+    DEBUG_PUTS( "gps_heading\n" );
 
     gps_state_s * const gps_state = (gps_state_s*) context;
     const msg_baseline_heading_t * const heading = (const msg_baseline_heading_t*) msg;
@@ -433,7 +427,8 @@ uint8_t gps_init(
             (void*) gps_state,
             &heading_node );
 
-    ret = hw_init();
+    //
+    hw_init();
 
     return ret;
 }
@@ -475,9 +470,11 @@ uint8_t gps_update(
             &sbp_state,
             &sbp_read_function );
 
-    if( sbp_status != SBP_OK )
+    if( (sbp_status != SBP_OK)
+            && (sbp_status != SBP_OK_CALLBACK_EXECUTED)
+            && (sbp_status != SBP_OK_CALLBACK_UNDEFINED) )
     {
-        DEBUG_PRINTF( "gps_enable : sbp_process %d\r\n", sbp_status );
+        DEBUG_PRINTF( "gps_enable : sbp_process %d\n", sbp_status );
     }
 
     return ret;
