@@ -11,10 +11,12 @@
 #include <string.h>
 #include <avr/io.h>
 #include <inttypes.h>
+#include <math.h>
 
 #include "board.h"
 #include "libsbp/sbp.h"
 #include "libsbp/system.h"
+#include "libsbp/navigation.h"
 #include "uart_lib.h"
 #include "uart_drv.h"
 #include "ring_buffer.h"
@@ -48,16 +50,17 @@
 // static global data
 // *****************************************************
 
-//
+// UART rx ring buffer
 static volatile ring_buffer_s rx_buffer;
 
 
-//
+// SBP state
 static sbp_state_t sbp_state;
 
 
-//
+// SBP callback nodes
 static sbp_msg_callbacks_node_t heartbeat_callback_node;
+static sbp_msg_callbacks_node_t gps_time_node;
 
 
 
