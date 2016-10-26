@@ -331,9 +331,18 @@ static void vel_ecef_callback(
         uint8_t msg[],
         void *context )
 {
-    //const msg_vel_ecef_t * const vel_ecef = (const msg_vel_ecef_t*) msg;
-
     DEBUG_PUTS( "gps_vel_ecef\r\n" );
+
+    gps_state_s * const gps_state = (gps_state_s*) context;
+    const msg_vel_ecef_t * const vel_ecef = (const msg_vel_ecef_t*) msg;
+
+    gps_state->vel_ecef1.time_of_week = vel_ecef->tow;
+    gps_state->vel_ecef1.accuracy = vel_ecef->accuracy;
+    gps_state->vel_ecef1.num_sats = vel_ecef->n_sats;
+    gps_state->vel_ecef1.flags = vel_ecef->flags;
+    gps_state->vel_ecef2.x = vel_ecef->x;
+    gps_state->vel_ecef2.y = vel_ecef->y;
+    gps_state->vel_ecef3.z = vel_ecef->z;
 }
 
 
