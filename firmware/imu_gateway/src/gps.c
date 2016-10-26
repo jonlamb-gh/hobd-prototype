@@ -20,6 +20,7 @@
 #include "uart_lib.h"
 #include "uart_drv.h"
 #include "ring_buffer.h"
+#include "time.h"
 #include "gps.h"
 
 
@@ -61,6 +62,11 @@ static sbp_state_t sbp_state;
 // SBP callback nodes
 static sbp_msg_callbacks_node_t heartbeat_callback_node;
 static sbp_msg_callbacks_node_t gps_time_node;
+static sbp_msg_callbacks_node_t dops_node;
+static sbp_msg_callbacks_node_t pos_ecef_node;
+static sbp_msg_callbacks_node_t baseline_ecef_node;
+static sbp_msg_callbacks_node_t vel_ecef_node;
+static sbp_msg_callbacks_node_t heading_node;
 
 
 
@@ -68,6 +74,72 @@ static sbp_msg_callbacks_node_t gps_time_node;
 // *****************************************************
 // static declarations
 // *****************************************************
+
+//
+static uint8_t hw_init( void );
+
+
+// prototype defined by libsbp
+static uint32_t sbp_read_function(
+        uint8_t *buff,
+        uint32_t buff_len,
+        void *context );
+
+
+// callback prototypes are defined by libsbp
+static void heartbeat_callback(
+        uint16_t sender_id,
+        uint8_t msg_len,
+        uint8_t msg[],
+        void *context );
+
+
+//
+static void gps_time_callback(
+        uint16_t sender_id,
+        uint8_t msg_len,
+        uint8_t msg[],
+        void *context );
+
+
+//
+static void dops_callback(
+        uint16_t sender_id,
+        uint8_t msg_len,
+        uint8_t msg[],
+        void *context );
+
+
+//
+static void pos_ecef_callback(
+        uint16_t sender_id,
+        uint8_t msg_len,
+        uint8_t msg[],
+        void *context );
+
+
+//
+static void baseline_ecef_callback(
+        uint16_t sender_id,
+        uint8_t msg_len,
+        uint8_t msg[],
+        void *context );
+
+
+//
+static void vel_ecef_callback(
+        uint16_t sender_id,
+        uint8_t msg_len,
+        uint8_t msg[],
+        void *context );
+
+
+//
+static void heading_callback(
+        uint16_t sender_id,
+        uint8_t msg_len,
+        uint8_t msg[],
+        void *context );
 
 
 
@@ -117,7 +189,10 @@ static uint8_t hw_init( void )
 
 
 //
-static uint32_t sbp_read_function( uint8_t *buff, uint32_t buff_len, void *context )
+static uint32_t sbp_read_function(
+        uint8_t *buff,
+        uint32_t buff_len,
+        void *context )
 {
     uint32_t idx = 0;
 
@@ -140,11 +215,93 @@ static uint32_t sbp_read_function( uint8_t *buff, uint32_t buff_len, void *conte
 
 
 //
-static void heartbeat_callback( uint16_t sender_id, uint8_t msg_len, uint8_t msg[], void *context )
+static void heartbeat_callback(
+        uint16_t sender_id,
+        uint8_t msg_len,
+        uint8_t msg[],
+        void *context )
 {
     const msg_heartbeat_t * const heartbeat = (const msg_heartbeat_t*) msg;
 
     DEBUG_PRINTF( "gps_heartbeat : flags 0x%X\r\n", heartbeat->flags );
+}
+
+
+//
+static void gps_time_callback(
+        uint16_t sender_id,
+        uint8_t msg_len,
+        uint8_t msg[],
+        void *context )
+{
+    //const msg_gps_time_t * const gps_time = (const msg_gps_time_t*) msg;
+
+    DEBUG_PUTS( "gps_time\r\n" );
+}
+
+
+//
+static void dops_callback(
+        uint16_t sender_id,
+        uint8_t msg_len,
+        uint8_t msg[],
+        void *context )
+{
+    //const msg_dops_t * const dops = (const msg_dops_t*) msg;
+
+    DEBUG_PUTS( "gps_dops\r\n" );
+}
+
+
+//
+static void pos_ecef_callback(
+        uint16_t sender_id,
+        uint8_t msg_len,
+        uint8_t msg[],
+        void *context )
+{
+    //const msg_pos_ecef_t * const pos_ecef = (const msg_pos_ecef_t*) msg;
+
+    DEBUG_PUTS( "gps_pos_ecef\r\n" );
+}
+
+
+//
+static void baseline_ecef_callback(
+        uint16_t sender_id,
+        uint8_t msg_len,
+        uint8_t msg[],
+        void *context )
+{
+    //const msg_baseline_ecef_t * const baseline_ecef = (const msg_baseline_ecef_t*) msg;
+
+    DEBUG_PUTS( "gps_baseline_ecef\r\n" );
+}
+
+
+//
+static void vel_ecef_callback(
+        uint16_t sender_id,
+        uint8_t msg_len,
+        uint8_t msg[],
+        void *context )
+{
+    //const msg_vel_ecef_t * const vel_ecef = (const msg_vel_ecef_t*) msg;
+
+    DEBUG_PUTS( "gps_vel_ecef\r\n" );
+}
+
+
+//
+static void heading_callback(
+        uint16_t sender_id,
+        uint8_t msg_len,
+        uint8_t msg[],
+        void *context )
+{
+    //const msg_baseline_heading_t * const heading = (const msg_baseline_heading_t*) msg;
+
+    DEBUG_PUTS( "gps_heading\r\n" );
 }
 
 
@@ -155,7 +312,8 @@ static void heartbeat_callback( uint16_t sender_id, uint8_t msg_len, uint8_t msg
 // *****************************************************
 
 //
-uint8_t gps_init( void )
+uint8_t gps_init(
+        gps_state_s * const gps_state )
 {
     uint8_t ret = 0;
 
@@ -165,12 +323,55 @@ uint8_t gps_init( void )
 
 #warning "TODO - check SBP cb status"
 
-    const int8_t sbp_status = sbp_register_callback(
+    int8_t sbp_status = 0;
+    sbp_status = sbp_register_callback(
             &sbp_state,
             SBP_MSG_HEARTBEAT,
             &heartbeat_callback,
-            NULL,
+            (void*) gps_state,
             &heartbeat_callback_node );
+
+    sbp_status = sbp_register_callback(
+            &sbp_state,
+            SBP_MSG_GPS_TIME,
+            &gps_time_callback,
+            (void*) gps_state,
+            &gps_time_node );
+
+    sbp_status = sbp_register_callback(
+            &sbp_state,
+            SBP_MSG_DOPS,
+            &dops_callback,
+            (void*) gps_state,
+            &dops_node );
+
+    sbp_status = sbp_register_callback(
+            &sbp_state,
+            SBP_MSG_POS_ECEF,
+            &pos_ecef_callback,
+            (void*) gps_state,
+            &pos_ecef_node );
+
+    sbp_status = sbp_register_callback(
+            &sbp_state,
+            SBP_MSG_BASELINE_ECEF,
+            &baseline_ecef_callback,
+            (void*) gps_state,
+            &baseline_ecef_node );
+
+    sbp_status = sbp_register_callback(
+            &sbp_state,
+            SBP_MSG_VEL_ECEF,
+            &vel_ecef_callback,
+            (void*) gps_state,
+            &vel_ecef_node );
+
+    sbp_status = sbp_register_callback(
+            &sbp_state,
+            SBP_MSG_BASELINE_HEADING,
+            &heading_callback,
+            (void*) gps_state,
+            &heading_node );
 
     ret = hw_init();
 
@@ -201,7 +402,8 @@ void gps_enable( void )
 
 
 //
-uint8_t gps_update( void )
+uint8_t gps_update(
+        gps_state_s * const gps_state )
 {
     uint8_t ret = 0;
 

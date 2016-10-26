@@ -15,11 +15,28 @@
 
 #include <inttypes.h>
 
+#include "hobd.h"
+
 
 
 
 //
-uint8_t gps_init( void );
+typedef struct
+{
+    //
+    //
+    hobd_gps_time1_s gps_time1;
+    //
+    //
+    hobd_gps_time2_s gps_time2;
+} gps_state_s;
+
+
+
+
+//
+uint8_t gps_init(
+        gps_state_s * const gps_state );
 
 
 //
@@ -31,7 +48,8 @@ void gps_enable( void );
 
 
 //
-uint8_t gps_update( void );
+uint8_t gps_update(
+        gps_state_s * const gps_state );
 
 
 

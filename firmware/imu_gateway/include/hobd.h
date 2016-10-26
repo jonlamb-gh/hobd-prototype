@@ -120,7 +120,7 @@ typedef struct
 
 
 /**
- * @brief GPS time 2 message.
+ * @brief GPS time 1 message.
  *
  * Message size (CAN frame DLC): 8 bytes
  * CAN frame ID: TODO
