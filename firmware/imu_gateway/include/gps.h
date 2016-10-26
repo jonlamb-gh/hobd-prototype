@@ -25,16 +25,28 @@ typedef struct
 {
     //
     //
-    hobd_gps_time1_s gps_time1;
+    hobd_gps_time1_s time1;
     //
     //
-    hobd_gps_time2_s gps_time2;
+    hobd_gps_time2_s time2;
     //
     //
-    hobd_gps_dop1_s gps_dop1;
+    hobd_gps_dop1_s dop1;
     //
     //
-    hobd_gps_dop2_s gps_dop2;
+    hobd_gps_dop2_s dop2;
+    //
+    //
+    hobd_gps_pos_ecef1_s pos_edef1;
+    //
+    //
+    hobd_gps_pos_ecef2_s pos_edef2;
+    //
+    //
+    hobd_gps_pos_ecef3_s pos_edef3;
+    //
+    //
+    hobd_gps_pos_ecef4_s pos_edef4;
 } gps_state_s;
 
 

@@ -239,14 +239,14 @@ static void gps_time_callback(
 
     const uint32_t rx_timestamp = time_get_ms();
 
-    const msg_gps_time_t * const gps_time = (const msg_gps_time_t*) msg;
     gps_state_s * const gps_state = (gps_state_s*) context;
+    const msg_gps_time_t * const gps_time = (const msg_gps_time_t*) msg;
 
-    gps_state->gps_time1.rx_time = rx_timestamp;
-    gps_state->gps_time1.time_of_week = gps_time->tow;
-    gps_state->gps_time2.week_number = gps_time->wn;
-    gps_state->gps_time2.residual = gps_time->ns;
-    gps_state->gps_time2.reserved = (uint16_t) gps_time->flags;
+    gps_state->time1.rx_time = rx_timestamp;
+    gps_state->time1.time_of_week = gps_time->tow;
+    gps_state->time2.week_number = gps_time->wn;
+    gps_state->time2.residual = gps_time->ns;
+    gps_state->time2.reserved = (uint16_t) gps_time->flags;
 }
 
 
@@ -259,15 +259,15 @@ static void dops_callback(
 {
     DEBUG_PUTS( "gps_dops\r\n" );
 
-    const msg_dops_t * const dops = (const msg_dops_t*) msg;
     gps_state_s * const gps_state = (gps_state_s*) context;
+    const msg_dops_t * const dops = (const msg_dops_t*) msg;
 
-    gps_state->gps_dop1.time_of_week = dops->tow;
-    gps_state->gps_dop1.gdop = dops->gdop;
-    gps_state->gps_dop1.pdop = dops->pdop;
-    gps_state->gps_dop2.tdop = dops->tdop;
-    gps_state->gps_dop2.hdop = dops->hdop;
-    gps_state->gps_dop2.vdop = dops->vdop;
+    gps_state->dop1.time_of_week = dops->tow;
+    gps_state->dop1.gdop = dops->gdop;
+    gps_state->dop1.pdop = dops->pdop;
+    gps_state->dop2.tdop = dops->tdop;
+    gps_state->dop2.hdop = dops->hdop;
+    gps_state->dop2.vdop = dops->vdop;
 }
 
 
@@ -278,9 +278,11 @@ static void pos_ecef_callback(
         uint8_t msg[],
         void *context )
 {
-    //const msg_pos_ecef_t * const pos_ecef = (const msg_pos_ecef_t*) msg;
-
     DEBUG_PUTS( "gps_pos_ecef\r\n" );
+
+    gps_state_s * const gps_state = (gps_state_s*) context;
+    const msg_pos_ecef_t * const pos_ecef = (const msg_pos_ecef_t*) msg;
+
 }
 
 
