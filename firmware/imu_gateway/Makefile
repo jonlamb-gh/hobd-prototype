@@ -68,8 +68,11 @@ PRJSRC= ../avrcan_at90can128/bsp/src/timer8_drv.c \
 	../avrcan_at90can128/bsp/src/rtc_drv.c \
 	../avrcan_at90can128/bsp/src/can_drv.c \
 	../avrcan_at90can128/bsp/src/can_lib.c \
+	src/edc.c \
+	src/sbp.c \
+	src/ring_buffer.c \
 	src/time.c \
-	src/gps_uart.c \
+	src/gps.c \
 	src/main.c
 
 # additional includes (e.g. -I/path/to/mydir)
@@ -125,6 +128,7 @@ HEXFORMAT=ihex
 CFLAGS=-I. $(INC) -g -mmcu=$(MCU) -O$(OPTLEVEL) \
 	-fpack-struct -fshort-enums            \
 	-funsigned-bitfields -funsigned-char   \
+	-std=gnu99 \
 	-Wall               \
 	-DBUILD_TARGET_AVR \
 	-DBUILD_TYPE_DEBUG \

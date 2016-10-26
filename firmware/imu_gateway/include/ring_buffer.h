@@ -16,11 +16,6 @@
 #include <inttypes.h>
 
 
-#warning "TESTING"
-// http://www.mikrocontroller.net/topic/155786
-// http://www.avrfreaks.net/forum/tut-soft-using-usart-interrupt-driven-serial-comms?page=all
-// http://cui.unige.ch/~harms/canlib/
-
 
 
 //

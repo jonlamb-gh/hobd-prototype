@@ -27,8 +27,9 @@
 #include "can_lib.h"
 
 //
+#include "hobd.h"
 #include "time.h"
-#include "gps_uart.h"
+#include "gps.h"
 
 
 
@@ -61,6 +62,9 @@
 // *****************************************************
 // static global data
 // *****************************************************
+
+//
+static gps_state_s gps_state;
 
 
 
@@ -106,22 +110,21 @@ static void init( void )
     //
     rtc_int_init();
 
-    //
-    enable_interrupt();
+    // init GPS UART/module
+#warning "TODO - handle gps init status"
+    const uint8_t gps_status = gps_init( &gps_state );
 
-    //
-    Uart_select( GPS_UART );
-    uart_init( CONF_8BIT_NOPAR_1STOP, GPS_BAUDRATE );
-
-    //
 #ifdef BUILD_TYPE_DEBUG
-	Uart_select( DEBUG_UART );
+    Uart_select( DEBUG_UART );
     uart_init( CONF_8BIT_NOPAR_1STOP, DEBUG_BAUDDRATE );
 #endif
 
+    // enable interrupts
+    enable_interrupt();
+
     time_sleep_ms( 5 );
 
-    DEBUG_PUTS( "init : pass\r\n" );
+    DEBUG_PUTS( "init : pass\n" );
 }
 
 
@@ -140,6 +143,9 @@ int main( void )
     {
         // reset watchdog
         wdt_reset();
+
+        //
+        const uint8_t gps_status = gps_update( &gps_state );
 
         // turn on the on-board LED if either switch is closed
         if( (sw0_get_state() == ON) || (sw1_get_state() == ON) )
