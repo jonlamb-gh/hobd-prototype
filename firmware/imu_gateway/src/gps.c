@@ -283,22 +283,22 @@ static void pos_ecef_callback(
     gps_state_s * const gps_state = (gps_state_s*) context;
     const msg_pos_ecef_t * const pos_ecef = (const msg_pos_ecef_t*) msg;
 
-    gps_state->pos_edef1.time_of_week = pos_ecef->tow;
-    gps_state->pos_edef1.accuracy = pos_ecef->accuracy;
-    gps_state->pos_edef1.num_sats = pos_ecef->n_sats;
-    gps_state->pos_edef1.flags = pos_ecef->flags;
+    gps_state->pos_ecef1.time_of_week = pos_ecef->tow;
+    gps_state->pos_ecef1.accuracy = pos_ecef->accuracy;
+    gps_state->pos_ecef1.num_sats = pos_ecef->n_sats;
+    gps_state->pos_ecef1.flags = pos_ecef->flags;
     memcpy(
-            &gps_state->pos_edef2.x,
+            &gps_state->pos_ecef2.x,
             &pos_ecef->x,
-            sizeof(gps_state->pos_edef2.x) );
+            sizeof(gps_state->pos_ecef2.x) );
     memcpy(
-            &gps_state->pos_edef3.y,
+            &gps_state->pos_ecef3.y,
             &pos_ecef->y,
-            sizeof(gps_state->pos_edef3.y) );
+            sizeof(gps_state->pos_ecef3.y) );
     memcpy(
-            &gps_state->pos_edef4.z,
+            &gps_state->pos_ecef4.z,
             &pos_ecef->z,
-            sizeof(gps_state->pos_edef4.z) );
+            sizeof(gps_state->pos_ecef4.z) );
 }
 
 
@@ -309,9 +309,18 @@ static void baseline_ecef_callback(
         uint8_t msg[],
         void *context )
 {
-    //const msg_baseline_ecef_t * const baseline_ecef = (const msg_baseline_ecef_t*) msg;
-
     DEBUG_PUTS( "gps_baseline_ecef\r\n" );
+
+    gps_state_s * const gps_state = (gps_state_s*) context;
+    const msg_baseline_ecef_t * const baseline_ecef = (const msg_baseline_ecef_t*) msg;
+
+    gps_state->baseline_ecef1.time_of_week = baseline_ecef->tow;
+    gps_state->baseline_ecef1.accuracy = baseline_ecef->accuracy;
+    gps_state->baseline_ecef1.num_sats = baseline_ecef->n_sats;
+    gps_state->baseline_ecef1.flags = baseline_ecef->flags;
+    gps_state->baseline_ecef2.x = baseline_ecef->x;
+    gps_state->baseline_ecef2.y = baseline_ecef->y;
+    gps_state->baseline_ecef3.z = baseline_ecef->z;
 }
 
 

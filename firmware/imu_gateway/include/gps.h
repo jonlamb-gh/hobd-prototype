@@ -20,7 +20,7 @@
 
 
 
-//
+// TODO - grouping/flags for CAN publishing signals
 typedef struct
 {
     //
@@ -37,16 +37,25 @@ typedef struct
     hobd_gps_dop2_s dop2;
     //
     //
-    hobd_gps_pos_ecef1_s pos_edef1;
+    hobd_gps_pos_ecef1_s pos_ecef1;
     //
     //
-    hobd_gps_pos_ecef2_s pos_edef2;
+    hobd_gps_pos_ecef2_s pos_ecef2;
     //
     //
-    hobd_gps_pos_ecef3_s pos_edef3;
+    hobd_gps_pos_ecef3_s pos_ecef3;
     //
     //
-    hobd_gps_pos_ecef4_s pos_edef4;
+    hobd_gps_pos_ecef4_s pos_ecef4;
+    //
+    //
+    hobd_gps_baseline_ecef1_s baseline_ecef1;
+    //
+    //
+    hobd_gps_baseline_ecef2_s baseline_ecef2;
+    //
+    //
+    hobd_gps_baseline_ecef3_s baseline_ecef3;
 } gps_state_s;
 
 
