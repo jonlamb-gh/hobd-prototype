@@ -28,7 +28,7 @@
 
 //
 #include "time.h"
-#include "gps_uart.h"
+#include "gps.h"
 
 
 
