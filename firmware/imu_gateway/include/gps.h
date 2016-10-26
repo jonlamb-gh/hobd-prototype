@@ -22,6 +22,18 @@
 uint8_t gps_init( void );
 
 
+//
+void gps_disable( void );
+
+
+//
+void gps_enable( void );
+
+
+//
+uint8_t gps_update( void );
+
+
 
 
 #endif	/* GPS_H */

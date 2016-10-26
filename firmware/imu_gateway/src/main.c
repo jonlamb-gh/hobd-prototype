@@ -141,6 +141,9 @@ int main( void )
         // reset watchdog
         wdt_reset();
 
+        //
+        const uint8_t gps_status = gps_update();
+
         // turn on the on-board LED if either switch is closed
         if( (sw0_get_state() == ON) || (sw1_get_state() == ON) )
         {

@@ -68,6 +68,8 @@ PRJSRC= ../avrcan_at90can128/bsp/src/timer8_drv.c \
 	../avrcan_at90can128/bsp/src/rtc_drv.c \
 	../avrcan_at90can128/bsp/src/can_drv.c \
 	../avrcan_at90can128/bsp/src/can_lib.c \
+	src/edc.c \
+	src/sbp.c \
 	src/ring_buffer.c \
 	src/time.c \
 	src/gps.c \
