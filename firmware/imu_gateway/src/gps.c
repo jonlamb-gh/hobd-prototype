@@ -19,6 +19,7 @@
 #include "libsbp/navigation.h"
 #include "uart_lib.h"
 #include "uart_drv.h"
+#include "hobd.h"
 #include "ring_buffer.h"
 #include "time.h"
 #include "gps.h"
@@ -234,9 +235,19 @@ static void gps_time_callback(
         uint8_t msg[],
         void *context )
 {
-    //const msg_gps_time_t * const gps_time = (const msg_gps_time_t*) msg;
-
     DEBUG_PUTS( "gps_time\r\n" );
+
+
+    const uint32_t rx_timestamp = time_get_ms();
+
+    const msg_gps_time_t * const gps_time = (const msg_gps_time_t*) msg;
+    gps_state_s * const gps_state = (gps_state_s*) context;
+
+    gps_state->gps_time1.rx_time = rx_timestamp;
+    gps_state->gps_time1.time_of_week = gps_time->tow;
+    gps_state->gps_time2.week_number = gps_time->wn;
+    gps_state->gps_time2.residual = gps_time->ns;
+    gps_state->gps_time2.reserved = (uint16_t) gps_time->flags;
 }
 
 
