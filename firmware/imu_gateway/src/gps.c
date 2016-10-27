@@ -145,6 +145,36 @@ static void heading_callback(
         void *context );
 
 
+//
+static uint8_t publish_group_a(
+        gps_state_s * const gps_state );
+
+
+//
+static uint8_t publish_group_b(
+        gps_state_s * const gps_state );
+
+
+//
+static uint8_t publish_group_c(
+        gps_state_s * const gps_state );
+
+
+//
+static uint8_t publish_group_d(
+        gps_state_s * const gps_state );
+
+
+//
+static uint8_t publish_group_e(
+        gps_state_s * const gps_state );
+
+
+//
+static uint8_t publish_group_f(
+        gps_state_s * const gps_state );
+
+
 
 
 // *****************************************************
@@ -368,6 +398,67 @@ static void heading_callback(
 }
 
 
+//
+static uint8_t publish_group_a(
+        gps_state_s * const gps_state )
+{
+    uint8_t ret = 0;
+#warning "TODO - publish_groups"
+
+    return ret;
+}
+
+
+//
+static uint8_t publish_group_b(
+        gps_state_s * const gps_state )
+{
+    uint8_t ret = 0;
+
+    return ret;
+}
+
+
+//
+static uint8_t publish_group_c(
+        gps_state_s * const gps_state )
+{
+    uint8_t ret = 0;
+
+    return ret;
+}
+
+
+//
+static uint8_t publish_group_d(
+        gps_state_s * const gps_state )
+{
+    uint8_t ret = 0;
+
+    return ret;
+}
+
+
+//
+static uint8_t publish_group_e(
+        gps_state_s * const gps_state )
+{
+    uint8_t ret = 0;
+
+    return ret;
+}
+
+
+//
+static uint8_t publish_group_f(
+        gps_state_s * const gps_state )
+{
+    uint8_t ret = 0;
+
+    return ret;
+}
+
+
 
 
 // *****************************************************
@@ -439,6 +530,12 @@ uint8_t gps_init(
     //
     hw_init();
 
+    // clear all ready groups
+    gps_clear_all_group_ready( gps_state );
+
+    // flush rx buffer
+    ring_buffer_flush( &rx_buffer );
+
     return ret;
 }
 
@@ -484,6 +581,14 @@ void gps_clear_group_ready(
 
 
 //
+void gps_clear_all_group_ready(
+        gps_state_s * const gps_state )
+{
+    gps_state->ready_groups = GPS_GROUP_NONE_READY;
+}
+
+
+//
 uint8_t gps_is_group_ready(
         const uint16_t group,
         const gps_state_s * const gps_state )
@@ -498,7 +603,7 @@ uint8_t gps_update(
 {
     uint8_t ret = 0;
 
-#warning "TODO - check SBP read status"
+#warning "TODO - check SBP read status and return code handling"
 
     // process any available data in the rx buffer, callbacks are called from
     // this context
@@ -506,11 +611,53 @@ uint8_t gps_update(
             &sbp_state,
             &sbp_read_function );
 
-    if( (sbp_status != SBP_OK)
+    if(
+            (sbp_status != SBP_OK)
             && (sbp_status != SBP_OK_CALLBACK_EXECUTED)
             && (sbp_status != SBP_OK_CALLBACK_UNDEFINED) )
     {
         DEBUG_PRINTF( "gps_enable : sbp_process %d\n", sbp_status );
+    }
+
+    // check for any ready groups
+    if( gps_state->ready_groups != GPS_GROUP_NONE_READY )
+    {
+        // handle groups in order/priority
+        if( gps_is_group_ready( GPS_GROUP_A_READY, gps_state ) != 0 )
+        {
+            ret = publish_group_a( gps_state );
+            gps_clear_group_ready( GPS_GROUP_A_READY, gps_state );
+        }
+
+        if( gps_is_group_ready( GPS_GROUP_B_READY, gps_state ) != 0 )
+        {
+            ret = publish_group_b( gps_state );
+            gps_clear_group_ready( GPS_GROUP_B_READY, gps_state );
+        }
+
+        if( gps_is_group_ready( GPS_GROUP_C_READY, gps_state ) != 0 )
+        {
+            ret = publish_group_c( gps_state );
+            gps_clear_group_ready( GPS_GROUP_C_READY, gps_state );
+        }
+
+        if( gps_is_group_ready( GPS_GROUP_D_READY, gps_state ) != 0 )
+        {
+            ret = publish_group_d( gps_state );
+            gps_clear_group_ready( GPS_GROUP_D_READY, gps_state );
+        }
+
+        if( gps_is_group_ready( GPS_GROUP_E_READY, gps_state ) != 0 )
+        {
+            ret = publish_group_e( gps_state );
+            gps_clear_group_ready( GPS_GROUP_E_READY, gps_state );
+        }
+
+        if( gps_is_group_ready( GPS_GROUP_F_READY, gps_state ) != 0 )
+        {
+            ret = publish_group_f( gps_state );
+            gps_clear_group_ready( GPS_GROUP_F_READY, gps_state );
+        }
     }
 
     return ret;

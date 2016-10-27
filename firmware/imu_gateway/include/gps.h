@@ -162,6 +162,11 @@ void gps_clear_group_ready(
 
 
 //
+void gps_clear_all_group_ready(
+        gps_state_s * const gps_state );
+
+
+//
 uint8_t gps_is_group_ready(
         const uint16_t group,
         const gps_state_s * const gps_state );
