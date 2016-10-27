@@ -29,6 +29,7 @@
 //
 #include "hobd.h"
 #include "time.h"
+#include "canbus.h"
 #include "gps.h"
 
 
