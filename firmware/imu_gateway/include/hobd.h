@@ -278,6 +278,79 @@ typedef struct
 
 
 /**
+ * @brief GPS geodetic position 1 message.
+ *
+ * Message size (CAN frame DLC): 8 bytes
+ * CAN frame ID: TODO
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    uint32_t time_of_week; /*!< GPS time of week. [milliseconds] */
+    //
+    //
+    uint16_t accuracy; /*!< Position accuracy estimate. [milimeters] */
+    //
+    //
+    uint8_t num_sats; /*!< Number of satellites used in the solution. */
+    //
+    //
+    uint8_t flags; /*!< Reserved data. */
+} hobd_gps_pos_llh1_s;
+
+
+/**
+ * @brief GPS geodetic position 2 message.
+ *
+ * Message size (CAN frame DLC): 8 bytes
+ * CAN frame ID: TODO
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    uint64_t latitude; /*!< Latitude. [degrees] */
+} hobd_gps_pos_llh2_s;
+
+
+/**
+ * @brief GPS geodetic position 3 message.
+ *
+ * Message size (CAN frame DLC): 8 bytes
+ * CAN frame ID: TODO
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    uint64_t longitude; /*!< Longitude. [degrees] */
+} hobd_gps_pos_llh3_s;
+
+
+/**
+ * @brief GPS geodetic position 4 message.
+ *
+ * Message size (CAN frame DLC): 8 bytes
+ * CAN frame ID: TODO
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    uint64_t height; /*!< Height. [meters] */
+} hobd_gps_pos_llh4_s;
+
+
+/**
  * @brief GPS baseline ECEF position 1 message.
  *
  * Message size (CAN frame DLC): 8 bytes
@@ -338,6 +411,69 @@ typedef struct
 
 
 /**
+ * @brief GPS baseline NED position 1 message.
+ *
+ * Message size (CAN frame DLC): 8 bytes
+ * CAN frame ID: TODO
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    uint32_t time_of_week; /*!< GPS time of week. [milliseconds] */
+    //
+    //
+    uint16_t h_accuracy; /*!< Horizontal position accuracy estimate. [millimeters] */
+    //
+    //
+    uint8_t num_sats; /*!< Number of satellites used in the solution. */
+    //
+    //
+    uint8_t flags; /*!< Reserved data. */
+} hobd_gps_baseline_ned1_s;
+
+
+/**
+ * @brief GPS baseline NED position 2 message.
+ *
+ * Message size (CAN frame DLC): 6 bytes
+ * CAN frame ID: TODO
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    uint16_t v_accuracy; /*!< Vertical position accuracy estimate. [millimeters] */
+    //
+    //
+    int32_t north; /*!< Baseline North coordinate. [millimeters] */
+} hobd_gps_baseline_ned2_s;
+
+
+/**
+ * @brief GPS baseline NED position 3 message.
+ *
+ * Message size (CAN frame DLC): 8 bytes
+ * CAN frame ID: TODO
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    int32_t east; /*!< Baseline East coordinate. [millimeters] */
+    //
+    //
+    int32_t down; /*!< Baseline Down coordinate. [millimeters] */
+} hobd_gps_baseline_ned3_s;
+
+
+/**
  * @brief GPS ECEF velocity 1 message.
  *
  * Message size (CAN frame DLC): 8 bytes
@@ -395,6 +531,69 @@ typedef struct
     //
     int32_t z; /*!< ECEF Z coordinate. [millimeters/second] */
 } hobd_gps_vel_ecef3_s;
+
+
+/**
+ * @brief GPS NED velocity 1 message.
+ *
+ * Message size (CAN frame DLC): 8 bytes
+ * CAN frame ID: TODO
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    uint32_t time_of_week; /*!< GPS time of week. [milliseconds] */
+    //
+    //
+    uint16_t h_accuracy; /*!< Horizontal velocity accuracy estimate. [millimeters/second] */
+    //
+    //
+    uint8_t num_sats; /*!< Number of satellites used in the solution. */
+    //
+    //
+    uint8_t flags; /*!< Reserved data. */
+} hobd_gps_vel_ned1_s;
+
+
+/**
+ * @brief GPS NED velocity 2 message.
+ *
+ * Message size (CAN frame DLC): 6 bytes
+ * CAN frame ID: TODO
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    uint16_t v_accuracy; /*!< Vertical velocity accuracy estimate. [millimeters/second] */
+    //
+    //
+    int32_t north; /*!< Velocity North coordinate. [millimeters/second] */
+} hobd_gps_vel_ned2_s;
+
+
+/**
+ * @brief GPS NED velocity 3 message.
+ *
+ * Message size (CAN frame DLC): 8 bytes
+ * CAN frame ID: TODO
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    int32_t east; /*!< Velocity East coordinate. [millimeters/second] */
+    //
+    //
+    int32_t down; /*!< Velocity Down coordinate. [millimeters/second] */
+} hobd_gps_vel_ned3_s;
 
 
 /**
