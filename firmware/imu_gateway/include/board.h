@@ -26,12 +26,6 @@
 
 
 
-// TESTING
-#ifndef BUILD_TYPE_DEBUG
-#define BUILD_TYPE_DEBUG
-#endif
-
-
 #ifndef BOOL
 #include <inttypes.h>
 typedef uint8_t BOOL;
