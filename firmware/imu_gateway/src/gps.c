@@ -241,6 +241,8 @@ static void gps_time_callback(
     gps_state->group_a.time2.week_number = gps_time->wn;
     gps_state->group_a.time2.residual = gps_time->ns;
     gps_state->group_a.time2.flags = gps_time->flags;
+
+    gps_set_group_ready( GPS_GROUP_A_READY, gps_state );
 }
 
 
@@ -262,6 +264,8 @@ static void dops_callback(
     gps_state->group_f.dop2.tdop = dops->tdop;
     gps_state->group_f.dop2.hdop = dops->hdop;
     gps_state->group_f.dop2.vdop = dops->vdop;
+
+    gps_set_group_ready( GPS_GROUP_F_READY, gps_state );
 }
 
 
@@ -292,6 +296,8 @@ static void pos_llh_callback(
             &gps_state->group_b.pos_llh4.height,
             &pos_llh->height,
             sizeof(gps_state->group_b.pos_llh4.height) );
+
+    gps_set_group_ready( GPS_GROUP_B_READY, gps_state );
 }
 
 
@@ -313,6 +319,8 @@ static void baseline_ned_callback(
     gps_state->group_c.baseline_ned2.north = baseline_ned->n;
     gps_state->group_c.baseline_ned2.east = baseline_ned->e;
     gps_state->group_c.baseline_ned3.down = baseline_ned->d;
+
+    gps_set_group_ready( GPS_GROUP_C_READY, gps_state );
 }
 
 
@@ -334,6 +342,8 @@ static void vel_ned_callback(
     gps_state->group_d.vel_ned2.north = vel_ned->n;
     gps_state->group_d.vel_ned2.east = vel_ned->e;
     gps_state->group_d.vel_ned3.down = vel_ned->d;
+
+    gps_set_group_ready( GPS_GROUP_D_READY, gps_state );
 }
 
 
@@ -353,6 +363,8 @@ static void heading_callback(
     gps_state->group_e.heading1.heading = heading->heading;
     gps_state->group_e.heading2.num_sats = heading->n_sats;
     gps_state->group_e.heading2.flags = heading->flags;
+
+    gps_set_group_ready( GPS_GROUP_E_READY, gps_state );
 }
 
 
@@ -450,6 +462,33 @@ void gps_enable( void )
 
     // enable UART
     gps_uart_enable();
+}
+
+
+//
+void gps_set_group_ready(
+        const uint16_t group,
+        gps_state_s * const gps_state )
+{
+    gps_state->ready_groups |= group;
+}
+
+
+//
+void gps_clear_group_ready(
+        const uint16_t group,
+        gps_state_s * const gps_state )
+{
+    gps_state->ready_groups &= ~group;
+}
+
+
+//
+uint8_t gps_is_group_ready(
+        const uint16_t group,
+        const gps_state_s * const gps_state )
+{
+    return ((gps_state->ready_groups & group) == 0) ? 0 : 1;
 }
 
 
