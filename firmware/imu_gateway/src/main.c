@@ -116,6 +116,9 @@ static void init( void )
     uart_init( CONF_8BIT_NOPAR_1STOP, DEBUG_BAUDDRATE );
 #endif
 
+    //
+    const uint8_t can_status = canbus_init();
+
     // enable interrupts
     enable_interrupt();
 

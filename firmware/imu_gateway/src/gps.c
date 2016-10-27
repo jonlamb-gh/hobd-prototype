@@ -23,6 +23,7 @@
 #include "hobd.h"
 #include "ring_buffer.h"
 #include "time.h"
+#include "canbus.h"
 #include "gps.h"
 
 
@@ -403,7 +404,16 @@ static uint8_t publish_group_a(
         gps_state_s * const gps_state )
 {
     uint8_t ret = 0;
-#warning "TODO - publish_groups"
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_GPS_TIME1,
+            (uint8_t) sizeof(gps_state->group_a.time1),
+            (const uint8_t *) &gps_state->group_a.time1 );
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_GPS_TIME2,
+            (uint8_t) sizeof(gps_state->group_a.time2),
+            (const uint8_t *) &gps_state->group_a.time2 );
 
     return ret;
 }
@@ -415,6 +425,26 @@ static uint8_t publish_group_b(
 {
     uint8_t ret = 0;
 
+    ret |= canbus_send(
+            HOBD_CAN_ID_GPS_POS_LLH1,
+            (uint8_t) sizeof(gps_state->group_b.pos_llh1),
+            (const uint8_t *) &gps_state->group_b.pos_llh1 );
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_GPS_POS_LLH2,
+            (uint8_t) sizeof(gps_state->group_b.pos_llh2),
+            (const uint8_t *) &gps_state->group_b.pos_llh2 );
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_GPS_POS_LLH3,
+            (uint8_t) sizeof(gps_state->group_b.pos_llh3),
+            (const uint8_t *) &gps_state->group_b.pos_llh3 );
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_GPS_POS_LLH4,
+            (uint8_t) sizeof(gps_state->group_b.pos_llh4),
+            (const uint8_t *) &gps_state->group_b.pos_llh4 );
+
     return ret;
 }
 
@@ -424,6 +454,21 @@ static uint8_t publish_group_c(
         gps_state_s * const gps_state )
 {
     uint8_t ret = 0;
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_GPS_BASELINE_NED1,
+            (uint8_t) sizeof(gps_state->group_c.baseline_ned1),
+            (const uint8_t *) &gps_state->group_c.baseline_ned1 );
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_GPS_BASELINE_NED2,
+            (uint8_t) sizeof(gps_state->group_c.baseline_ned2),
+            (const uint8_t *) &gps_state->group_c.baseline_ned2 );
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_GPS_BASELINE_NED3,
+            (uint8_t) sizeof(gps_state->group_c.baseline_ned3),
+            (const uint8_t *) &gps_state->group_c.baseline_ned3 );
 
     return ret;
 }
@@ -435,6 +480,21 @@ static uint8_t publish_group_d(
 {
     uint8_t ret = 0;
 
+    ret |= canbus_send(
+            HOBD_CAN_ID_GPS_VEL_NED1,
+            (uint8_t) sizeof(gps_state->group_d.vel_ned1),
+            (const uint8_t *) &gps_state->group_d.vel_ned1 );
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_GPS_VEL_NED2,
+            (uint8_t) sizeof(gps_state->group_d.vel_ned2),
+            (const uint8_t *) &gps_state->group_d.vel_ned2 );
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_GPS_VEL_NED3,
+            (uint8_t) sizeof(gps_state->group_d.vel_ned3),
+            (const uint8_t *) &gps_state->group_d.vel_ned3 );
+
     return ret;
 }
 
@@ -445,6 +505,16 @@ static uint8_t publish_group_e(
 {
     uint8_t ret = 0;
 
+    ret |= canbus_send(
+            HOBD_CAN_ID_GPS_HEADING1,
+            (uint8_t) sizeof(gps_state->group_e.heading1),
+            (const uint8_t *) &gps_state->group_e.heading1 );
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_GPS_HEADING2,
+            (uint8_t) sizeof(gps_state->group_e.heading2),
+            (const uint8_t *) &gps_state->group_e.heading2 );
+
     return ret;
 }
 
@@ -454,6 +524,16 @@ static uint8_t publish_group_f(
         gps_state_s * const gps_state )
 {
     uint8_t ret = 0;
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_GPS_DOP1,
+            (uint8_t) sizeof(gps_state->group_f.dop1),
+            (const uint8_t *) &gps_state->group_f.dop1 );
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_GPS_DOP2,
+            (uint8_t) sizeof(gps_state->group_f.dop2),
+            (const uint8_t *) &gps_state->group_f.dop2 );
 
     return ret;
 }
