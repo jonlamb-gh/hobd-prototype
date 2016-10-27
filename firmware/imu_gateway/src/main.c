@@ -30,6 +30,7 @@
 #include "hobd.h"
 #include "time.h"
 #include "canbus.h"
+#include "diagnostics.h"
 #include "gps.h"
 
 
@@ -63,9 +64,6 @@
 // *****************************************************
 // static global data
 // *****************************************************
-
-//
-static gps_state_s gps_state;
 
 
 
@@ -107,9 +105,12 @@ static void init( void )
     //
     rtc_int_init();
 
+    //
+    diagnostics_init();
+
     // init GPS UART/module
 #warning "TODO - handle gps init status"
-    const uint8_t gps_status = gps_init( &gps_state );
+    const uint8_t gps_status = gps_init();
 
 #ifdef BUILD_TYPE_DEBUG
     Uart_select( DEBUG_UART );
@@ -148,7 +149,7 @@ int main( void )
         wdt_reset();
 
         // process any incoming GPS data, and potentially publish ready CAN frames
-        const uint8_t gps_status = gps_update( &gps_state );
+        const uint8_t gps_status = gps_update();
     }
 
    return 0;

@@ -63,6 +63,10 @@ static volatile ring_buffer_s rx_buffer;
 static sbp_state_t sbp_state;
 
 
+// GPS message/data state
+static gps_data_s gps_data;
+
+
 // SBP callback nodes
 static sbp_msg_callbacks_node_t heartbeat_callback_node;
 static sbp_msg_callbacks_node_t gps_time_node;
@@ -147,33 +151,27 @@ static void heading_callback(
 
 
 //
-static uint8_t publish_group_a(
-        gps_state_s * const gps_state );
+static uint8_t publish_group_a( void );
 
 
 //
-static uint8_t publish_group_b(
-        gps_state_s * const gps_state );
+static uint8_t publish_group_b( void );
 
 
 //
-static uint8_t publish_group_c(
-        gps_state_s * const gps_state );
+static uint8_t publish_group_c( void );
 
 
 //
-static uint8_t publish_group_d(
-        gps_state_s * const gps_state );
+static uint8_t publish_group_d( void );
 
 
 //
-static uint8_t publish_group_e(
-        gps_state_s * const gps_state );
+static uint8_t publish_group_e( void );
 
 
 //
-static uint8_t publish_group_f(
-        gps_state_s * const gps_state );
+static uint8_t publish_group_f( void );
 
 
 
@@ -264,16 +262,15 @@ static void gps_time_callback(
 
     const uint32_t rx_timestamp = time_get_ms();
 
-    gps_state_s * const gps_state = (gps_state_s*) context;
     const msg_gps_time_t * const gps_time = (const msg_gps_time_t*) msg;
 
-    gps_state->group_a.time1.rx_time = rx_timestamp;
-    gps_state->group_a.time1.time_of_week = gps_time->tow;
-    gps_state->group_a.time2.week_number = gps_time->wn;
-    gps_state->group_a.time2.residual = gps_time->ns;
-    gps_state->group_a.time2.flags = gps_time->flags;
+    gps_data.group_a.time1.rx_time = rx_timestamp;
+    gps_data.group_a.time1.time_of_week = gps_time->tow;
+    gps_data.group_a.time2.week_number = gps_time->wn;
+    gps_data.group_a.time2.residual = gps_time->ns;
+    gps_data.group_a.time2.flags = gps_time->flags;
 
-    gps_set_group_ready( GPS_GROUP_A_READY, gps_state );
+    gps_set_group_ready( GPS_GROUP_A_READY );
 }
 
 
@@ -286,17 +283,16 @@ static void dops_callback(
 {
     DEBUG_PUTS( "gps_dops\n" );
 
-    gps_state_s * const gps_state = (gps_state_s*) context;
     const msg_dops_t * const dops = (const msg_dops_t*) msg;
 
-    gps_state->group_f.dop1.time_of_week = dops->tow;
-    gps_state->group_f.dop1.gdop = dops->gdop;
-    gps_state->group_f.dop1.pdop = dops->pdop;
-    gps_state->group_f.dop2.tdop = dops->tdop;
-    gps_state->group_f.dop2.hdop = dops->hdop;
-    gps_state->group_f.dop2.vdop = dops->vdop;
+    gps_data.group_f.dop1.time_of_week = dops->tow;
+    gps_data.group_f.dop1.gdop = dops->gdop;
+    gps_data.group_f.dop1.pdop = dops->pdop;
+    gps_data.group_f.dop2.tdop = dops->tdop;
+    gps_data.group_f.dop2.hdop = dops->hdop;
+    gps_data.group_f.dop2.vdop = dops->vdop;
 
-    gps_set_group_ready( GPS_GROUP_F_READY, gps_state );
+    gps_set_group_ready( GPS_GROUP_F_READY );
 }
 
 
@@ -309,26 +305,25 @@ static void pos_llh_callback(
 {
     DEBUG_PUTS( "gps_pos_llh\n" );
 
-    gps_state_s * const gps_state = (gps_state_s*) context;
     const msg_pos_llh_t * const pos_llh = (const msg_pos_llh_t*) msg;
 
-    gps_state->group_b.pos_llh1.time_of_week = pos_llh->tow;
-    gps_state->group_b.pos_llh1.num_sats = pos_llh->n_sats;
-    gps_state->group_b.pos_llh1.flags = pos_llh->flags;
+    gps_data.group_b.pos_llh1.time_of_week = pos_llh->tow;
+    gps_data.group_b.pos_llh1.num_sats = pos_llh->n_sats;
+    gps_data.group_b.pos_llh1.flags = pos_llh->flags;
     memcpy(
-            &gps_state->group_b.pos_llh2.latitude,
+            &gps_data.group_b.pos_llh2.latitude,
             &pos_llh->lat,
-            sizeof(gps_state->group_b.pos_llh2.latitude) );
+            sizeof(gps_data.group_b.pos_llh2.latitude) );
     memcpy(
-            &gps_state->group_b.pos_llh3.longitude,
+            &gps_data.group_b.pos_llh3.longitude,
             &pos_llh->lon,
-            sizeof(gps_state->group_b.pos_llh3.longitude) );
+            sizeof(gps_data.group_b.pos_llh3.longitude) );
     memcpy(
-            &gps_state->group_b.pos_llh4.height,
+            &gps_data.group_b.pos_llh4.height,
             &pos_llh->height,
-            sizeof(gps_state->group_b.pos_llh4.height) );
+            sizeof(gps_data.group_b.pos_llh4.height) );
 
-    gps_set_group_ready( GPS_GROUP_B_READY, gps_state );
+    gps_set_group_ready( GPS_GROUP_B_READY );
 }
 
 
@@ -341,17 +336,16 @@ static void baseline_ned_callback(
 {
     DEBUG_PUTS( "gps_baseline_ned\n" );
 
-    gps_state_s * const gps_state = (gps_state_s*) context;
     const msg_baseline_ned_t * const baseline_ned = (const msg_baseline_ned_t*) msg;
 
-    gps_state->group_c.baseline_ned1.time_of_week = baseline_ned->tow;
-    gps_state->group_c.baseline_ned1.num_sats = baseline_ned->n_sats;
-    gps_state->group_c.baseline_ned1.flags = baseline_ned->flags;
-    gps_state->group_c.baseline_ned2.north = baseline_ned->n;
-    gps_state->group_c.baseline_ned2.east = baseline_ned->e;
-    gps_state->group_c.baseline_ned3.down = baseline_ned->d;
+    gps_data.group_c.baseline_ned1.time_of_week = baseline_ned->tow;
+    gps_data.group_c.baseline_ned1.num_sats = baseline_ned->n_sats;
+    gps_data.group_c.baseline_ned1.flags = baseline_ned->flags;
+    gps_data.group_c.baseline_ned2.north = baseline_ned->n;
+    gps_data.group_c.baseline_ned2.east = baseline_ned->e;
+    gps_data.group_c.baseline_ned3.down = baseline_ned->d;
 
-    gps_set_group_ready( GPS_GROUP_C_READY, gps_state );
+    gps_set_group_ready( GPS_GROUP_C_READY );
 }
 
 
@@ -364,17 +358,16 @@ static void vel_ned_callback(
 {
     DEBUG_PUTS( "gps_vel_ned\n" );
 
-    gps_state_s * const gps_state = (gps_state_s*) context;
     const msg_vel_ned_t * const vel_ned = (const msg_vel_ned_t*) msg;
 
-    gps_state->group_d.vel_ned1.time_of_week = vel_ned->tow;
-    gps_state->group_d.vel_ned1.num_sats = vel_ned->n_sats;
-    gps_state->group_d.vel_ned1.flags = vel_ned->flags;
-    gps_state->group_d.vel_ned2.north = vel_ned->n;
-    gps_state->group_d.vel_ned2.east = vel_ned->e;
-    gps_state->group_d.vel_ned3.down = vel_ned->d;
+    gps_data.group_d.vel_ned1.time_of_week = vel_ned->tow;
+    gps_data.group_d.vel_ned1.num_sats = vel_ned->n_sats;
+    gps_data.group_d.vel_ned1.flags = vel_ned->flags;
+    gps_data.group_d.vel_ned2.north = vel_ned->n;
+    gps_data.group_d.vel_ned2.east = vel_ned->e;
+    gps_data.group_d.vel_ned3.down = vel_ned->d;
 
-    gps_set_group_ready( GPS_GROUP_D_READY, gps_state );
+    gps_set_group_ready( GPS_GROUP_D_READY );
 }
 
 
@@ -387,153 +380,146 @@ static void heading_callback(
 {
     DEBUG_PUTS( "gps_heading\n" );
 
-    gps_state_s * const gps_state = (gps_state_s*) context;
     const msg_baseline_heading_t * const heading = (const msg_baseline_heading_t*) msg;
 
-    gps_state->group_e.heading1.time_of_week = heading->tow;
-    gps_state->group_e.heading1.heading = heading->heading;
-    gps_state->group_e.heading2.num_sats = heading->n_sats;
-    gps_state->group_e.heading2.flags = heading->flags;
+    gps_data.group_e.heading1.time_of_week = heading->tow;
+    gps_data.group_e.heading1.heading = heading->heading;
+    gps_data.group_e.heading2.num_sats = heading->n_sats;
+    gps_data.group_e.heading2.flags = heading->flags;
 
-    gps_set_group_ready( GPS_GROUP_E_READY, gps_state );
+    gps_set_group_ready( GPS_GROUP_E_READY );
 }
 
 
 //
-static uint8_t publish_group_a(
-        gps_state_s * const gps_state )
+static uint8_t publish_group_a( void )
 {
     uint8_t ret = 0;
 
     ret |= canbus_send(
             HOBD_CAN_ID_GPS_TIME1,
-            (uint8_t) sizeof(gps_state->group_a.time1),
-            (const uint8_t *) &gps_state->group_a.time1 );
+            (uint8_t) sizeof(gps_data.group_a.time1),
+            (const uint8_t *) &gps_data.group_a.time1 );
 
     ret |= canbus_send(
             HOBD_CAN_ID_GPS_TIME2,
-            (uint8_t) sizeof(gps_state->group_a.time2),
-            (const uint8_t *) &gps_state->group_a.time2 );
+            (uint8_t) sizeof(gps_data.group_a.time2),
+            (const uint8_t *) &gps_data.group_a.time2 );
 
     return ret;
 }
 
 
 //
-static uint8_t publish_group_b(
-        gps_state_s * const gps_state )
+static uint8_t publish_group_b( void )
 {
     uint8_t ret = 0;
 
     ret |= canbus_send(
             HOBD_CAN_ID_GPS_POS_LLH1,
-            (uint8_t) sizeof(gps_state->group_b.pos_llh1),
-            (const uint8_t *) &gps_state->group_b.pos_llh1 );
+            (uint8_t) sizeof(gps_data.group_b.pos_llh1),
+            (const uint8_t *) &gps_data.group_b.pos_llh1 );
 
     ret |= canbus_send(
             HOBD_CAN_ID_GPS_POS_LLH2,
-            (uint8_t) sizeof(gps_state->group_b.pos_llh2),
-            (const uint8_t *) &gps_state->group_b.pos_llh2 );
+            (uint8_t) sizeof(gps_data.group_b.pos_llh2),
+            (const uint8_t *) &gps_data.group_b.pos_llh2 );
 
     ret |= canbus_send(
             HOBD_CAN_ID_GPS_POS_LLH3,
-            (uint8_t) sizeof(gps_state->group_b.pos_llh3),
-            (const uint8_t *) &gps_state->group_b.pos_llh3 );
+            (uint8_t) sizeof(gps_data.group_b.pos_llh3),
+            (const uint8_t *) &gps_data.group_b.pos_llh3 );
 
     ret |= canbus_send(
             HOBD_CAN_ID_GPS_POS_LLH4,
-            (uint8_t) sizeof(gps_state->group_b.pos_llh4),
-            (const uint8_t *) &gps_state->group_b.pos_llh4 );
+            (uint8_t) sizeof(gps_data.group_b.pos_llh4),
+            (const uint8_t *) &gps_data.group_b.pos_llh4 );
 
     return ret;
 }
 
 
 //
-static uint8_t publish_group_c(
-        gps_state_s * const gps_state )
+static uint8_t publish_group_c( void )
 {
     uint8_t ret = 0;
 
     ret |= canbus_send(
             HOBD_CAN_ID_GPS_BASELINE_NED1,
-            (uint8_t) sizeof(gps_state->group_c.baseline_ned1),
-            (const uint8_t *) &gps_state->group_c.baseline_ned1 );
+            (uint8_t) sizeof(gps_data.group_c.baseline_ned1),
+            (const uint8_t *) &gps_data.group_c.baseline_ned1 );
 
     ret |= canbus_send(
             HOBD_CAN_ID_GPS_BASELINE_NED2,
-            (uint8_t) sizeof(gps_state->group_c.baseline_ned2),
-            (const uint8_t *) &gps_state->group_c.baseline_ned2 );
+            (uint8_t) sizeof(gps_data.group_c.baseline_ned2),
+            (const uint8_t *) &gps_data.group_c.baseline_ned2 );
 
     ret |= canbus_send(
             HOBD_CAN_ID_GPS_BASELINE_NED3,
-            (uint8_t) sizeof(gps_state->group_c.baseline_ned3),
-            (const uint8_t *) &gps_state->group_c.baseline_ned3 );
+            (uint8_t) sizeof(gps_data.group_c.baseline_ned3),
+            (const uint8_t *) &gps_data.group_c.baseline_ned3 );
 
     return ret;
 }
 
 
 //
-static uint8_t publish_group_d(
-        gps_state_s * const gps_state )
+static uint8_t publish_group_d( void )
 {
     uint8_t ret = 0;
 
     ret |= canbus_send(
             HOBD_CAN_ID_GPS_VEL_NED1,
-            (uint8_t) sizeof(gps_state->group_d.vel_ned1),
-            (const uint8_t *) &gps_state->group_d.vel_ned1 );
+            (uint8_t) sizeof(gps_data.group_d.vel_ned1),
+            (const uint8_t *) &gps_data.group_d.vel_ned1 );
 
     ret |= canbus_send(
             HOBD_CAN_ID_GPS_VEL_NED2,
-            (uint8_t) sizeof(gps_state->group_d.vel_ned2),
-            (const uint8_t *) &gps_state->group_d.vel_ned2 );
+            (uint8_t) sizeof(gps_data.group_d.vel_ned2),
+            (const uint8_t *) &gps_data.group_d.vel_ned2 );
 
     ret |= canbus_send(
             HOBD_CAN_ID_GPS_VEL_NED3,
-            (uint8_t) sizeof(gps_state->group_d.vel_ned3),
-            (const uint8_t *) &gps_state->group_d.vel_ned3 );
+            (uint8_t) sizeof(gps_data.group_d.vel_ned3),
+            (const uint8_t *) &gps_data.group_d.vel_ned3 );
 
     return ret;
 }
 
 
 //
-static uint8_t publish_group_e(
-        gps_state_s * const gps_state )
+static uint8_t publish_group_e( void )
 {
     uint8_t ret = 0;
 
     ret |= canbus_send(
             HOBD_CAN_ID_GPS_HEADING1,
-            (uint8_t) sizeof(gps_state->group_e.heading1),
-            (const uint8_t *) &gps_state->group_e.heading1 );
+            (uint8_t) sizeof(gps_data.group_e.heading1),
+            (const uint8_t *) &gps_data.group_e.heading1 );
 
     ret |= canbus_send(
             HOBD_CAN_ID_GPS_HEADING2,
-            (uint8_t) sizeof(gps_state->group_e.heading2),
-            (const uint8_t *) &gps_state->group_e.heading2 );
+            (uint8_t) sizeof(gps_data.group_e.heading2),
+            (const uint8_t *) &gps_data.group_e.heading2 );
 
     return ret;
 }
 
 
 //
-static uint8_t publish_group_f(
-        gps_state_s * const gps_state )
+static uint8_t publish_group_f( void )
 {
     uint8_t ret = 0;
 
     ret |= canbus_send(
             HOBD_CAN_ID_GPS_DOP1,
-            (uint8_t) sizeof(gps_state->group_f.dop1),
-            (const uint8_t *) &gps_state->group_f.dop1 );
+            (uint8_t) sizeof(gps_data.group_f.dop1),
+            (const uint8_t *) &gps_data.group_f.dop1 );
 
     ret |= canbus_send(
             HOBD_CAN_ID_GPS_DOP2,
-            (uint8_t) sizeof(gps_state->group_f.dop2),
-            (const uint8_t *) &gps_state->group_f.dop2 );
+            (uint8_t) sizeof(gps_data.group_f.dop2),
+            (const uint8_t *) &gps_data.group_f.dop2 );
 
     return ret;
 }
@@ -546,8 +532,7 @@ static uint8_t publish_group_f(
 // *****************************************************
 
 //
-uint8_t gps_init(
-        gps_state_s * const gps_state )
+uint8_t gps_init( void )
 {
     uint8_t ret = 0;
 
@@ -562,56 +547,56 @@ uint8_t gps_init(
             &sbp_state,
             SBP_MSG_HEARTBEAT,
             &heartbeat_callback,
-            (void*) gps_state,
+            NULL,
             &heartbeat_callback_node );
 
     sbp_status = sbp_register_callback(
             &sbp_state,
             SBP_MSG_GPS_TIME,
             &gps_time_callback,
-            (void*) gps_state,
+            NULL,
             &gps_time_node );
 
     sbp_status = sbp_register_callback(
             &sbp_state,
             SBP_MSG_DOPS,
             &dops_callback,
-            (void*) gps_state,
+            NULL,
             &dops_node );
 
     sbp_status = sbp_register_callback(
             &sbp_state,
             SBP_MSG_POS_LLH,
             &pos_llh_callback,
-            (void*) gps_state,
+            NULL,
             &pos_llh_node );
 
     sbp_status = sbp_register_callback(
             &sbp_state,
             SBP_MSG_BASELINE_NED,
             &baseline_ned_callback,
-            (void*) gps_state,
+            NULL,
             &baseline_ned_node );
 
     sbp_status = sbp_register_callback(
             &sbp_state,
             SBP_MSG_VEL_NED,
             &vel_ned_callback,
-            (void*) gps_state,
+            NULL,
             &vel_ned_node );
 
     sbp_status = sbp_register_callback(
             &sbp_state,
             SBP_MSG_BASELINE_HEADING,
             &heading_callback,
-            (void*) gps_state,
+            NULL,
             &heading_node );
 
     //
     hw_init();
 
     // clear all ready groups
-    gps_clear_all_group_ready( gps_state );
+    gps_clear_all_group_ready();
 
     // flush rx buffer
     ring_buffer_flush( &rx_buffer );
@@ -644,42 +629,37 @@ void gps_enable( void )
 
 //
 void gps_set_group_ready(
-        const uint16_t group,
-        gps_state_s * const gps_state )
+        const uint16_t group )
 {
-    gps_state->ready_groups |= group;
+    gps_data.ready_groups |= group;
 }
 
 
 //
 void gps_clear_group_ready(
-        const uint16_t group,
-        gps_state_s * const gps_state )
+        const uint16_t group )
 {
-    gps_state->ready_groups &= ~group;
+    gps_data.ready_groups &= ~group;
 }
 
 
 //
-void gps_clear_all_group_ready(
-        gps_state_s * const gps_state )
+void gps_clear_all_group_ready( void )
 {
-    gps_state->ready_groups = GPS_GROUP_NONE_READY;
+    gps_data.ready_groups = GPS_GROUP_NONE_READY;
 }
 
 
 //
 uint8_t gps_is_group_ready(
-        const uint16_t group,
-        const gps_state_s * const gps_state )
+        const uint16_t group )
 {
-    return ((gps_state->ready_groups & group) == 0) ? 0 : 1;
+    return ((gps_data.ready_groups & group) == 0) ? 0 : 1;
 }
 
 
 //
-uint8_t gps_update(
-        gps_state_s * const gps_state )
+uint8_t gps_update( void )
 {
     uint8_t ret = 0;
 
@@ -700,43 +680,43 @@ uint8_t gps_update(
     }
 
     // check for any ready groups
-    if( gps_state->ready_groups != GPS_GROUP_NONE_READY )
+    if( gps_data.ready_groups != GPS_GROUP_NONE_READY )
     {
         // handle groups in order/priority
-        if( gps_is_group_ready( GPS_GROUP_A_READY, gps_state ) != 0 )
+        if( gps_is_group_ready( GPS_GROUP_A_READY ) != 0 )
         {
-            ret = publish_group_a( gps_state );
-            gps_clear_group_ready( GPS_GROUP_A_READY, gps_state );
+            ret = publish_group_a();
+            gps_clear_group_ready( GPS_GROUP_A_READY );
         }
 
-        if( gps_is_group_ready( GPS_GROUP_B_READY, gps_state ) != 0 )
+        if( gps_is_group_ready( GPS_GROUP_B_READY ) != 0 )
         {
-            ret = publish_group_b( gps_state );
-            gps_clear_group_ready( GPS_GROUP_B_READY, gps_state );
+            ret = publish_group_b();
+            gps_clear_group_ready( GPS_GROUP_B_READY );
         }
 
-        if( gps_is_group_ready( GPS_GROUP_C_READY, gps_state ) != 0 )
+        if( gps_is_group_ready( GPS_GROUP_C_READY ) != 0 )
         {
-            ret = publish_group_c( gps_state );
-            gps_clear_group_ready( GPS_GROUP_C_READY, gps_state );
+            ret = publish_group_c();
+            gps_clear_group_ready( GPS_GROUP_C_READY );
         }
 
-        if( gps_is_group_ready( GPS_GROUP_D_READY, gps_state ) != 0 )
+        if( gps_is_group_ready( GPS_GROUP_D_READY ) != 0 )
         {
-            ret = publish_group_d( gps_state );
-            gps_clear_group_ready( GPS_GROUP_D_READY, gps_state );
+            ret = publish_group_d();
+            gps_clear_group_ready( GPS_GROUP_D_READY );
         }
 
-        if( gps_is_group_ready( GPS_GROUP_E_READY, gps_state ) != 0 )
+        if( gps_is_group_ready( GPS_GROUP_E_READY ) != 0 )
         {
-            ret = publish_group_e( gps_state );
-            gps_clear_group_ready( GPS_GROUP_E_READY, gps_state );
+            ret = publish_group_e();
+            gps_clear_group_ready( GPS_GROUP_E_READY );
         }
 
-        if( gps_is_group_ready( GPS_GROUP_F_READY, gps_state ) != 0 )
+        if( gps_is_group_ready( GPS_GROUP_F_READY ) != 0 )
         {
-            ret = publish_group_f( gps_state );
-            gps_clear_group_ready( GPS_GROUP_F_READY, gps_state );
+            ret = publish_group_f();
+            gps_clear_group_ready( GPS_GROUP_F_READY );
         }
     }
 
