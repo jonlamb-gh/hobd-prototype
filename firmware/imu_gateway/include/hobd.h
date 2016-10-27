@@ -98,7 +98,7 @@
 #define HOBD_CAN_ID_GPS_DOP2 (0x04F)
 
 
-// TODO - IMU offset by at least 16 for ECEF frames
+// TODO - IMU offset by at least 16 for ECEF frames  - 0x060
 
 
 //
@@ -119,6 +119,14 @@
 
 //
 #define HOBD_HEARTBEAT_WARN_HOBDBUS (1 << 6)
+
+
+//
+#define HOBD_HEARTBEAT_WARN_IMUBUS (1 << 5)
+
+
+//
+#define HOBD_HEARTBEAT_WARN_GPSBUS (1 << 4)
 
 
 
