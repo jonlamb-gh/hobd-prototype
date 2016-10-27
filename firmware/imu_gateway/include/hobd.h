@@ -19,7 +19,7 @@
 
 
 //
-#define HOBD_CAN_ID_HEARTBEAT_BASE (0x100)
+#define HOBD_CAN_ID_HEARTBEAT_BASE (0x010)
 
 
 // ms
@@ -27,11 +27,78 @@
 
 
 //
-#define HOBD_CAN_ID_COMMAND (0x200)
+#define HOBD_CAN_ID_COMMAND (0x020)
 
 
 //
-#define HOBD_CAN_ID_RESPONSE (0x201)
+#define HOBD_CAN_ID_RESPONSE (0x021)
+
+
+//
+#define HOBD_CAN_ID_GPS_TIME1 (0x040)
+
+
+//
+#define HOBD_CAN_ID_GPS_TIME2 (0x041)
+
+
+//
+#define HOBD_CAN_ID_GPS_POS_LLH1 (0x042)
+
+
+//
+#define HOBD_CAN_ID_GPS_POS_LLH2 (0x043)
+
+
+//
+#define HOBD_CAN_ID_GPS_POS_LLH3 (0x044)
+
+
+//
+#define HOBD_CAN_ID_GPS_POS_LLH4 (0x045)
+
+
+//
+#define HOBD_CAN_ID_GPS_BASELINE_NED1 (0x046)
+
+
+//
+#define HOBD_CAN_ID_GPS_BASELINE_NED2 (0x047)
+
+
+//
+#define HOBD_CAN_ID_GPS_BASELINE_NED3 (0x048)
+
+
+//
+#define HOBD_CAN_ID_GPS_VEL_NED1 (0x049)
+
+
+//
+#define HOBD_CAN_ID_GPS_VEL_NED2 (0x04A)
+
+
+//
+#define HOBD_CAN_ID_GPS_VEL_NED3 (0x04B)
+
+
+//
+#define HOBD_CAN_ID_GPS_HEADING1 (0x04C)
+
+
+//
+#define HOBD_CAN_ID_GPS_HEADING2 (0x04D)
+
+
+//
+#define HOBD_CAN_ID_GPS_DOP1 (0x04E)
+
+
+//
+#define HOBD_CAN_ID_GPS_DOP2 (0x04F)
+
+
+// TODO - IMU offset by at least 16 for ECEF frames
 
 
 //
@@ -123,7 +190,7 @@ typedef struct
  * @brief GPS time 1 message.
  *
  * Message size (CAN frame DLC): 8 bytes
- * CAN frame ID: TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_GPS_TIME1
  * Transmit rate: TODO ms
  *
  */
@@ -142,7 +209,7 @@ typedef struct
  * @brief GPS time 2 message.
  *
  * Message size (CAN frame DLC): 7 bytes
- * CAN frame ID: TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_GPS_TIME2
  * Transmit rate: TODO ms
  *
  */
@@ -164,7 +231,7 @@ typedef struct
  * @brief GPS dilution of precision 1 message.
  *
  * Message size (CAN frame DLC): 8 bytes
- * CAN frame ID: TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_GPS_DOP1
  * Transmit rate: TODO ms
  *
  */
@@ -186,7 +253,7 @@ typedef struct
  * @brief GPS dilution of precision 2 message.
  *
  * Message size (CAN frame DLC): 6 bytes
- * CAN frame ID: TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_GPS_DOP1
  * Transmit rate: TODO ms
  *
  */
@@ -278,7 +345,7 @@ typedef struct
  * @brief GPS geodetic position 1 message.
  *
  * Message size (CAN frame DLC): 6 bytes
- * CAN frame ID: TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_GPS_POS_LLH1
  * Transmit rate: TODO ms
  *
  */
@@ -300,7 +367,7 @@ typedef struct
  * @brief GPS geodetic position 2 message.
  *
  * Message size (CAN frame DLC): 8 bytes
- * CAN frame ID: TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_GPS_POS_LLH2
  * Transmit rate: TODO ms
  *
  */
@@ -316,7 +383,7 @@ typedef struct
  * @brief GPS geodetic position 3 message.
  *
  * Message size (CAN frame DLC): 8 bytes
- * CAN frame ID: TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_GPS_POS_LLH3
  * Transmit rate: TODO ms
  *
  */
@@ -332,7 +399,7 @@ typedef struct
  * @brief GPS geodetic position 4 message.
  *
  * Message size (CAN frame DLC): 8 bytes
- * CAN frame ID: TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_GPS_POS_LLH4
  * Transmit rate: TODO ms
  *
  */
@@ -405,7 +472,7 @@ typedef struct
  * @brief GPS baseline NED position 1 message.
  *
  * Message size (CAN frame DLC): 6 bytes
- * CAN frame ID: TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_GPS_BASELINE_NED1
  * Transmit rate: TODO ms
  *
  */
@@ -427,7 +494,7 @@ typedef struct
  * @brief GPS baseline NED position 2 message.
  *
  * Message size (CAN frame DLC): 8 bytes
- * CAN frame ID: TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_GPS_BASELINE_NED2
  * Transmit rate: TODO ms
  *
  */
@@ -446,7 +513,7 @@ typedef struct
  * @brief GPS baseline NED position 3 message.
  *
  * Message size (CAN frame DLC): 4 bytes
- * CAN frame ID: TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_GPS_BASELINE_NED3
  * Transmit rate: TODO ms
  *
  */
@@ -519,7 +586,7 @@ typedef struct
  * @brief GPS NED velocity 1 message.
  *
  * Message size (CAN frame DLC): 6 bytes
- * CAN frame ID: TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_GPS_VEL_NED1
  * Transmit rate: TODO ms
  *
  */
@@ -541,7 +608,7 @@ typedef struct
  * @brief GPS NED velocity 2 message.
  *
  * Message size (CAN frame DLC): 8 bytes
- * CAN frame ID: TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_GPS_VEL_NED2
  * Transmit rate: TODO ms
  *
  */
@@ -560,7 +627,7 @@ typedef struct
  * @brief GPS NED velocity 3 message.
  *
  * Message size (CAN frame DLC): 4 bytes
- * CAN frame ID: TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_GPS_VEL_NED3
  * Transmit rate: TODO ms
  *
  */
@@ -576,7 +643,7 @@ typedef struct
  * @brief GPS heading 1 message.
  *
  * Message size (CAN frame DLC): 8 bytes
- * CAN frame ID: TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_GPS_HEADING1
  * Transmit rate: TODO ms
  *
  */
@@ -595,7 +662,7 @@ typedef struct
  * @brief GPS heading 2 message.
  *
  * Message size (CAN frame DLC): 2 bytes
- * CAN frame ID: TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_GPS_HEADING2
  * Transmit rate: TODO ms
  *
  */

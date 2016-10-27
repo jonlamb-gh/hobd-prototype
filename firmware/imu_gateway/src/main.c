@@ -93,10 +93,6 @@ static void init( void )
     sw0_init();
     sw0_enable_pullup();
 
-    // init enclosure switch pin
-    sw1_init();
-    sw1_enable_pullup();
-
     // init LED pin
     led_init();
     led_off();
@@ -138,24 +134,17 @@ int main( void )
     //
     init();
 
+    // reset watchdog
+    wdt_reset();
+
     //
     while( 1 )
     {
         // reset watchdog
         wdt_reset();
 
-        //
+        // process any incoming GPS data, and potentially publish ready CAN frames
         const uint8_t gps_status = gps_update( &gps_state );
-
-        // turn on the on-board LED if either switch is closed
-        if( (sw0_get_state() == ON) || (sw1_get_state() == ON) )
-        {
-            led_on();
-        }
-        else
-        {
-            led_off();
-        }
     }
 
    return 0;
