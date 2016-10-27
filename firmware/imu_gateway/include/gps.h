@@ -54,7 +54,7 @@ typedef struct
     //
     uint16_t ready_groups;
     //
-    // TODO - flag bit MACRO for each group in docs here
+    // GPS_GROUP_A_READY
     struct
     {
         //
@@ -65,7 +65,7 @@ typedef struct
         hobd_gps_time2_s time2;
     } group_a;
     //
-    //
+    // GPS_GROUP_B_READY
     struct
     {
         //
@@ -82,7 +82,7 @@ typedef struct
         hobd_gps_pos_llh4_s pos_llh4;
     } group_b;
     //
-    //
+    // GPS_GROUP_C_READY
     struct
     {
         //
@@ -96,7 +96,7 @@ typedef struct
         hobd_gps_baseline_ned3_s baseline_ned3;
     } group_c;
     //
-    //
+    // GPS_GROUP_D_READY
     struct
     {
         //
@@ -110,7 +110,7 @@ typedef struct
         hobd_gps_vel_ned3_s vel_ned3;
     } group_d;
     //
-    //
+    // GPS_GROUP_E_READY
     struct
     {
         //
@@ -121,7 +121,7 @@ typedef struct
         hobd_gps_heading2_s heading2;
     } group_e;
     //
-    //
+    // GPS_GROUP_F_READY
     struct
     {
         //
