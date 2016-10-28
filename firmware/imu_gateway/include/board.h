@@ -26,6 +26,18 @@
 
 
 
+//
+#define NODE_ID (0x06)
+
+
+//
+#define HARDWARE_VERSION (1)
+
+
+//
+#define FIRMWARE_VERSION (1)
+
+
 #ifndef BOOL
 #include <inttypes.h>
 typedef uint8_t BOOL;

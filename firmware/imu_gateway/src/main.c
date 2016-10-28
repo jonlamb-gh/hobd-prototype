@@ -47,17 +47,6 @@
 // static global types/macros
 // *****************************************************
 
-//
-#define NODE_ID (0x06)
-
-
-//
-#define HARDWARE_VERSION (1)
-
-
-//
-#define FIRMWARE_VERSION (1)
-
 
 
 
@@ -106,6 +95,9 @@ static void init( void )
     rtc_int_init();
 
     //
+    const uint8_t can_status = canbus_init();
+
+    //
     diagnostics_init();
 
     // init GPS UART/module
@@ -116,9 +108,6 @@ static void init( void )
     Uart_select( DEBUG_UART );
     uart_init( CONF_8BIT_NOPAR_1STOP, DEBUG_BAUDDRATE );
 #endif
-
-    //
-    const uint8_t can_status = canbus_init();
 
     // enable interrupts
     enable_interrupt();
