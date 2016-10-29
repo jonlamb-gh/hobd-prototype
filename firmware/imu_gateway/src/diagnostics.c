@@ -37,7 +37,12 @@ static hobd_heartbeat_s hobd_heartbeat;
 
 
 //
-static const uint16_t CAN_ID_HEARTBEAT = (HOBD_CAN_ID_HEARTBEAT_BASE + NODE_ID);
+static uint32_t last_tx_heartbeat = 0;
+
+
+//
+static const uint16_t CAN_ID_HEARTBEAT =
+        (uint16_t) (HOBD_CAN_ID_HEARTBEAT_BASE + NODE_ID);
 
 
 
@@ -47,11 +52,51 @@ static const uint16_t CAN_ID_HEARTBEAT = (HOBD_CAN_ID_HEARTBEAT_BASE + NODE_ID);
 // *****************************************************
 
 
+//
+static void send_heartbeat(
+        const uint8_t send_now );
+
+
 
 
 // *****************************************************
 // static definitions
 // *****************************************************
+
+//
+static void send_heartbeat(
+        const uint8_t send_now )
+{
+    // get current time
+    const uint32_t now = time_get_ms();
+
+    // get time since last publish
+    const uint32_t delta = time_get_delta(
+            &last_tx_heartbeat,
+            &now );
+
+    // publish if interval met/exceeded
+    if( (send_now != 0) || (delta >= HOBD_CAN_TX_INTERVAL_HEARTBEAT) )
+    {
+        led_toggle();
+
+        // update last publish timestamp, ms
+        last_tx_heartbeat = now;
+
+        // update counter
+        hobd_heartbeat.counter += 1;
+
+        // publish
+        const uint8_t ret = canbus_send(
+                CAN_ID_HEARTBEAT,
+                (uint8_t) sizeof(hobd_heartbeat),
+                (const uint8_t*) &hobd_heartbeat );
+        if( ret != 0 )
+        {
+            diagnostics_set_warn( HOBD_HEARTBEAT_WARN_CANBUS );
+        }
+    }
+}
 
 
 
@@ -70,8 +115,6 @@ void diagnostics_init( void )
     hobd_heartbeat.counter = 0;
     hobd_heartbeat.error_register = 0;
     hobd_heartbeat.warning_register = 0;
-
-#warning "TODO - call init state - and publish on state change"
 }
 
 
@@ -80,6 +123,9 @@ void diagnostics_set_state(
         const uint8_t state )
 {
     hobd_heartbeat.state = state;
+
+    // publish heartbeat message immediately
+    send_heartbeat( 1 );
 }
 
 
@@ -118,6 +164,9 @@ void diagnostics_set_error(
         const uint16_t error )
 {
     hobd_heartbeat.error_register |= error;
+
+    // publish heartbeat message immediately
+//    send_heartbeat( 1 );
 }
 
 
@@ -133,11 +182,15 @@ void diagnostics_clear_error(
         const uint16_t error )
 {
     hobd_heartbeat.error_register &= ~error;
+
+    // publish heartbeat message immediately
+//    send_heartbeat( 1 );
 }
 
 
 //
 void diagnostics_update( void )
 {
-
+    // publish heartbeat message as needed
+    send_heartbeat( 0 );
 }

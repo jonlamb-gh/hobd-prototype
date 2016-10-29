@@ -256,7 +256,19 @@ static void heartbeat_callback(
         diagnostics_set_error( HOBD_HEARTBEAT_ERROR_GPS_STATUS );
     }
 
-    // bit 31 - system error
+    // bit 1 - IO error
+    if( (heartbeat->flags & 0x00000002) != 0 )
+    {
+        diagnostics_set_error( HOBD_HEARTBEAT_ERROR_GPS_STATUS );
+    }
+
+    // bit 2 - SwiftNAP error
+    if( (heartbeat->flags & 0x00000004) != 0 )
+    {
+        diagnostics_set_error( HOBD_HEARTBEAT_ERROR_GPS_STATUS );
+    }
+
+    // bit 31 - external antenna present
     if( (heartbeat->flags & 0x80000000) == 0 )
     {
         diagnostics_set_error( HOBD_HEARTBEAT_ERROR_GPS_ANT1 );
@@ -707,38 +719,43 @@ uint8_t gps_update( void )
         // handle groups in order/priority
         if( gps_is_group_ready( GPS_GROUP_A_READY ) != 0 )
         {
-            ret = publish_group_a();
+            ret |= publish_group_a();
             gps_clear_group_ready( GPS_GROUP_A_READY );
         }
 
         if( gps_is_group_ready( GPS_GROUP_B_READY ) != 0 )
         {
-            ret = publish_group_b();
+            ret |= publish_group_b();
             gps_clear_group_ready( GPS_GROUP_B_READY );
         }
 
         if( gps_is_group_ready( GPS_GROUP_C_READY ) != 0 )
         {
-            ret = publish_group_c();
+            ret |= publish_group_c();
             gps_clear_group_ready( GPS_GROUP_C_READY );
         }
 
         if( gps_is_group_ready( GPS_GROUP_D_READY ) != 0 )
         {
-            ret = publish_group_d();
+            ret |= publish_group_d();
             gps_clear_group_ready( GPS_GROUP_D_READY );
         }
 
         if( gps_is_group_ready( GPS_GROUP_E_READY ) != 0 )
         {
-            ret = publish_group_e();
+            ret |= publish_group_e();
             gps_clear_group_ready( GPS_GROUP_E_READY );
         }
 
         if( gps_is_group_ready( GPS_GROUP_F_READY ) != 0 )
         {
-            ret = publish_group_f();
+            ret |= publish_group_f();
             gps_clear_group_ready( GPS_GROUP_F_READY );
+        }
+
+        if( ret != 0 )
+        {
+            diagnostics_set_warn( HOBD_HEARTBEAT_WARN_CANBUS );
         }
     }
 

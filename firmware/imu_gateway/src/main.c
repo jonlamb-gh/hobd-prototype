@@ -135,10 +135,13 @@ static void init( void )
 
     time_sleep_ms( 5 );
 
+    DEBUG_PUTS( "init : pass\n" );
+
+    // reset watchdog
+    wdt_reset();
+
     //
     diagnostics_update();
-
-    DEBUG_PUTS( "init : pass\n" );
 }
 
 
