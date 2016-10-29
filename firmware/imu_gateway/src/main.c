@@ -30,6 +30,7 @@
 #include "hobd.h"
 #include "time.h"
 #include "canbus.h"
+#include "diagnostics.h"
 #include "gps.h"
 
 
@@ -46,26 +47,12 @@
 // static global types/macros
 // *****************************************************
 
-//
-#define NODE_ID (0x06)
-
-
-//
-#define HARDWARE_VERSION (1)
-
-
-//
-#define FIRMWARE_VERSION (1)
-
 
 
 
 // *****************************************************
 // static global data
 // *****************************************************
-
-//
-static gps_state_s gps_state;
 
 
 
@@ -107,24 +94,54 @@ static void init( void )
     //
     rtc_int_init();
 
-    // init GPS UART/module
-#warning "TODO - handle gps init status"
-    const uint8_t gps_status = gps_init( &gps_state );
-
-#ifdef BUILD_TYPE_DEBUG
-    Uart_select( DEBUG_UART );
-    uart_init( CONF_8BIT_NOPAR_1STOP, DEBUG_BAUDDRATE );
-#endif
-
     //
     const uint8_t can_status = canbus_init();
+
+    //
+    diagnostics_init();
+
+    // init GPS UART/module
+    const uint8_t gps_status = gps_init();
+
+    //
+#ifdef BUILD_TYPE_DEBUG
+    Uart_select( DEBUG_UART );
+    uart_init( CONF_8BIT_NOPAR_1STOP, DEBUG_BAUDRATE );
+#else
+    // TESTING
+    Uart_select( IMU_UART );
+    uart_init( CONF_8BIT_NOPAR_1STOP, IMU_BAUDRATE );
+#endif
 
     // enable interrupts
     enable_interrupt();
 
+    // reset watchdog
+    wdt_reset();
+
+    //
+    if( can_status != 0 )
+    {
+        diagnostics_set_error( HOBD_HEARTBEAT_ERROR_CANBUS );
+        DEBUG_PUTS( "init : canbus_init fail\n" );
+    }
+
+    //
+    if( gps_status != 0 )
+    {
+        diagnostics_set_error( HOBD_HEARTBEAT_ERROR_GPSBUS );
+        DEBUG_PUTS( "init : gps_init fail\n" );
+    }
+
     time_sleep_ms( 5 );
 
     DEBUG_PUTS( "init : pass\n" );
+
+    // reset watchdog
+    wdt_reset();
+
+    //
+    diagnostics_update();
 }
 
 
@@ -142,13 +159,25 @@ int main( void )
     wdt_reset();
 
     //
+    diagnostics_set_state( HOBD_HEARTBEAT_STATE_OK );
+
+    //
     while( 1 )
     {
         // reset watchdog
         wdt_reset();
 
         // process any incoming GPS data, and potentially publish ready CAN frames
-        const uint8_t gps_status = gps_update( &gps_state );
+        const uint8_t gps_status = gps_update();
+
+        // TODO - better error/warn handling
+        if( gps_status != 0 )
+        {
+            diagnostics_set_warn( HOBD_HEARTBEAT_WARN_GPSBUS );
+        }
+
+        //
+        diagnostics_update();
     }
 
    return 0;

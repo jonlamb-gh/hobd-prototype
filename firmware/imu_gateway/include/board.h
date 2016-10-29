@@ -26,6 +26,18 @@
 
 
 
+//
+#define NODE_ID (0x06)
+
+
+//
+#define HARDWARE_VERSION (1)
+
+
+//
+#define FIRMWARE_VERSION (1)
+
+
 #ifndef BOOL
 #include <inttypes.h>
 typedef uint8_t BOOL;
@@ -93,7 +105,7 @@ typedef uint8_t BOOL;
 
 
 //
-#define DEBUG_BAUDDRATE (57600UL)
+#define DEBUG_BAUDRATE (57600UL)
 #define GPS_BAUDRATE (115200UL)
 #define IMU_BAUDRATE (115200UL)
 

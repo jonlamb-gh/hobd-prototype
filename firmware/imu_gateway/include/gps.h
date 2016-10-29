@@ -131,14 +131,13 @@ typedef struct
         //
         hobd_gps_dop2_s dop2;
     } group_f;
-} gps_state_s;
+} gps_data_s;
 
 
 
 
 //
-uint8_t gps_init(
-        gps_state_s * const gps_state );
+uint8_t gps_init( void );
 
 
 //
@@ -151,30 +150,25 @@ void gps_enable( void );
 
 //
 void gps_set_group_ready(
-        const uint16_t group,
-        gps_state_s * const gps_state );
+        const uint16_t group );
 
 
 //
 void gps_clear_group_ready(
-        const uint16_t group,
-        gps_state_s * const gps_state );
+        const uint16_t group );
 
 
 //
-void gps_clear_all_group_ready(
-        gps_state_s * const gps_state );
+void gps_clear_all_group_ready( void );
 
 
 //
 uint8_t gps_is_group_ready(
-        const uint16_t group,
-        const gps_state_s * const gps_state );
+        const uint16_t group );
 
 
 //
-uint8_t gps_update(
-        gps_state_s * const gps_state );
+uint8_t gps_update( void );
 
 
 
