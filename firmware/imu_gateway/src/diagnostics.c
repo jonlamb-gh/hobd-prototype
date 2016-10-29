@@ -78,8 +78,6 @@ static void send_heartbeat(
     // publish if interval met/exceeded
     if( (send_now != 0) || (delta >= HOBD_CAN_TX_INTERVAL_HEARTBEAT) )
     {
-        led_toggle();
-
         // update last publish timestamp, ms
         last_tx_heartbeat = now;
 

@@ -32,6 +32,7 @@
 #include "canbus.h"
 #include "diagnostics.h"
 #include "gps.h"
+#include "imu.h"
 
 
 
@@ -103,14 +104,15 @@ static void init( void )
     // init GPS UART/module
     const uint8_t gps_status = gps_init();
 
-    //
 #ifdef BUILD_TYPE_DEBUG
+    // debug UART is used instead of IMU
     Uart_select( DEBUG_UART );
     uart_init( CONF_8BIT_NOPAR_1STOP, DEBUG_BAUDRATE );
+
+    const uint8_t imu_status = 0;
 #else
-    // TESTING
-    Uart_select( IMU_UART );
-    uart_init( CONF_8BIT_NOPAR_1STOP, IMU_BAUDRATE );
+    // init IMU UART/module
+    const uint8_t imu_status = imu_init();
 #endif
 
     // enable interrupts
@@ -131,6 +133,13 @@ static void init( void )
     {
         diagnostics_set_error( HOBD_HEARTBEAT_ERROR_GPSBUS );
         DEBUG_PUTS( "init : gps_init fail\n" );
+    }
+
+    //
+    if( imu_status != 0 )
+    {
+        diagnostics_set_error( HOBD_HEARTBEAT_ERROR_IMUBUS );
+        DEBUG_PUTS( "init : imu_init fail\n" );
     }
 
     time_sleep_ms( 5 );
@@ -174,6 +183,15 @@ int main( void )
         if( gps_status != 0 )
         {
             diagnostics_set_warn( HOBD_HEARTBEAT_WARN_GPSBUS );
+        }
+
+        // process any incoming IMU data, and potentially publish ready CAN frames
+        const uint8_t imu_status = imu_update();
+
+        // TODO - better error/warn handling
+        if( imu_status != 0 )
+        {
+            diagnostics_set_warn( HOBD_HEARTBEAT_WARN_IMUBUS );
         }
 
         //
