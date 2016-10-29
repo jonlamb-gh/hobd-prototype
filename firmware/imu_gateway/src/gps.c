@@ -24,6 +24,7 @@
 #include "ring_buffer.h"
 #include "time.h"
 #include "canbus.h"
+#include "diagnostics.h"
 #include "gps.h"
 
 
@@ -248,6 +249,22 @@ static void heartbeat_callback(
     const msg_heartbeat_t * const heartbeat = (const msg_heartbeat_t*) msg;
 
     DEBUG_PRINTF( "gps_heartbeat : flags 0x%lX\n", heartbeat->flags );
+
+    // bit 0 - system error
+    if( (heartbeat->flags & 0x00000001) != 0 )
+    {
+        diagnostics_set_error( HOBD_HEARTBEAT_ERROR_GPS_STATUS );
+    }
+
+    // bit 31 - system error
+    if( (heartbeat->flags & 0x80000000) == 0 )
+    {
+        diagnostics_set_error( HOBD_HEARTBEAT_ERROR_GPS_ANT1 );
+    }
+    else
+    {
+        diagnostics_clear_error( HOBD_HEARTBEAT_ERROR_GPS_ANT1 );
+    }
 }
 
 

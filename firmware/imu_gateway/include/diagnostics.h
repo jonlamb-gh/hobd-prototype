@@ -41,12 +41,22 @@ uint16_t diagnostics_get_warn( void );
 
 
 //
+void diagnostics_clear_warn(
+        const uint16_t warn );
+
+
+//
 void diagnostics_set_error(
         const uint16_t error );
 
 
 //
 uint16_t diagnostics_get_error( void );
+
+
+//
+void diagnostics_clear_error(
+        const uint16_t error );
 
 
 //

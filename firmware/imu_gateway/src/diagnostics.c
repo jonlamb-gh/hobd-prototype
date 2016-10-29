@@ -106,6 +106,14 @@ uint16_t diagnostics_get_warn( void )
 
 
 //
+void diagnostics_clear_warn(
+        const uint16_t warn )
+{
+    hobd_heartbeat.warning_register &= ~warn;
+}
+
+
+//
 void diagnostics_set_error(
         const uint16_t error )
 {
@@ -117,6 +125,14 @@ void diagnostics_set_error(
 uint16_t diagnostics_get_error( void )
 {
     return hobd_heartbeat.error_register;
+}
+
+
+//
+void diagnostics_clear_error(
+        const uint16_t error )
+{
+    hobd_heartbeat.error_register &= ~error;
 }
 
 
