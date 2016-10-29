@@ -105,7 +105,7 @@ typedef uint8_t BOOL;
 
 
 //
-#define DEBUG_BAUDDRATE (57600UL)
+#define DEBUG_BAUDRATE (57600UL)
 #define GPS_BAUDRATE (115200UL)
 #define IMU_BAUDRATE (115200UL)
 

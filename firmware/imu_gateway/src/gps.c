@@ -247,7 +247,7 @@ static void heartbeat_callback(
 {
     const msg_heartbeat_t * const heartbeat = (const msg_heartbeat_t*) msg;
 
-    DEBUG_PRINTF( "gps_heartbeat : flags 0x%X\n", heartbeat->flags );
+    DEBUG_PRINTF( "gps_heartbeat : flags 0x%lX\n", heartbeat->flags );
 }
 
 
@@ -309,7 +309,9 @@ static void pos_llh_callback(
 
     gps_data.group_b.pos_llh1.time_of_week = pos_llh->tow;
     gps_data.group_b.pos_llh1.num_sats = pos_llh->n_sats;
-    gps_data.group_b.pos_llh1.flags = pos_llh->flags;
+    gps_data.group_b.pos_llh1.fix_mode = (0x03 & pos_llh->flags);
+    gps_data.group_b.pos_llh1.height_mode = (pos_llh->flags >> 2) & 0x01;
+    gps_data.group_b.pos_llh1.flags = (pos_llh->flags >> 3) & 0x1F;
     memcpy(
             &gps_data.group_b.pos_llh2.latitude,
             &pos_llh->lat,
@@ -340,7 +342,8 @@ static void baseline_ned_callback(
 
     gps_data.group_c.baseline_ned1.time_of_week = baseline_ned->tow;
     gps_data.group_c.baseline_ned1.num_sats = baseline_ned->n_sats;
-    gps_data.group_c.baseline_ned1.flags = baseline_ned->flags;
+    gps_data.group_c.baseline_ned1.fix_mode = (0x03 & baseline_ned->flags);
+    gps_data.group_c.baseline_ned1.flags = (baseline_ned->flags >> 2) & 0x3F;
     gps_data.group_c.baseline_ned2.north = baseline_ned->n;
     gps_data.group_c.baseline_ned2.east = baseline_ned->e;
     gps_data.group_c.baseline_ned3.down = baseline_ned->d;
@@ -535,62 +538,65 @@ static uint8_t publish_group_f( void )
 uint8_t gps_init( void )
 {
     uint8_t ret = 0;
+    int8_t sbp_status = 0;
 
     ring_buffer_init( &rx_buffer );
 
     sbp_state_init( &sbp_state );
 
-#warning "TODO - check SBP cb status"
-
-    int8_t sbp_status = 0;
-    sbp_status = sbp_register_callback(
+    sbp_status |= sbp_register_callback(
             &sbp_state,
             SBP_MSG_HEARTBEAT,
             &heartbeat_callback,
             NULL,
             &heartbeat_callback_node );
 
-    sbp_status = sbp_register_callback(
+    sbp_status |= sbp_register_callback(
             &sbp_state,
             SBP_MSG_GPS_TIME,
             &gps_time_callback,
             NULL,
             &gps_time_node );
 
-    sbp_status = sbp_register_callback(
+    sbp_status |= sbp_register_callback(
             &sbp_state,
             SBP_MSG_DOPS,
             &dops_callback,
             NULL,
             &dops_node );
 
-    sbp_status = sbp_register_callback(
+    sbp_status |= sbp_register_callback(
             &sbp_state,
             SBP_MSG_POS_LLH,
             &pos_llh_callback,
             NULL,
             &pos_llh_node );
 
-    sbp_status = sbp_register_callback(
+    sbp_status |= sbp_register_callback(
             &sbp_state,
             SBP_MSG_BASELINE_NED,
             &baseline_ned_callback,
             NULL,
             &baseline_ned_node );
 
-    sbp_status = sbp_register_callback(
+    sbp_status |= sbp_register_callback(
             &sbp_state,
             SBP_MSG_VEL_NED,
             &vel_ned_callback,
             NULL,
             &vel_ned_node );
 
-    sbp_status = sbp_register_callback(
+    sbp_status |= sbp_register_callback(
             &sbp_state,
             SBP_MSG_BASELINE_HEADING,
             &heading_callback,
             NULL,
             &heading_node );
+
+    if( sbp_status != SBP_OK )
+    {
+        ret = 1;
+    }
 
     //
     hw_init();
@@ -663,8 +669,6 @@ uint8_t gps_update( void )
 {
     uint8_t ret = 0;
 
-#warning "TODO - check SBP read status and return code handling"
-
     // process any available data in the rx buffer, callbacks are called from
     // this context
     const int8_t sbp_status = sbp_process(
@@ -676,6 +680,7 @@ uint8_t gps_update( void )
             && (sbp_status != SBP_OK_CALLBACK_EXECUTED)
             && (sbp_status != SBP_OK_CALLBACK_UNDEFINED) )
     {
+        ret = 1;
         DEBUG_PRINTF( "gps_enable : sbp_process %d\n", sbp_status );
     }
 

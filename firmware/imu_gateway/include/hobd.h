@@ -103,30 +103,35 @@
 
 //
 #define HOBD_HEARTBEAT_STATE_INVALID (0x00)
-
-
-//
 #define HOBD_HEARTBEAT_STATE_INIT (0x01)
-
-
-//
 #define HOBD_HEARTBEAT_STATE_OK (0x02)
 
 
 //
-#define HOBD_HEARTBEAT_WARN_CANBUS (1 << 7)
+#define HOBD_HEARTBEAT_WARN_CANBUS (1 << 6)
+#define HOBD_HEARTBEAT_WARN_IMUBUS (1 << 7)
+#define HOBD_HEARTBEAT_WARN_GPSBUS (1 << 8)
+#define HOBD_HEARTBEAT_WARN_OBDBUS (1 << 9)
 
 
 //
-#define HOBD_HEARTBEAT_WARN_HOBDBUS (1 << 6)
+#define HOBD_HEARTBEAT_ERROR_CANBUS (1 << 6)
+#define HOBD_HEARTBEAT_ERROR_IMUBUS (1 << 7)
+#define HOBD_HEARTBEAT_ERROR_GPSBUS (1 << 8)
+#define HOBD_HEARTBEAT_ERROR_OBDBUS (1 << 9)
+#define HOBD_HEARTBEAT_ERROR_GPS_ANT1 (1 << 10)
+#define HOBD_HEARTBEAT_ERROR_GPS_ANT2 (1 << 11)
 
 
 //
-#define HOBD_HEARTBEAT_WARN_IMUBUS (1 << 5)
+#define HOBD_GPS_FIX_MODE_SPP (0)
+#define HOBD_GPS_FIX_MODE_RTK_FLOAT (1)
+#define HOBD_GPS_FIX_MODE_RTK_FIXED (2)
 
 
 //
-#define HOBD_HEARTBEAT_WARN_GPSBUS (1 << 4)
+#define HOBD_GPS_HEIGHT_MODE_ELLIPSOID (0)
+#define HOBD_GPS_HEIGHT_MODE_MEANSEA (1)
 
 
 
@@ -297,7 +302,11 @@ typedef struct
     uint8_t num_sats; /*!< Number of satellites used in the solution. */
     //
     //
-    uint8_t flags; /*!< Reserved data. */
+    uint8_t fix_mode : 2; /*!< Fix mode.
+                           * See \ref HOBD_GPS_FIX_MODE_SPP. */
+    //
+    //
+    uint8_t flags : 6; /*!< Reserved data. */
 } hobd_gps_pos_ecef1_s;
 
 
@@ -367,7 +376,15 @@ typedef struct
     uint8_t num_sats; /*!< Number of satellites used in the solution. */
     //
     //
-    uint8_t flags; /*!< Reserved data. */
+    uint8_t fix_mode : 2; /*!< Fix mode.
+                           * See \ref HOBD_GPS_FIX_MODE_SPP. */
+    //
+    //
+    uint8_t height_mode : 1; /*!< Height mode.
+                              * See \ref HOBD_GPS_HEIGHT_MODE_ELLIPSOID. */
+    //
+    //
+    uint8_t flags : 5; /*!< Reserved data. */
 } hobd_gps_pos_llh1_s;
 
 
@@ -437,7 +454,11 @@ typedef struct
     uint8_t num_sats; /*!< Number of satellites used in the solution. */
     //
     //
-    uint8_t flags; /*!< Reserved data. */
+    uint8_t fix_mode : 2; /*!< Fix mode.
+                           * See \ref HOBD_GPS_FIX_MODE_SPP. */
+    //
+    //
+    uint8_t flags : 6; /*!< Reserved data. */
 } hobd_gps_baseline_ecef1_s;
 
 
@@ -494,7 +515,11 @@ typedef struct
     uint8_t num_sats; /*!< Number of satellites used in the solution. */
     //
     //
-    uint8_t flags; /*!< Reserved data. */
+    uint8_t fix_mode : 2; /*!< Fix mode.
+                           * See \ref HOBD_GPS_FIX_MODE_SPP. */
+    //
+    //
+    uint8_t flags : 6; /*!< Reserved data. */
 } hobd_gps_baseline_ned1_s;
 
 
