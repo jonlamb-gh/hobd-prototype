@@ -33,6 +33,9 @@
 // static global types/macros
 // *****************************************************
 
+//
+#define XBUS_BUFFER_SIZE (512)
+
 // IMU is on UART0
 #define UART_RX_INTERRUPT USART0_RX_vect
 #define UART_UCSRA UCSR0A
@@ -59,12 +62,16 @@
 static volatile ring_buffer_s rx_buffer;
 
 
-// SBP state
-//static sbp_state_t sbp_state;
+// Xbus parser state
+static struct XbusParser xbus_parser;
 
 
-// GPS message/data state
-//static gps_data_s gps_data;
+// Xbux static buffer
+static uint8_t xbus_buffer[ XBUS_BUFFER_SIZE ];
+
+
+// IMU message/data state
+//static imu_data_s imu_data;
 
 
 
@@ -91,7 +98,7 @@ ISR( UART_RX_INTERRUPT )
     const uint8_t data = UART_DATA;
 
     // read error status
-    rx_buffer.error = (status & (_BV(FE1) | _BV(DOR1)) );
+    rx_buffer.error = (status & (_BV(FE0) | _BV(DOR0)) );
 
     // push data into the rx buffer, error is updated with return status
     (void) ring_buffer_putc(
@@ -115,6 +122,46 @@ static void hw_init( void )
 }
 
 
+//
+static uint8_t process_buffer( void )
+{
+    uint8_t ret = 0;
+
+    const uint16_t data = ring_buffer_getc( &rx_buffer );
+
+    if( data != RING_BUFFER_NO_DATA )
+    {
+        XbusParser_parseByte( &xbus_parser, (uint8_t) (data & 0xFF) );
+    }
+
+    return ret;
+}
+
+
+//
+static void *xbus_alloc_cb( size_t size )
+{
+    return (void*) &xbus_buffer[0];
+}
+
+
+//
+static void xbus_free_cb( void const * buffer )
+{
+    // do nothing to our static buffer
+}
+
+
+//
+static void handle_message_cb( struct XbusMessage const * message )
+{
+//    led_toggle();
+#warning "TESTING"
+    uint8_t data[1];
+    (void) canbus_send( 55, 1, &data[0] );
+}
+
+
 
 
 // *****************************************************
@@ -128,7 +175,17 @@ uint8_t imu_init( void )
 
     ring_buffer_init( &rx_buffer );
 
-    //
+    const struct XbusParserCallback xbus_callbacks =
+    {
+        .allocateBuffer = &xbus_alloc_cb,
+        .deallocateBuffer = &xbus_free_cb,
+        .handleMessage = &handle_message_cb
+    };
+
+    (void) XbusParser_init(
+            (void*) &xbus_parser,
+            &xbus_callbacks );
+
     hw_init();
 
     // clear all ready groups
@@ -168,9 +225,9 @@ uint8_t imu_update( void )
 {
     uint8_t ret = 0;
 
-    // TESTING
-#warning "TODO - imu_update() logic"
-    ring_buffer_flush( &rx_buffer );
+    // process any available data in the rx buffer, callbacks are called from
+    // this context
+    ret = process_buffer();
 
     return ret;
 }
