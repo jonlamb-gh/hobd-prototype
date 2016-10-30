@@ -15,6 +15,8 @@
 #include <math.h>
 
 #include "board.h"
+#include "xbusmessage.h"
+#include "xbusparser.h"
 #include "uart_lib.h"
 #include "uart_drv.h"
 #include "hobd.h"
@@ -84,9 +86,6 @@ static void hw_init( void );
 //
 ISR( UART_RX_INTERRUPT )
 {
-    // toggle LED
-    led_toggle();
-
     // read UART status register and UART data register
     const uint8_t status  = UART_UCSRA;
     const uint8_t data = UART_DATA;

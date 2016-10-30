@@ -68,6 +68,10 @@ PRJSRC= ../avrcan_at90can128/bsp/src/timer8_drv.c \
 	../avrcan_at90can128/bsp/src/rtc_drv.c \
 	../avrcan_at90can128/bsp/src/can_drv.c \
 	../avrcan_at90can128/bsp/src/can_lib.c \
+	src/xbusmessage.c \
+	src/xbusparser.c \
+	src/xbusutility.c \
+	src/xsdeviceid.c \
 	src/edc.c \
 	src/sbp.c \
 	src/time.c \
@@ -79,7 +83,7 @@ PRJSRC= ../avrcan_at90can128/bsp/src/timer8_drv.c \
 	src/main.c
 
 # additional includes (e.g. -I/path/to/mydir)
-INC=-Iinclude -I../avrcan_at90can128/bsp/include
+INC=-Iinclude -Iinclude/libxsens -I../avrcan_at90can128/bsp/include
 
 # libraries to link in (e.g. -lmylib)
 LIBS=-lm
