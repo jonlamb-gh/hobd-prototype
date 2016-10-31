@@ -158,17 +158,63 @@ static void xbus_free_cb( void const * buffer )
 
 
 //
+static uint8_t publish_group_b( void )
+{
+    uint8_t ret = 0;
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_IMU_ORIENT_QUAT1,
+            (uint8_t) sizeof(imu_data.group_b.orient_quat1),
+            (const uint8_t *) &imu_data.group_b.orient_quat1 );
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_IMU_ORIENT_QUAT2,
+            (uint8_t) sizeof(imu_data.group_b.orient_quat2),
+            (const uint8_t *) &imu_data.group_b.orient_quat2 );
+
+    return ret;
+}
+
+
+//
+static void parse_orient_quat(
+        const struct XbusMessage * const message )
+{
+    float quat[4];
+
+    const uint8_t status = XbusMessage_getDataItem(
+            quat,
+            XDI_Quaternion,
+            message );
+
+    if( status != 0 )
+    {
+        DEBUG_PUTS( "imu_orient_quat\n" );
+
+        imu_data.group_b.orient_quat1.q1 = quat[ 0 ];
+        imu_data.group_b.orient_quat1.q2 = quat[ 1 ];
+        imu_data.group_b.orient_quat2.q3 = quat[ 2 ];
+        imu_data.group_b.orient_quat2.q4 = quat[ 3 ];
+
+        imu_set_group_ready( IMU_GROUP_B_READY );
+    }
+}
+
+
+//
 static void handle_message_cb( struct XbusMessage const * message )
 {
-#warning "TODO - message handler - may need to add support for double types or configure for floats"
+#warning "TODO - message handler"
 
     if( message->length > (uint16_t) sizeof(xbus_buffer) )
     {
         diagnostics_set_error( HOBD_HEARTBEAT_ERROR_IMU_RX_OVERFLOW );
     }
-    else
+    else if( message->data != NULL )
     {
         // TODO
+
+        parse_orient_quat( (const struct XbusMessage *) message );
     }
 
 
@@ -220,7 +266,7 @@ uint8_t imu_init( void )
     hw_init();
 
     // clear all ready groups
-//    imu_clear_all_group_ready();
+    imu_clear_all_group_ready();
 
     // flush rx buffer
     ring_buffer_flush( &rx_buffer );
@@ -252,6 +298,37 @@ void imu_enable( void )
 
 
 //
+void imu_set_group_ready(
+        const uint16_t group )
+{
+    imu_data.ready_groups |= group;
+}
+
+
+//
+void imu_clear_group_ready(
+        const uint16_t group )
+{
+    imu_data.ready_groups &= ~group;
+}
+
+
+//
+void imu_clear_all_group_ready( void )
+{
+    imu_data.ready_groups = IMU_GROUP_NONE_READY;
+}
+
+
+//
+uint8_t imu_is_group_ready(
+        const uint16_t group )
+{
+    return ((imu_data.ready_groups & group) == 0) ? 0 : 1;
+}
+
+
+//
 uint8_t imu_update( void )
 {
     uint8_t ret = 0;
@@ -259,6 +336,24 @@ uint8_t imu_update( void )
     // process any available data in the rx buffer, callbacks are called from
     // this context
     ret = process_buffer();
+
+    // check for any ready groups
+    if( imu_data.ready_groups != IMU_GROUP_NONE_READY )
+    {
+#warning "TODO - handle groups"
+        // handle groups in order/priority
+//        if( imu_is_group_ready( IMU_GROUP_A_READY ) != 0 )
+//        {
+//            ret |= publish_group_a();
+//            imu_clear_group_ready( IMU_GROUP_A_READY );
+//        }
+
+        if( imu_is_group_ready( IMU_GROUP_B_READY ) != 0 )
+        {
+            ret |= publish_group_b();
+            imu_clear_group_ready( IMU_GROUP_B_READY );
+        }
+    }
 
     return ret;
 }

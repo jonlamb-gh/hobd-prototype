@@ -140,6 +140,25 @@ void imu_enable( void );
 
 
 //
+void imu_set_group_ready(
+        const uint16_t group );
+
+
+//
+void imu_clear_group_ready(
+        const uint16_t group );
+
+
+//
+void imu_clear_all_group_ready( void );
+
+
+//
+uint8_t imu_is_group_ready(
+        const uint16_t group );
+
+
+//
 uint8_t imu_update( void );
 
 
