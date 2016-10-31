@@ -141,7 +141,11 @@ static uint8_t process_buffer( void )
 //
 static void *xbus_alloc_cb( size_t size )
 {
-#warning "TODO - solution to message memory buffer"
+    if( size > sizeof(xbus_buffer) )
+    {
+        diagnostics_set_error( HOBD_HEARTBEAT_ERROR_IMU_RX_OVERFLOW );
+    }
+
     return (void*) &xbus_buffer[0];
 }
 
@@ -157,6 +161,18 @@ static void xbus_free_cb( void const * buffer )
 static void handle_message_cb( struct XbusMessage const * message )
 {
 #warning "TODO - message handler - may need to add support for double types or configure for floats"
+
+    if( message->length > (uint16_t) sizeof(xbus_buffer) )
+    {
+        diagnostics_set_error( HOBD_HEARTBEAT_ERROR_IMU_RX_OVERFLOW );
+    }
+    else
+    {
+        // TODO
+    }
+
+
+
     // TODO
 //    float ori[4];
 //    if (XbusMessage_getDataItem(ori, XDI_Quaternion, message))

@@ -162,9 +162,6 @@ void diagnostics_set_error(
         const uint16_t error )
 {
     hobd_heartbeat.error_register |= error;
-
-    // publish heartbeat message immediately
-//    send_heartbeat( 1 );
 }
 
 
@@ -180,9 +177,6 @@ void diagnostics_clear_error(
         const uint16_t error )
 {
     hobd_heartbeat.error_register &= ~error;
-
-    // publish heartbeat message immediately
-//    send_heartbeat( 1 );
 }
 
 

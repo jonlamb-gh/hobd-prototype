@@ -86,6 +86,7 @@
 
 
 //
+#define HOBD_HEARTBEAT_ERROR_IMU_RX_OVERFLOW (1 << 5)
 #define HOBD_HEARTBEAT_ERROR_CANBUS (1 << 6)
 #define HOBD_HEARTBEAT_ERROR_IMUBUS (1 << 7)
 #define HOBD_HEARTBEAT_ERROR_GPSBUS (1 << 8)
@@ -128,10 +129,10 @@ typedef struct
     uint8_t counter;
     //
     //
-    uint16_t error_register;
-    //
-    //
     uint16_t warning_register;
+    //
+    //
+    uint16_t error_register;
 } hobd_heartbeat_s;
 
 

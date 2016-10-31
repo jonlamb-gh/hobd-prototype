@@ -95,6 +95,9 @@ static void init( void )
     //
     rtc_int_init();
 
+    // enable interrupts
+    enable_interrupt();
+
     //
     const uint8_t can_status = canbus_init();
 
