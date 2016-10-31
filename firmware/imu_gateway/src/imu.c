@@ -177,6 +177,25 @@ static uint8_t publish_group_b( void )
 
 
 //
+static uint8_t publish_group_c( void )
+{
+    uint8_t ret = 0;
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_IMU_RATE_OF_TURN1,
+            (uint8_t) sizeof(imu_data.group_c.rate_of_turn1),
+            (const uint8_t *) &imu_data.group_c.rate_of_turn1 );
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_IMU_RATE_OF_TURN2,
+            (uint8_t) sizeof(imu_data.group_c.rate_of_turn2),
+            (const uint8_t *) &imu_data.group_c.rate_of_turn2 );
+
+    return ret;
+}
+
+
+//
 static void parse_orient_quat(
         const struct XbusMessage * const message )
 {
@@ -202,10 +221,32 @@ static void parse_orient_quat(
 
 
 //
+static void parse_rate_of_turn(
+        const struct XbusMessage * const message )
+{
+    float gryo[3];
+
+    const uint8_t status = XbusMessage_getDataItem(
+            gryo,
+            XDI_RateOfTurn,
+            message );
+
+    if( status != 0 )
+    {
+        DEBUG_PUTS( "imu_rate_of_turn\n" );
+
+        imu_data.group_c.rate_of_turn1.x = gryo[ 0 ];
+        imu_data.group_c.rate_of_turn1.y = gryo[ 1 ];
+        imu_data.group_c.rate_of_turn2.z = gryo[ 2 ];
+
+        imu_set_group_ready( IMU_GROUP_C_READY );
+    }
+}
+
+
+//
 static void handle_message_cb( struct XbusMessage const * message )
 {
-#warning "TODO - message handler"
-
     if( message->length > (uint16_t) sizeof(xbus_buffer) )
     {
         diagnostics_set_error( HOBD_HEARTBEAT_ERROR_IMU_RX_OVERFLOW );
@@ -213,8 +254,11 @@ static void handle_message_cb( struct XbusMessage const * message )
     else if( message->data != NULL )
     {
         // TODO
+        #warning "TODO - message handler"
 
         parse_orient_quat( (const struct XbusMessage *) message );
+
+        parse_rate_of_turn( (const struct XbusMessage *) message );
     }
 
 
@@ -352,6 +396,12 @@ uint8_t imu_update( void )
         {
             ret |= publish_group_b();
             imu_clear_group_ready( IMU_GROUP_B_READY );
+        }
+
+        if( imu_is_group_ready( IMU_GROUP_C_READY ) != 0 )
+        {
+            ret |= publish_group_c();
+            imu_clear_group_ready( IMU_GROUP_C_READY );
         }
     }
 
