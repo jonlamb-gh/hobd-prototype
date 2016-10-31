@@ -34,71 +34,41 @@
 #define HOBD_CAN_ID_RESPONSE (0x021)
 
 
-//
+// GPS ID's
 #define HOBD_CAN_ID_GPS_TIME1 (0x040)
-
-
-//
 #define HOBD_CAN_ID_GPS_TIME2 (0x041)
-
-
-//
 #define HOBD_CAN_ID_GPS_POS_LLH1 (0x042)
-
-
-//
 #define HOBD_CAN_ID_GPS_POS_LLH2 (0x043)
-
-
-//
 #define HOBD_CAN_ID_GPS_POS_LLH3 (0x044)
-
-
-//
 #define HOBD_CAN_ID_GPS_POS_LLH4 (0x045)
-
-
-//
 #define HOBD_CAN_ID_GPS_BASELINE_NED1 (0x046)
-
-
-//
 #define HOBD_CAN_ID_GPS_BASELINE_NED2 (0x047)
-
-
-//
 #define HOBD_CAN_ID_GPS_BASELINE_NED3 (0x048)
-
-
-//
 #define HOBD_CAN_ID_GPS_VEL_NED1 (0x049)
-
-
-//
 #define HOBD_CAN_ID_GPS_VEL_NED2 (0x04A)
-
-
-//
 #define HOBD_CAN_ID_GPS_VEL_NED3 (0x04B)
-
-
-//
 #define HOBD_CAN_ID_GPS_HEADING1 (0x04C)
-
-
-//
 #define HOBD_CAN_ID_GPS_HEADING2 (0x04D)
-
-
-//
 #define HOBD_CAN_ID_GPS_DOP1 (0x04E)
-
-
-//
 #define HOBD_CAN_ID_GPS_DOP2 (0x04F)
 
 
-// TODO - IMU offset by at least 16 for ECEF frames  - 0x060
+// IMU ID's
+#define HOBD_CAN_ID_IMU_TIME1 (0x060)
+#define HOBD_CAN_ID_IMU_TIME2 (0x061)
+#define HOBD_CAN_ID_IMU_TIME3 (0x062)
+#define HOBD_CAN_ID_IMU_POS_LLH1 (0x063)
+#define HOBD_CAN_ID_IMU_POS_LLH2 (0x064)
+#define HOBD_CAN_ID_IMU_VEL_NED1 (0x065)
+#define HOBD_CAN_ID_IMU_VEL_NED2 (0x066)
+#define HOBD_CAN_ID_IMU_ORIENT_QUAT1 (0x067)
+#define HOBD_CAN_ID_IMU_ORIENT_QUAT2 (0x068)
+#define HOBD_CAN_ID_IMU_RATE_OF_TURN1 (0x069)
+#define HOBD_CAN_ID_IMU_RATE_OF_TURN2 (0x06A)
+#define HOBD_CAN_ID_IMU_ACCEL1 (0x06B)
+#define HOBD_CAN_ID_IMU_ACCEL2 (0x06C)
+#define HOBD_CAN_ID_IMU_MAGF1 (0x06D)
+#define HOBD_CAN_ID_IMU_MAGF2 (0x06E)
 
 
 //
@@ -715,7 +685,7 @@ typedef struct
  * @brief IMU time 1 message.
  *
  * Message size (CAN frame DLC): 8 bytes
- * CAN frame ID: \ref TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_IMU_TIME1
  * Transmit rate: TODO ms
  *
  */
@@ -740,7 +710,7 @@ typedef struct
  * @brief IMU time 2 message.
  *
  * Message size (CAN frame DLC): 5 bytes
- * CAN frame ID: \ref TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_IMU_TIME2
  * Transmit rate: TODO ms
  *
  */
@@ -768,7 +738,7 @@ typedef struct
  * @brief IMU time 3 message.
  *
  * Message size (CAN frame DLC): 6 bytes
- * CAN frame ID: \ref TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_IMU_TIME3
  * Transmit rate: TODO ms
  *
  */
@@ -787,7 +757,7 @@ typedef struct
  * @brief IMU geodetic position 1 message.
  *
  * Message size (CAN frame DLC): 8 bytes
- * CAN frame ID: \ref TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_IMU_POS_LLH1
  * Transmit rate: TODO ms
  *
  */
@@ -806,7 +776,7 @@ typedef struct
  * @brief IMU geodetic position 2 message.
  *
  * Message size (CAN frame DLC): 4 bytes
- * CAN frame ID: \ref TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_IMU_POS_LLH2
  * Transmit rate: TODO ms
  *
  */
@@ -822,7 +792,7 @@ typedef struct
  * @brief IMU NED velocity 1 message.
  *
  * Message size (CAN frame DLC): 8 bytes
- * CAN frame ID: \ref TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_IMU_VEL_NED1
  * Transmit rate: TODO ms
  *
  */
@@ -841,7 +811,7 @@ typedef struct
  * @brief IMU NED velocity 2 message.
  *
  * Message size (CAN frame DLC): 4 bytes
- * CAN frame ID: \ref TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_IMU_VEL_NED2
  * Transmit rate: TODO ms
  *
  */
@@ -857,7 +827,7 @@ typedef struct
  * @brief IMU orientation quaternion 1 message.
  *
  * Message size (CAN frame DLC): 8 bytes
- * CAN frame ID: \ref TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_IMU_ORIENT_QUAT1
  * Transmit rate: TODO ms
  *
  */
@@ -876,7 +846,7 @@ typedef struct
  * @brief IMU orientation quaternion 2 message.
  *
  * Message size (CAN frame DLC): 8 bytes
- * CAN frame ID: \ref TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_IMU_ORIENT_QUAT2
  * Transmit rate: TODO ms
  *
  */
@@ -895,7 +865,7 @@ typedef struct
  * @brief IMU rate of turn 1 message.
  *
  * Message size (CAN frame DLC): 8 bytes
- * CAN frame ID: \ref TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_IMU_RATE_OF_TURN1
  * Transmit rate: TODO ms
  *
  */
@@ -914,7 +884,7 @@ typedef struct
  * @brief IMU rate of turn 2 message.
  *
  * Message size (CAN frame DLC): 4 bytes
- * CAN frame ID: \ref TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_IMU_RATE_OF_TURN2
  * Transmit rate: TODO ms
  *
  */
@@ -930,7 +900,7 @@ typedef struct
  * @brief IMU acceleration 1 message.
  *
  * Message size (CAN frame DLC): 8 bytes
- * CAN frame ID: \ref TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_IMU_ACCEL1
  * Transmit rate: TODO ms
  *
  */
@@ -949,7 +919,7 @@ typedef struct
  * @brief IMU acceleration 2 message.
  *
  * Message size (CAN frame DLC): 4 bytes
- * CAN frame ID: \ref TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_IMU_ACCEL2
  * Transmit rate: TODO ms
  *
  */
@@ -965,7 +935,7 @@ typedef struct
  * @brief IMU magnetic field 1 message.
  *
  * Message size (CAN frame DLC): 8 bytes
- * CAN frame ID: \ref TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_IMU_MAGF1
  * Transmit rate: TODO ms
  *
  */
@@ -984,7 +954,7 @@ typedef struct
  * @brief IMU magnetic field 2 message.
  *
  * Message size (CAN frame DLC): 4 bytes
- * CAN frame ID: \ref TODO
+ * CAN frame ID: \ref HOBD_CAN_ID_IMU_MAGF2
  * Transmit rate: TODO ms
  *
  */

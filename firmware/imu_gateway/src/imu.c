@@ -71,7 +71,7 @@ static uint8_t xbus_buffer[ XBUS_BUFFER_SIZE ];
 
 
 // IMU message/data state
-//static imu_data_s imu_data;
+static imu_data_s imu_data;
 
 
 

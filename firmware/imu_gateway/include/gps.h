@@ -47,7 +47,7 @@
 
 
 
-// TODO - should this be in hobd.h as a global definition ?
+// GPS message data group
 typedef struct
 {
     //
