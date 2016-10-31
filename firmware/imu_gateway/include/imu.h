@@ -52,6 +52,9 @@ typedef struct
         //
         //
         hobd_imu_time3_s time3;
+        //
+        //
+        hobd_imu_time4_s time4;
     } group_a;
     //
     // IMU_GROUP_B_READY

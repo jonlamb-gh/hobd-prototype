@@ -57,18 +57,19 @@
 #define HOBD_CAN_ID_IMU_TIME1 (0x060)
 #define HOBD_CAN_ID_IMU_TIME2 (0x061)
 #define HOBD_CAN_ID_IMU_TIME3 (0x062)
-#define HOBD_CAN_ID_IMU_POS_LLH1 (0x063)
-#define HOBD_CAN_ID_IMU_POS_LLH2 (0x064)
-#define HOBD_CAN_ID_IMU_VEL_NED1 (0x065)
-#define HOBD_CAN_ID_IMU_VEL_NED2 (0x066)
-#define HOBD_CAN_ID_IMU_ORIENT_QUAT1 (0x067)
-#define HOBD_CAN_ID_IMU_ORIENT_QUAT2 (0x068)
-#define HOBD_CAN_ID_IMU_RATE_OF_TURN1 (0x069)
-#define HOBD_CAN_ID_IMU_RATE_OF_TURN2 (0x06A)
-#define HOBD_CAN_ID_IMU_ACCEL1 (0x06B)
-#define HOBD_CAN_ID_IMU_ACCEL2 (0x06C)
-#define HOBD_CAN_ID_IMU_MAGF1 (0x06D)
-#define HOBD_CAN_ID_IMU_MAGF2 (0x06E)
+#define HOBD_CAN_ID_IMU_TIME4 (0x063)
+#define HOBD_CAN_ID_IMU_POS_LLH1 (0x064)
+#define HOBD_CAN_ID_IMU_POS_LLH2 (0x065)
+#define HOBD_CAN_ID_IMU_VEL_NED1 (0x066)
+#define HOBD_CAN_ID_IMU_VEL_NED2 (0x067)
+#define HOBD_CAN_ID_IMU_ORIENT_QUAT1 (0x068)
+#define HOBD_CAN_ID_IMU_ORIENT_QUAT2 (0x069)
+#define HOBD_CAN_ID_IMU_RATE_OF_TURN1 (0x06A)
+#define HOBD_CAN_ID_IMU_RATE_OF_TURN2 (0x06B)
+#define HOBD_CAN_ID_IMU_ACCEL1 (0x06C)
+#define HOBD_CAN_ID_IMU_ACCEL2 (0x06D)
+#define HOBD_CAN_ID_IMU_MAGF1 (0x06E)
+#define HOBD_CAN_ID_IMU_MAGF2 (0x06F)
 
 
 //
@@ -696,20 +697,14 @@ typedef struct
     uint32_t rx_time; /*!< Local rx millisecond timestamp when the IMU time data was received. [milliseconds] */
     //
     //
-    uint16_t sample_count;
-    //
-    //
-    uint8_t status;
-    //
-    //
-    uint8_t flags;
+    uint32_t status;
 } hobd_imu_time1_s;
 
 
 /**
  * @brief IMU time 2 message.
  *
- * Message size (CAN frame DLC): 5 bytes
+ * Message size (CAN frame DLC): 8 bytes
  * CAN frame ID: \ref HOBD_CAN_ID_IMU_TIME2
  * Transmit rate: TODO ms
  *
@@ -718,19 +713,10 @@ typedef struct
 {
     //
     //
-    uint8_t month;
+    uint32_t time_of_week; /*!< GPS time of week rounded to the nearest millisecond. [milliseconds] */
     //
     //
-    uint8_t day;
-    //
-    //
-    uint8_t hour;
-    //
-    //
-    uint8_t min;
-    //
-    //
-    uint8_t sec;
+    int32_t residual; /*!< Nanosecond residual of millisecond-rounded TOW (ranges from -500000 to 500000). [nanoseconds] */
 } hobd_imu_time2_s;
 
 
@@ -746,11 +732,45 @@ typedef struct
 {
     //
     //
-    uint32_t nanosec;
+    uint16_t week_number; /*!< GPS week number. [weeks] */
+    //
+    //
+    uint8_t flags;
     //
     //
     uint16_t year;
+    //
+    //
+    uint8_t month;
 } hobd_imu_time3_s;
+
+
+/**
+ * @brief IMU time 4 message.
+ *
+ * Message size (CAN frame DLC): 8 bytes
+ * CAN frame ID: \ref HOBD_CAN_ID_IMU_TIME4
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    uint8_t day;
+    //
+    //
+    uint8_t hour;
+    //
+    //
+    uint8_t min;
+    //
+    //
+    uint8_t sec;
+    //
+    //
+    uint32_t nanosec;
+} hobd_imu_time4_s;
 
 
 /**
