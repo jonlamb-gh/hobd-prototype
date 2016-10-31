@@ -711,6 +711,291 @@ typedef struct
 } hobd_gps_heading2_s;
 
 
+/**
+ * @brief IMU time 1 message.
+ *
+ * Message size (CAN frame DLC): 8 bytes
+ * CAN frame ID: \ref TODO
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    uint32_t rx_time; /*!< Local rx millisecond timestamp when the IMU time data was received. [milliseconds] */
+    //
+    //
+    uint16_t sample_count;
+    //
+    //
+    uint8_t status;
+    //
+    //
+    uint8_t flags;
+} hobd_imu_time1_s;
+
+
+/**
+ * @brief IMU time 2 message.
+ *
+ * Message size (CAN frame DLC): 5 bytes
+ * CAN frame ID: \ref TODO
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    uint8_t month;
+    //
+    //
+    uint8_t day;
+    //
+    //
+    uint8_t hour;
+    //
+    //
+    uint8_t min;
+    //
+    //
+    uint8_t sec;
+} hobd_imu_time2_s;
+
+
+/**
+ * @brief IMU time 3 message.
+ *
+ * Message size (CAN frame DLC): 6 bytes
+ * CAN frame ID: \ref TODO
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    uint32_t nanosec;
+    //
+    //
+    uint16_t year;
+} hobd_imu_time3_s;
+
+
+/**
+ * @brief IMU geodetic position 1 message.
+ *
+ * Message size (CAN frame DLC): 8 bytes
+ * CAN frame ID: \ref TODO
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    float latitude; /*!< Latitude. [degrees] */
+    //
+    //
+    float longitude; /*!< Longitude. [degrees] */
+} hobd_imu_pos_llh1_s;
+
+
+/**
+ * @brief IMU geodetic position 2 message.
+ *
+ * Message size (CAN frame DLC): 4 bytes
+ * CAN frame ID: \ref TODO
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    float height; /*!< Height. [meters] */
+} hobd_imu_pos_llh2_s;
+
+
+/**
+ * @brief IMU NED velocity 1 message.
+ *
+ * Message size (CAN frame DLC): 8 bytes
+ * CAN frame ID: \ref TODO
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    float north; /*!< Velocity North coordinate. [meters/second] */
+    //
+    //
+    float east; /*!< Velocity East coordinate. [meters/second] */
+} hobd_imu_vel_ned1_s;
+
+
+/**
+ * @brief IMU NED velocity 2 message.
+ *
+ * Message size (CAN frame DLC): 4 bytes
+ * CAN frame ID: \ref TODO
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    float down; /*!< Velocity Down coordinate. [meters/second] */
+} hobd_imu_vel_ned2_s;
+
+
+/**
+ * @brief IMU orientation quaternion 1 message.
+ *
+ * Message size (CAN frame DLC): 8 bytes
+ * CAN frame ID: \ref TODO
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    float q1;
+    //
+    //
+    float q2;
+} hobd_imu_orient_quat1_s;
+
+
+/**
+ * @brief IMU orientation quaternion 2 message.
+ *
+ * Message size (CAN frame DLC): 8 bytes
+ * CAN frame ID: \ref TODO
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    float q3;
+    //
+    //
+    float q4;
+} hobd_imu_orient_quat2_s;
+
+
+/**
+ * @brief IMU rate of turn 1 message.
+ *
+ * Message size (CAN frame DLC): 8 bytes
+ * CAN frame ID: \ref TODO
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    float x;
+    //
+    //
+    float y;
+} hobd_imu_rate_of_turn1_s;
+
+
+/**
+ * @brief IMU rate of turn 2 message.
+ *
+ * Message size (CAN frame DLC): 4 bytes
+ * CAN frame ID: \ref TODO
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    float z;
+} hobd_imu_rate_of_turn2_s;
+
+
+/**
+ * @brief IMU acceleration 1 message.
+ *
+ * Message size (CAN frame DLC): 8 bytes
+ * CAN frame ID: \ref TODO
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    float x;
+    //
+    //
+    float y;
+} hobd_imu_accel1_s;
+
+
+/**
+ * @brief IMU acceleration 2 message.
+ *
+ * Message size (CAN frame DLC): 4 bytes
+ * CAN frame ID: \ref TODO
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    float z;
+} hobd_imu_accel2_s;
+
+
+/**
+ * @brief IMU magnetic field 1 message.
+ *
+ * Message size (CAN frame DLC): 8 bytes
+ * CAN frame ID: \ref TODO
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    float x;
+    //
+    //
+    float y;
+} hobd_imu_magf1_s;
+
+
+/**
+ * @brief IMU magnetic field 2 message.
+ *
+ * Message size (CAN frame DLC): 4 bytes
+ * CAN frame ID: \ref TODO
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    float z;
+} hobd_imu_magf2_s;
+
+
 
 
 #endif	/* HOBD_H */

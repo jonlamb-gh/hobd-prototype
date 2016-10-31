@@ -76,8 +76,7 @@ static void send_heartbeat(
             &now );
 
     // publish if interval met/exceeded
-    if( hobd_heartbeat.counter == 0 )
-//    if( (send_now != 0) || (delta >= HOBD_CAN_TX_INTERVAL_HEARTBEAT) )
+    if( (send_now != 0) || (delta >= HOBD_CAN_TX_INTERVAL_HEARTBEAT) )
     {
         // update last publish timestamp, ms
         last_tx_heartbeat = now;
@@ -94,7 +93,6 @@ static void send_heartbeat(
         {
             diagnostics_set_warn( HOBD_HEARTBEAT_WARN_CANBUS );
         }
-#warning "TESTING"
     }
 }
 

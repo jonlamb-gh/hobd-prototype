@@ -141,6 +141,7 @@ static uint8_t process_buffer( void )
 //
 static void *xbus_alloc_cb( size_t size )
 {
+#warning "TODO - solution to message memory buffer"
     return (void*) &xbus_buffer[0];
 }
 
@@ -155,10 +156,24 @@ static void xbus_free_cb( void const * buffer )
 //
 static void handle_message_cb( struct XbusMessage const * message )
 {
-//    led_toggle();
-#warning "TESTING"
-    uint8_t data[1];
-    (void) canbus_send( 55, 1, &data[0] );
+#warning "TODO - message handler - may need to add support for double types or configure for floats"
+    // TODO
+//    float ori[4];
+//    if (XbusMessage_getDataItem(ori, XDI_Quaternion, message))
+//    {
+//        pc.printf(" Orientation: (% .3f, % .3f, % .3f, % .3f)", ori[0], ori[1],
+//                ori[2], ori[3]);
+//    }
+//    float acc[3];
+//    if (XbusMessage_getDataItem(acc, XDI_Acceleration, message))
+//    {
+//        pc.printf(" Acceleration: (% .3f, % .3f, % .3f)", acc[0], acc[1], acc[2]);
+//    }
+//    float gyr[3];
+//    if (XbusMessage_getDataItem(gyr, XDI_RateOfTurn, message))
+//    {
+//        pc.printf(" Rate Of Turn: (% .3f, % .3f, % .3f)", gyr[0], gyr[1], gyr[2]);
+//    }
 }
 
 
