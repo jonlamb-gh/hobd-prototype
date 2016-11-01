@@ -30,6 +30,7 @@ typedef enum
 {
     LED_STATE_OFF,
     LED_STATE_SLOW_BLINK,
+    LED_STATE_MED_BLINK,
     LED_STATE_FAST_BLINK,
     LED_STATE_ON,
 } led_state_kind;
@@ -75,6 +76,7 @@ static const uint32_t led_blink_intervals[] =
 {
     [LED_STATE_OFF] = 0,
     [LED_STATE_SLOW_BLINK] = DIAGNOSTICS_SLOW_BLINK_INTERVAL,
+    [LED_STATE_MED_BLINK] = DIAGNOSTICS_MED_BLINK_INTERVAL,
     [LED_STATE_FAST_BLINK] = DIAGNOSTICS_FAST_BLINK_INTERVAL,
     [LED_STATE_ON] = 0
 };
@@ -186,7 +188,7 @@ static void update_led(
         // GPS or IMU has a lock
         if( gps_fix != 0 )
         {
-            led_state = LED_STATE_SLOW_BLINK;
+            led_state = LED_STATE_MED_BLINK;
         }
         else if( imu_fix != 0 )
         {
@@ -201,7 +203,7 @@ static void update_led(
     else
     {
         // neither GPS or IMU has lock
-        led_state = LED_STATE_OFF;
+        led_state = LED_STATE_SLOW_BLINK;
     }
 
     // update LED

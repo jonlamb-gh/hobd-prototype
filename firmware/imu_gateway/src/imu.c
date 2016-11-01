@@ -740,7 +740,7 @@ static void handle_message_cb(
                 (const struct XbusMessage *) message,
                 &rx_timestamp );
 
-        
+
         parse_gps_sol_time(
                 (const struct XbusMessage *) message,
                 &rx_timestamp );
@@ -774,15 +774,21 @@ static void handle_message_cb(
 static void update_imu_fix_timeout(
         const uint32_t * const now )
 {
-    // get time since last rx update
-    const uint32_t delta = time_get_delta(
-            &last_rx_status_time,
-            now );
+    const uint16_t warn = diagnostics_get_warn();
 
-    // set warning if interval met/exceeded
-    if( delta >= IMU_FIX_WARN_TIMEOUT )
+    // if warn not set
+    if( (warn & HOBD_HEARTBEAT_WARN_NO_IMU_FIX) == 0 )
     {
-        diagnostics_set_warn( HOBD_HEARTBEAT_WARN_NO_IMU_FIX );
+        // get time since last rx update
+        const uint32_t delta = time_get_delta(
+                &last_rx_status_time,
+                now );
+
+        // set warning if interval met/exceeded
+        if( delta >= IMU_FIX_WARN_TIMEOUT )
+        {
+            diagnostics_set_warn( HOBD_HEARTBEAT_WARN_NO_IMU_FIX );
+        }
     }
 }
 

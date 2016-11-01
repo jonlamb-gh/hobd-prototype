@@ -558,15 +558,21 @@ static uint8_t publish_group_f( void )
 static void update_gps_fix_timeout(
         const uint32_t * const now )
 {
-    // get time since last rx update
-    const uint32_t delta = time_get_delta(
-            &last_rx_gps_time,
-            now );
+    const uint16_t warn = diagnostics_get_warn();
 
-    // set warning if interval met/exceeded
-    if( delta >= GPS_FIX_WARN_TIMEOUT )
+    // if warn not set
+    if( (warn & HOBD_HEARTBEAT_WARN_NO_GPS_FIX) == 0 )
     {
-        diagnostics_set_warn( HOBD_HEARTBEAT_WARN_NO_GPS_FIX );
+        // get time since last rx update
+        const uint32_t delta = time_get_delta(
+                &last_rx_gps_time,
+                now );
+
+        // set warning if interval met/exceeded
+        if( delta >= GPS_FIX_WARN_TIMEOUT )
+        {
+            diagnostics_set_warn( HOBD_HEARTBEAT_WARN_NO_GPS_FIX );
+        }
     }
 }
 
