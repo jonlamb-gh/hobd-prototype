@@ -84,6 +84,8 @@
 #define HOBD_HEARTBEAT_WARN_IMUBUS (1 << 7)
 #define HOBD_HEARTBEAT_WARN_GPSBUS (1 << 8)
 #define HOBD_HEARTBEAT_WARN_OBDBUS (1 << 9)
+#define HOBD_HEARTBEAT_WARN_NO_GPS_FIX (1 << 10)
+#define HOBD_HEARTBEAT_WARN_NO_IMU_FIX (1 << 11)
 
 
 //
@@ -95,6 +97,7 @@
 #define HOBD_HEARTBEAT_ERROR_GPS_ANT1 (1 << 10)
 #define HOBD_HEARTBEAT_ERROR_GPS_ANT2 (1 << 11)
 #define HOBD_HEARTBEAT_ERROR_GPS_STATUS (1 << 12)
+#define HOBD_HEARTBEAT_ERROR_IMU_STATUS (1 << 13)
 
 
 //
@@ -721,7 +724,7 @@ typedef struct
     uint16_t week_number; /*!< GPS week number. [weeks] */
     //
     //
-    uint8_t gps_fix;
+    uint8_t gps_fix_type;
     //
     //
     uint8_t flags;
@@ -762,7 +765,10 @@ typedef struct
     uint32_t rx_time; /*!< Local rx millisecond timestamp when the IMU UTC time data was received. [milliseconds] */
     //
     //
-    uint8_t flags;
+    uint8_t flags : 7;
+    //
+    //
+    uint8_t gps_fix : 1;
     //
     //
     uint16_t year;

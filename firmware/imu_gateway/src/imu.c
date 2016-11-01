@@ -36,6 +36,12 @@
 //
 #define XBUS_BUFFER_SIZE (512)
 
+
+//
+#define XS_STATUS_BIT_SELF_TEST (1 << 0)
+#define XS_STATUS_BIT_GPS_FIX (1 << 2)
+
+
 // IMU is on UART0
 #define UART_RX_INTERRUPT USART0_RX_vect
 #define UART_UCSRA UCSR0A
@@ -459,7 +465,7 @@ static void parse_utc_time(
         DEBUG_PUTS( "imu_utc_time\n" );
 
         imu_data.group_c.utc_time1.rx_time = *rx_timestamp;
-        imu_data.group_c.utc_time1.flags = utc_time.flags;
+        imu_data.group_c.utc_time1.flags = (utc_time.flags & 0x7F);
         imu_data.group_c.utc_time1.year = utc_time.year;
         imu_data.group_c.utc_time1.month = utc_time.month;
         imu_data.group_c.utc_time2.day = utc_time.day;
@@ -655,7 +661,21 @@ static void parse_status_byte(
     {
         DEBUG_PUTS( "imu_status\n" );
 
-#warning "TODO - IMU status byte handling"
+        if( (status_byte & XS_STATUS_BIT_GPS_FIX) == 0 )
+        {
+            imu_data.group_c.utc_time1.gps_fix = 0;
+            diagnostics_set_warn( HOBD_HEARTBEAT_WARN_NO_IMU_FIX );
+        }
+        else
+        {
+            imu_data.group_c.utc_time1.gps_fix = 1;
+            diagnostics_clear_warn( HOBD_HEARTBEAT_WARN_NO_IMU_FIX );
+        }
+
+        if( (status_byte & XS_STATUS_BIT_SELF_TEST) == 0 )
+        {
+            diagnostics_set_error( HOBD_HEARTBEAT_ERROR_IMU_STATUS );
+        }
     }
 }
 
