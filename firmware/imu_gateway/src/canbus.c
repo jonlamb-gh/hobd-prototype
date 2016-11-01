@@ -57,7 +57,8 @@ uint8_t canbus_init( void )
 {
     uint8_t ret = 0;
 
-    if( can_init( 0 ) == 0 )
+    // wait for CAN to initialize or wdt will reset
+    while( can_init( 0 ) == 0 )
     {
         ret = 1;
     }

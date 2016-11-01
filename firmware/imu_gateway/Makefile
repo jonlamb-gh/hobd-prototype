@@ -68,6 +68,10 @@ PRJSRC= ../avrcan_at90can128/bsp/src/timer8_drv.c \
 	../avrcan_at90can128/bsp/src/rtc_drv.c \
 	../avrcan_at90can128/bsp/src/can_drv.c \
 	../avrcan_at90can128/bsp/src/can_lib.c \
+	src/xbusmessage.c \
+	src/xbusparser.c \
+	src/xbusutility.c \
+	src/xsdeviceid.c \
 	src/edc.c \
 	src/sbp.c \
 	src/time.c \
@@ -75,10 +79,11 @@ PRJSRC= ../avrcan_at90can128/bsp/src/timer8_drv.c \
 	src/canbus.c \
 	src/diagnostics.c \
 	src/gps.c \
+	src/imu.c \
 	src/main.c
 
 # additional includes (e.g. -I/path/to/mydir)
-INC=-Iinclude -I../avrcan_at90can128/bsp/include
+INC=-Iinclude -Iinclude/libxsens -I../avrcan_at90can128/bsp/include
 
 # libraries to link in (e.g. -lmylib)
 LIBS=-lm
@@ -133,9 +138,11 @@ CFLAGS=-I. $(INC) -g -mmcu=$(MCU) -O$(OPTLEVEL) \
 	-std=gnu99 \
 	-Wall               \
 	-DBUILD_TARGET_AVR \
-	-DBUILD_TYPE_DEBUG \
 	-Wa,-ahlms=$(firstword                  \
 	$(filter %.lst, $(<:.c=.lst)))
+
+# DEBUG/IMU
+#CFLAGS += -DBUILD_TYPE_DEBUG
 
 # c++ specific flags
 CPPFLAGS=-fno-exceptions               \

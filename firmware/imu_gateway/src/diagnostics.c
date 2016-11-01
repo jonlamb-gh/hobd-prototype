@@ -78,8 +78,6 @@ static void send_heartbeat(
     // publish if interval met/exceeded
     if( (send_now != 0) || (delta >= HOBD_CAN_TX_INTERVAL_HEARTBEAT) )
     {
-        led_toggle();
-
         // update last publish timestamp, ms
         last_tx_heartbeat = now;
 
@@ -164,9 +162,6 @@ void diagnostics_set_error(
         const uint16_t error )
 {
     hobd_heartbeat.error_register |= error;
-
-    // publish heartbeat message immediately
-//    send_heartbeat( 1 );
 }
 
 
@@ -182,9 +177,6 @@ void diagnostics_clear_error(
         const uint16_t error )
 {
     hobd_heartbeat.error_register &= ~error;
-
-    // publish heartbeat message immediately
-//    send_heartbeat( 1 );
 }
 
 
