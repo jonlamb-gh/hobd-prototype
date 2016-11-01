@@ -84,6 +84,30 @@ static imu_data_s imu_data;
 static void hw_init( void );
 
 
+//
+static uint8_t process_buffer( void );
+
+
+//
+static void *xbus_alloc_cb( size_t size );
+
+
+//
+static void xbus_free_cb( void const * buffer );
+
+
+//
+static uint8_t publish_group_a( void );
+static uint8_t publish_group_b( void );
+static uint8_t publish_group_c( void );
+static uint8_t publish_group_d( void );
+static uint8_t publish_group_e( void );
+static uint8_t publish_group_f( void );
+static uint8_t publish_group_h( void );
+static uint8_t publish_group_i( void );
+static uint8_t publish_group_j( void );
+
+
 
 
 // *****************************************************
@@ -158,6 +182,58 @@ static void xbus_free_cb( void const * buffer )
 
 
 //
+static uint8_t publish_group_a( void )
+{
+    uint8_t ret = 0;
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_IMU_SAMPLE_TIME,
+            (uint8_t) sizeof(imu_data.group_a.sample_time),
+            (const uint8_t *) &imu_data.group_a.sample_time );
+
+    return ret;
+}
+
+
+//
+static uint8_t publish_group_b( void )
+{
+    uint8_t ret = 0;
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_IMU_TIME1,
+            (uint8_t) sizeof(imu_data.group_b.time1),
+            (const uint8_t *) &imu_data.group_b.time1 );
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_IMU_TIME2,
+            (uint8_t) sizeof(imu_data.group_b.time2),
+            (const uint8_t *) &imu_data.group_b.time2 );
+
+    return ret;
+}
+
+
+//
+static uint8_t publish_group_c( void )
+{
+    uint8_t ret = 0;
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_IMU_UTC_TIME1,
+            (uint8_t) sizeof(imu_data.group_c.utc_time1),
+            (const uint8_t *) &imu_data.group_c.utc_time1 );
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_IMU_UTC_TIME2,
+            (uint8_t) sizeof(imu_data.group_c.utc_time1),
+            (const uint8_t *) &imu_data.group_c.utc_time1 );
+
+    return ret;
+}
+
+
+//
 static uint8_t publish_group_d( void )
 {
     uint8_t ret = 0;
@@ -190,6 +266,91 @@ static uint8_t publish_group_e( void )
             HOBD_CAN_ID_IMU_RATE_OF_TURN2,
             (uint8_t) sizeof(imu_data.group_e.rate_of_turn2),
             (const uint8_t *) &imu_data.group_e.rate_of_turn2 );
+
+    return ret;
+}
+
+
+//
+static uint8_t publish_group_f( void )
+{
+    uint8_t ret = 0;
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_IMU_ACCEL1,
+            (uint8_t) sizeof(imu_data.group_f.accel1),
+            (const uint8_t *) &imu_data.group_f.accel1 );
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_IMU_ACCEL2,
+            (uint8_t) sizeof(imu_data.group_f.accel2),
+            (const uint8_t *) &imu_data.group_f.accel2 );
+
+    return ret;
+}
+
+
+//
+static uint8_t publish_group_g( void )
+{
+    uint8_t ret = 0;
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_IMU_MAGF1,
+            (uint8_t) sizeof(imu_data.group_g.magf1),
+            (const uint8_t *) &imu_data.group_g.magf1 );
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_IMU_MAGF2,
+            (uint8_t) sizeof(imu_data.group_g.magf2),
+            (const uint8_t *) &imu_data.group_g.magf2 );
+
+    return ret;
+}
+
+
+//
+static uint8_t publish_group_h( void )
+{
+    uint8_t ret = 0;
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_IMU_POS_LLH1,
+            (uint8_t) sizeof(imu_data.group_h.pos_llh1),
+            (const uint8_t *) &imu_data.group_h.pos_llh1 );
+
+    return ret;
+}
+
+
+//
+static uint8_t publish_group_i( void )
+{
+    uint8_t ret = 0;
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_IMU_POS_LLH2,
+            (uint8_t) sizeof(imu_data.group_i.pos_llh2),
+            (const uint8_t *) &imu_data.group_i.pos_llh2 );
+
+    return ret;
+}
+
+
+//
+static uint8_t publish_group_j( void )
+{
+    uint8_t ret = 0;
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_IMU_VEL_NED1,
+            (uint8_t) sizeof(imu_data.group_j.vel_ned1),
+            (const uint8_t *) &imu_data.group_j.vel_ned1 );
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_IMU_VEL_NED2,
+            (uint8_t) sizeof(imu_data.group_j.vel_ned2),
+            (const uint8_t *) &imu_data.group_j.vel_ned2 );
 
     return ret;
 }
@@ -428,10 +589,13 @@ static void handle_message_cb( struct XbusMessage const * message )
     }
     else if( message->data != NULL )
     {
-        // TODO
         #warning "TODO - message handler - group B time data"
 
         parse_sample_time_fine(
+                (const struct XbusMessage *) message,
+                &rx_timestamp );
+
+        parse_utc_time(
                 (const struct XbusMessage *) message,
                 &rx_timestamp );
 
@@ -553,13 +717,24 @@ uint8_t imu_update( void )
     // check for any ready groups
     if( imu_data.ready_groups != IMU_GROUP_NONE_READY )
     {
-#warning "TODO - handle groups"
         // handle groups in order/priority
-//        if( imu_is_group_ready( IMU_GROUP_A_READY ) != 0 )
-//        {
-//            ret |= publish_group_a();
-//            imu_clear_group_ready( IMU_GROUP_A_READY );
-//        }
+        if( imu_is_group_ready( IMU_GROUP_A_READY ) != 0 )
+        {
+            ret |= publish_group_a();
+            imu_clear_group_ready( IMU_GROUP_A_READY );
+        }
+
+        if( imu_is_group_ready( IMU_GROUP_B_READY ) != 0 )
+        {
+            ret |= publish_group_b();
+            imu_clear_group_ready( IMU_GROUP_B_READY );
+        }
+
+        if( imu_is_group_ready( IMU_GROUP_C_READY ) != 0 )
+        {
+            ret |= publish_group_c();
+            imu_clear_group_ready( IMU_GROUP_C_READY );
+        }
 
         if( imu_is_group_ready( IMU_GROUP_D_READY ) != 0 )
         {
@@ -571,6 +746,36 @@ uint8_t imu_update( void )
         {
             ret |= publish_group_e();
             imu_clear_group_ready( IMU_GROUP_E_READY );
+        }
+
+        if( imu_is_group_ready( IMU_GROUP_F_READY ) != 0 )
+        {
+            ret |= publish_group_f();
+            imu_clear_group_ready( IMU_GROUP_F_READY );
+        }
+
+        if( imu_is_group_ready( IMU_GROUP_G_READY ) != 0 )
+        {
+            ret |= publish_group_g();
+            imu_clear_group_ready( IMU_GROUP_G_READY );
+        }
+
+        if( imu_is_group_ready( IMU_GROUP_H_READY ) != 0 )
+        {
+            ret |= publish_group_h();
+            imu_clear_group_ready( IMU_GROUP_H_READY );
+        }
+
+        if( imu_is_group_ready( IMU_GROUP_I_READY ) != 0 )
+        {
+            ret |= publish_group_i();
+            imu_clear_group_ready( IMU_GROUP_I_READY );
+        }
+
+        if( imu_is_group_ready( IMU_GROUP_J_READY ) != 0 )
+        {
+            ret |= publish_group_j();
+            imu_clear_group_ready( IMU_GROUP_J_READY );
         }
     }
 

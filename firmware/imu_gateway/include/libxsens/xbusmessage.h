@@ -70,7 +70,6 @@ enum XsDataIdentifier
 };
 
 // TODO - parsers for
-// XDI_UtcTime = 0x1010
 // XDI_ltow = 0x1030
 // XDI_GpsDop = 0x8830
 // XDI_GpsSol = 0x8840
@@ -142,6 +141,26 @@ typedef struct
 
     uint8_t flags;
 } XsUtcTime;
+
+
+typedef struct
+{
+    uint32_t nanosec;
+
+    uint16_t year;
+
+    uint8_t month;
+
+    uint8_t day;
+
+    uint8_t hour;
+
+    uint8_t min;
+
+    uint8_t sec;
+
+    uint8_t flags;
+} XsGpsUtcTime;
 
 
 size_t XbusMessage_format(uint8_t* raw, struct XbusMessage const* message, enum XbusLowLevelFormat format);

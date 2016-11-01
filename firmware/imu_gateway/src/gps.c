@@ -153,25 +153,10 @@ static void heading_callback(
 
 //
 static uint8_t publish_group_a( void );
-
-
-//
 static uint8_t publish_group_b( void );
-
-
-//
 static uint8_t publish_group_c( void );
-
-
-//
 static uint8_t publish_group_d( void );
-
-
-//
 static uint8_t publish_group_e( void );
-
-
-//
 static uint8_t publish_group_f( void );
 
 
