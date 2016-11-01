@@ -108,6 +108,68 @@ static uint8_t publish_group_i( void );
 static uint8_t publish_group_j( void );
 
 
+//
+static void parse_status_byte(
+        const struct XbusMessage * const message );
+
+
+//
+static void parse_sample_time_fine(
+        const struct XbusMessage * const message,
+        const uint32_t * const rx_timestamp );
+
+
+//
+static void parse_utc_time(
+        const struct XbusMessage * const message,
+        const uint32_t * const rx_timestamp );
+
+
+//
+static void parse_orient_quat(
+        const struct XbusMessage * const message );
+
+
+//
+static void parse_rate_of_turn(
+        const struct XbusMessage * const message );
+
+
+//
+static void parse_free_accel(
+        const struct XbusMessage * const message );
+
+
+//
+static void parse_magf(
+        const struct XbusMessage * const message );
+
+
+//
+static void parse_pos_ll(
+        const struct XbusMessage * const message );
+
+
+//
+static void parse_pos_h(
+        const struct XbusMessage * const message );
+
+
+//
+static void parse_vel_ned(
+        const struct XbusMessage * const message );
+
+
+//
+static void parse_status_byte(
+        const struct XbusMessage * const message );
+
+
+//
+static void handle_message_cb(
+        struct XbusMessage const * message );
+
+
 
 
 // *****************************************************
@@ -461,7 +523,7 @@ static void parse_rate_of_turn(
 
 
 //
-static void parse_accel(
+static void parse_free_accel(
         const struct XbusMessage * const message )
 {
 #warning "USING FreeAcceleration instead of Acceleration"
@@ -474,7 +536,7 @@ static void parse_accel(
 
     if( status != 0 )
     {
-        DEBUG_PUTS( "imu_accel\n" );
+        DEBUG_PUTS( "imu_free_accel\n" );
 
         imu_data.group_f.accel1.x = accel[ 0 ];
         imu_data.group_f.accel1.y = accel[ 1 ];
@@ -579,7 +641,28 @@ static void parse_vel_ned(
 
 
 //
-static void handle_message_cb( struct XbusMessage const * message )
+static void parse_status_byte(
+        const struct XbusMessage * const message )
+{
+    uint8_t status_byte = 0;
+
+    const uint8_t status = XbusMessage_getDataItem(
+            &status_byte,
+            XDI_StatusByte,
+            message );
+
+    if( status != 0 )
+    {
+        DEBUG_PUTS( "imu_status\n" );
+
+#warning "TODO - IMU status byte handling"
+    }
+}
+
+
+//
+static void handle_message_cb(
+        struct XbusMessage const * message )
 {
     const uint32_t rx_timestamp = time_get_ms();
 
@@ -603,7 +686,7 @@ static void handle_message_cb( struct XbusMessage const * message )
 
         parse_rate_of_turn( (const struct XbusMessage *) message );
 
-        parse_accel( (const struct XbusMessage *) message );
+        parse_free_accel( (const struct XbusMessage *) message );
 
         parse_magf( (const struct XbusMessage *) message );
 
@@ -612,6 +695,8 @@ static void handle_message_cb( struct XbusMessage const * message )
         parse_pos_h( (const struct XbusMessage *) message );
 
         parse_vel_ned( (const struct XbusMessage *) message );
+
+        parse_status_byte( (const struct XbusMessage *) message );
     }
 }
 

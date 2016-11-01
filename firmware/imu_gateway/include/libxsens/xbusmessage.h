@@ -65,6 +65,7 @@ enum XsDataIdentifier
     XDI_GpsSol            = 0x8840,
     XDI_GpsTimeUtc        = 0x8880,
 	XDI_MagneticField     = 0xC020,
+    XDI_StatusByte        = 0xE010,
 	XDI_StatusWord        = 0xE020,
     XDI_VelocityXYZ       = 0xD010
 };
@@ -141,26 +142,6 @@ typedef struct
 
     uint8_t flags;
 } XsUtcTime;
-
-
-typedef struct
-{
-    uint32_t nanosec;
-
-    uint16_t year;
-
-    uint8_t month;
-
-    uint8_t day;
-
-    uint8_t hour;
-
-    uint8_t min;
-
-    uint8_t sec;
-
-    uint8_t flags;
-} XsGpsUtcTime;
 
 
 size_t XbusMessage_format(uint8_t* raw, struct XbusMessage const* message, enum XbusLowLevelFormat format);

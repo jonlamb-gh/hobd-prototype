@@ -219,6 +219,10 @@ bool XbusMessage_getDataItem(void* item, enum XsDataIdentifier id, struct XbusMe
 				readFloats(item, raw, 1);
 				break;
 
+            case XDI_StatusByte:
+                raw = XbusUtility_readU8(item, raw);
+                break;
+
             case XDI_UtcTime:
                 raw = XbusUtility_readU32( &((XsUtcTime*) item)->nanosec, raw );
                 raw = XbusUtility_readU16( &((XsUtcTime*) item)->year, raw );
