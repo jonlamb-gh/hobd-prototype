@@ -54,22 +54,23 @@
 
 
 // IMU ID's
-#define HOBD_CAN_ID_IMU_TIME1 (0x060)
-#define HOBD_CAN_ID_IMU_TIME2 (0x061)
-#define HOBD_CAN_ID_IMU_TIME3 (0x062)
-#define HOBD_CAN_ID_IMU_TIME4 (0x063)
-#define HOBD_CAN_ID_IMU_POS_LLH1 (0x064)
-#define HOBD_CAN_ID_IMU_POS_LLH2 (0x065)
-#define HOBD_CAN_ID_IMU_VEL_NED1 (0x066)
-#define HOBD_CAN_ID_IMU_VEL_NED2 (0x067)
-#define HOBD_CAN_ID_IMU_ORIENT_QUAT1 (0x068)
-#define HOBD_CAN_ID_IMU_ORIENT_QUAT2 (0x069)
-#define HOBD_CAN_ID_IMU_RATE_OF_TURN1 (0x06A)
-#define HOBD_CAN_ID_IMU_RATE_OF_TURN2 (0x06B)
-#define HOBD_CAN_ID_IMU_ACCEL1 (0x06C)
-#define HOBD_CAN_ID_IMU_ACCEL2 (0x06D)
-#define HOBD_CAN_ID_IMU_MAGF1 (0x06E)
-#define HOBD_CAN_ID_IMU_MAGF2 (0x06F)
+#define HOBD_CAN_ID_IMU_SAMPLE_TIME (0x060)
+#define HOBD_CAN_ID_IMU_TIME1 (0x061)
+#define HOBD_CAN_ID_IMU_TIME2 (0x062)
+#define HOBD_CAN_ID_IMU_UTC_TIME1 (0x063)
+#define HOBD_CAN_ID_IMU_UTC_TIME2 (0x064)
+#define HOBD_CAN_ID_IMU_POS_LLH1 (0x065)
+#define HOBD_CAN_ID_IMU_POS_LLH2 (0x066)
+#define HOBD_CAN_ID_IMU_VEL_NED1 (0x067)
+#define HOBD_CAN_ID_IMU_VEL_NED2 (0x068)
+#define HOBD_CAN_ID_IMU_ORIENT_QUAT1 (0x069)
+#define HOBD_CAN_ID_IMU_ORIENT_QUAT2 (0x06A)
+#define HOBD_CAN_ID_IMU_RATE_OF_TURN1 (0x06B)
+#define HOBD_CAN_ID_IMU_RATE_OF_TURN2 (0x06C)
+#define HOBD_CAN_ID_IMU_ACCEL1 (0x06D)
+#define HOBD_CAN_ID_IMU_ACCEL2 (0x06E)
+#define HOBD_CAN_ID_IMU_MAGF1 (0x06F)
+#define HOBD_CAN_ID_IMU_MAGF2 (0x070)
 
 
 //
@@ -684,6 +685,25 @@ typedef struct
 
 
 /**
+ * @brief IMU sample time message.
+ *
+ * Message size (CAN frame DLC): 8 bytes
+ * CAN frame ID: \ref HOBD_CAN_ID_IMU_SAMPLE_TIME
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    uint32_t rx_time; /*!< Local rx millisecond timestamp when the IMU time data was received. [milliseconds] */
+    //
+    //
+    uint32_t sample_time;
+} hobd_imu_sample_time_s;
+
+
+/**
  * @brief IMU time 1 message.
  *
  * Message size (CAN frame DLC): 8 bytes
@@ -695,10 +715,16 @@ typedef struct
 {
     //
     //
-    uint32_t rx_time; /*!< Local rx millisecond timestamp when the IMU time data was received. [milliseconds] */
+    uint32_t rx_time; /*!< Local rx millisecond timestamp when the IMU UTC time data was received. [milliseconds] */
     //
     //
-    uint32_t status;
+    uint16_t week_number; /*!< GPS week number. [weeks] */
+    //
+    //
+    uint8_t gps_fix;
+    //
+    //
+    uint8_t flags;
 } hobd_imu_time1_s;
 
 
@@ -722,10 +748,10 @@ typedef struct
 
 
 /**
- * @brief IMU time 3 message.
+ * @brief IMU UTC time 1 message.
  *
- * Message size (CAN frame DLC): 6 bytes
- * CAN frame ID: \ref HOBD_CAN_ID_IMU_TIME3
+ * Message size (CAN frame DLC): 8 bytes
+ * CAN frame ID: \ref HOBD_CAN_ID_IMU_UTC_TIME1
  * Transmit rate: TODO ms
  *
  */
@@ -733,7 +759,7 @@ typedef struct
 {
     //
     //
-    uint16_t week_number; /*!< GPS week number. [weeks] */
+    uint32_t rx_time; /*!< Local rx millisecond timestamp when the IMU UTC time data was received. [milliseconds] */
     //
     //
     uint8_t flags;
@@ -743,14 +769,14 @@ typedef struct
     //
     //
     uint8_t month;
-} hobd_imu_time3_s;
+} hobd_imu_utc_time1_s;
 
 
 /**
- * @brief IMU time 4 message.
+ * @brief IMU UTC time 2 message.
  *
  * Message size (CAN frame DLC): 8 bytes
- * CAN frame ID: \ref HOBD_CAN_ID_IMU_TIME4
+ * CAN frame ID: \ref HOBD_CAN_ID_IMU_UTC_TIME2
  * Transmit rate: TODO ms
  *
  */
@@ -771,7 +797,7 @@ typedef struct
     //
     //
     uint32_t nanosec;
-} hobd_imu_time4_s;
+} hobd_imu_utc_time2_s;
 
 
 /**

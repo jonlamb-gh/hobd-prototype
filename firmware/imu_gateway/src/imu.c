@@ -158,38 +158,38 @@ static void xbus_free_cb( void const * buffer )
 
 
 //
-static uint8_t publish_group_b( void )
+static uint8_t publish_group_d( void )
 {
     uint8_t ret = 0;
 
     ret |= canbus_send(
             HOBD_CAN_ID_IMU_ORIENT_QUAT1,
-            (uint8_t) sizeof(imu_data.group_b.orient_quat1),
-            (const uint8_t *) &imu_data.group_b.orient_quat1 );
+            (uint8_t) sizeof(imu_data.group_d.orient_quat1),
+            (const uint8_t *) &imu_data.group_d.orient_quat1 );
 
     ret |= canbus_send(
             HOBD_CAN_ID_IMU_ORIENT_QUAT2,
-            (uint8_t) sizeof(imu_data.group_b.orient_quat2),
-            (const uint8_t *) &imu_data.group_b.orient_quat2 );
+            (uint8_t) sizeof(imu_data.group_d.orient_quat2),
+            (const uint8_t *) &imu_data.group_d.orient_quat2 );
 
     return ret;
 }
 
 
 //
-static uint8_t publish_group_c( void )
+static uint8_t publish_group_e( void )
 {
     uint8_t ret = 0;
 
     ret |= canbus_send(
             HOBD_CAN_ID_IMU_RATE_OF_TURN1,
-            (uint8_t) sizeof(imu_data.group_c.rate_of_turn1),
-            (const uint8_t *) &imu_data.group_c.rate_of_turn1 );
+            (uint8_t) sizeof(imu_data.group_e.rate_of_turn1),
+            (const uint8_t *) &imu_data.group_e.rate_of_turn1 );
 
     ret |= canbus_send(
             HOBD_CAN_ID_IMU_RATE_OF_TURN2,
-            (uint8_t) sizeof(imu_data.group_c.rate_of_turn2),
-            (const uint8_t *) &imu_data.group_c.rate_of_turn2 );
+            (uint8_t) sizeof(imu_data.group_e.rate_of_turn2),
+            (const uint8_t *) &imu_data.group_e.rate_of_turn2 );
 
     return ret;
 }
@@ -210,12 +210,12 @@ static void parse_orient_quat(
     {
         DEBUG_PUTS( "imu_orient_quat\n" );
 
-        imu_data.group_b.orient_quat1.q1 = quat[ 0 ];
-        imu_data.group_b.orient_quat1.q2 = quat[ 1 ];
-        imu_data.group_b.orient_quat2.q3 = quat[ 2 ];
-        imu_data.group_b.orient_quat2.q4 = quat[ 3 ];
+        imu_data.group_d.orient_quat1.q1 = quat[ 0 ];
+        imu_data.group_d.orient_quat1.q2 = quat[ 1 ];
+        imu_data.group_d.orient_quat2.q3 = quat[ 2 ];
+        imu_data.group_d.orient_quat2.q4 = quat[ 3 ];
 
-        imu_set_group_ready( IMU_GROUP_B_READY );
+        imu_set_group_ready( IMU_GROUP_D_READY );
     }
 }
 
@@ -235,11 +235,11 @@ static void parse_rate_of_turn(
     {
         DEBUG_PUTS( "imu_rate_of_turn\n" );
 
-        imu_data.group_c.rate_of_turn1.x = gryo[ 0 ];
-        imu_data.group_c.rate_of_turn1.y = gryo[ 1 ];
-        imu_data.group_c.rate_of_turn2.z = gryo[ 2 ];
+        imu_data.group_e.rate_of_turn1.x = gryo[ 0 ];
+        imu_data.group_e.rate_of_turn1.y = gryo[ 1 ];
+        imu_data.group_e.rate_of_turn2.z = gryo[ 2 ];
 
-        imu_set_group_ready( IMU_GROUP_C_READY );
+        imu_set_group_ready( IMU_GROUP_E_READY );
     }
 }
 
@@ -260,11 +260,11 @@ static void parse_accel(
     {
         DEBUG_PUTS( "imu_accel\n" );
 
-        imu_data.group_d.accel1.x = accel[ 0 ];
-        imu_data.group_d.accel1.y = accel[ 1 ];
-        imu_data.group_d.accel2.z = accel[ 2 ];
+        imu_data.group_f.accel1.x = accel[ 0 ];
+        imu_data.group_f.accel1.y = accel[ 1 ];
+        imu_data.group_f.accel2.z = accel[ 2 ];
 
-        imu_set_group_ready( IMU_GROUP_D_READY );
+        imu_set_group_ready( IMU_GROUP_F_READY );
     }
 }
 
@@ -284,11 +284,11 @@ static void parse_magf(
     {
         DEBUG_PUTS( "imu_magf\n" );
 
-        imu_data.group_e.magf1.x = magf[ 0 ];
-        imu_data.group_e.magf1.y = magf[ 1 ];
-        imu_data.group_e.magf2.z = magf[ 2 ];
+        imu_data.group_g.magf1.x = magf[ 0 ];
+        imu_data.group_g.magf1.y = magf[ 1 ];
+        imu_data.group_g.magf2.z = magf[ 2 ];
 
-        imu_set_group_ready( IMU_GROUP_E_READY );
+        imu_set_group_ready( IMU_GROUP_G_READY );
     }
 }
 
@@ -308,10 +308,10 @@ static void parse_pos_ll(
     {
         DEBUG_PUTS( "imu_pos_ll\n" );
 
-        imu_data.group_f.pos_llh1.latitude = lat_lon[ 0 ];
-        imu_data.group_f.pos_llh1.longitude = lat_lon[ 1 ];
+        imu_data.group_h.pos_llh1.latitude = lat_lon[ 0 ];
+        imu_data.group_h.pos_llh1.longitude = lat_lon[ 1 ];
 
-        imu_set_group_ready( IMU_GROUP_F_READY );
+        imu_set_group_ready( IMU_GROUP_H_READY );
     }
 }
 
@@ -331,9 +331,9 @@ static void parse_pos_h(
     {
         DEBUG_PUTS( "imu_pos_h\n" );
 
-        imu_data.group_g.pos_llh2.height = height;
+        imu_data.group_i.pos_llh2.height = height;
 
-        imu_set_group_ready( IMU_GROUP_G_READY );
+        imu_set_group_ready( IMU_GROUP_I_READY );
     }
 }
 
@@ -353,11 +353,11 @@ static void parse_vel_ned(
     {
         DEBUG_PUTS( "imu_vel_ned\n" );
 
-        imu_data.group_h.vel_ned1.north = vel[ 0 ];
-        imu_data.group_h.vel_ned1.east = vel[ 1 ];
-        imu_data.group_h.vel_ned2.down = vel[ 2 ];
+        imu_data.group_j.vel_ned1.north = vel[ 0 ];
+        imu_data.group_j.vel_ned1.east = vel[ 1 ];
+        imu_data.group_j.vel_ned2.down = vel[ 2 ];
 
-        imu_set_group_ready( IMU_GROUP_H_READY );
+        imu_set_group_ready( IMU_GROUP_J_READY );
     }
 }
 
@@ -500,16 +500,16 @@ uint8_t imu_update( void )
 //            imu_clear_group_ready( IMU_GROUP_A_READY );
 //        }
 
-        if( imu_is_group_ready( IMU_GROUP_B_READY ) != 0 )
+        if( imu_is_group_ready( IMU_GROUP_D_READY ) != 0 )
         {
-            ret |= publish_group_b();
-            imu_clear_group_ready( IMU_GROUP_B_READY );
+            ret |= publish_group_d();
+            imu_clear_group_ready( IMU_GROUP_D_READY );
         }
 
-        if( imu_is_group_ready( IMU_GROUP_C_READY ) != 0 )
+        if( imu_is_group_ready( IMU_GROUP_E_READY ) != 0 )
         {
-            ret |= publish_group_c();
-            imu_clear_group_ready( IMU_GROUP_C_READY );
+            ret |= publish_group_e();
+            imu_clear_group_ready( IMU_GROUP_E_READY );
         }
     }
 

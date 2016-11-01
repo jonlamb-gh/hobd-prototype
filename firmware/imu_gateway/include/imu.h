@@ -30,6 +30,8 @@
 #define IMU_GROUP_F_READY (1 << 5)
 #define IMU_GROUP_G_READY (1 << 6)
 #define IMU_GROUP_H_READY (1 << 7)
+#define IMU_GROUP_I_READY (1 << 8)
+#define IMU_GROUP_J_READY (1 << 9)
 
 
 
@@ -46,19 +48,32 @@ typedef struct
     {
         //
         //
+        hobd_imu_sample_time_s sample_time;
+    } group_a;
+    //
+    // IMU_GROUP_B_READY
+    struct
+    {
+        //
+        //
         hobd_imu_time1_s time1;
         //
         //
         hobd_imu_time2_s time2;
-        //
-        //
-        hobd_imu_time3_s time3;
-        //
-        //
-        hobd_imu_time4_s time4;
-    } group_a;
+    } group_b;
     //
-    // IMU_GROUP_B_READY
+    // IMU_GROUP_C_READY
+    struct
+    {
+        //
+        //
+        hobd_imu_utc_time1_s utc_time1;
+        //
+        //
+        hobd_imu_utc_time2_s utc_time2;
+    } group_c;
+    //
+    // IMU_GROUP_D_READY
     struct
     {
         //
@@ -67,9 +82,9 @@ typedef struct
         //
         //
         hobd_imu_orient_quat2_s orient_quat2;
-    } group_b;
+    } group_d;
     //
-    // IMU_GROUP_C_READY
+    // IMU_GROUP_E_READY
     struct
     {
         //
@@ -78,9 +93,9 @@ typedef struct
         //
         //
         hobd_imu_rate_of_turn2_s rate_of_turn2;
-    } group_c;
+    } group_e;
     //
-    // IMU_GROUP_D_READY
+    // IMU_GROUP_F_READY
     struct
     {
         //
@@ -89,9 +104,9 @@ typedef struct
         //
         //
         hobd_imu_accel2_s accel2;
-    } group_d;
+    } group_f;
     //
-    // IMU_GROUP_E_READY
+    // IMU_GROUP_G_READY
     struct
     {
         //
@@ -100,25 +115,25 @@ typedef struct
         //
         //
         hobd_imu_magf2_s magf2;
-    } group_e;
+    } group_g;
     //
-    // IMU_GROUP_F_READY
+    // IMU_GROUP_H_READY
     struct
     {
         //
         //
         hobd_imu_pos_llh1_s pos_llh1;
-    } group_f;
+    } group_h;
     //
-    // IMU_GROUP_G_READY
+    // IMU_GROUP_I_READY
     struct
     {
         //
         //
         hobd_imu_pos_llh2_s pos_llh2;
-    } group_g;
+    } group_i;
     //
-    // IMU_GROUP_H_READY
+    // IMU_GROUP_J_READY
     struct
     {
         //
@@ -127,7 +142,7 @@ typedef struct
         //
         //
         hobd_imu_vel_ned2_s vel_ned2;
-    } group_h;
+    } group_j;
 } imu_data_s;
 
 
