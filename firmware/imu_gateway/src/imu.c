@@ -125,6 +125,12 @@ static void parse_sample_time_fine(
 
 
 //
+static void parse_gps_sol_time(
+        const struct XbusMessage * const message,
+        const uint32_t * const rx_timestamp );
+
+
+//
 static void parse_utc_time(
         const struct XbusMessage * const message,
         const uint32_t * const rx_timestamp );
@@ -445,10 +451,38 @@ static void parse_sample_time_fine(
     {
         DEBUG_PUTS( "imu_sample_time_fine\n" );
 
-        imu_data.group_a.sample_time.rx_time = *rx_timestamp;
+        imu_data.group_a.sample_time.rx_time = (*rx_timestamp);
         imu_data.group_a.sample_time.sample_time = sample_time;
 
         imu_set_group_ready( IMU_GROUP_A_READY );
+    }
+}
+
+
+//
+static void parse_gps_sol_time(
+        const struct XbusMessage * const message,
+        const uint32_t * const rx_timestamp )
+{
+    XsGpsSol gps_sol;
+
+    const uint8_t status = XbusMessage_getDataItem(
+            &gps_sol,
+            XDI_GpsSol,
+            message );
+
+    if( status != 0 )
+    {
+        DEBUG_PUTS( "imu_gps_sol_time\n" );
+
+        imu_data.group_b.time1.rx_time = (*rx_timestamp);
+        imu_data.group_b.time1.week_number = gps_sol.week;
+        imu_data.group_b.time1.gps_fix_type = gps_sol.gps_fix;
+        imu_data.group_b.time1.flags = gps_sol.flags;
+        imu_data.group_b.time2.time_of_week = gps_sol.tow;
+        imu_data.group_b.time2.residual = gps_sol.residual;
+
+        imu_set_group_ready( IMU_GROUP_B_READY );
     }
 }
 
@@ -469,7 +503,7 @@ static void parse_utc_time(
     {
         DEBUG_PUTS( "imu_utc_time\n" );
 
-        imu_data.group_c.utc_time1.rx_time = *rx_timestamp;
+        imu_data.group_c.utc_time1.rx_time = (*rx_timestamp);
         imu_data.group_c.utc_time1.flags = (utc_time.flags & 0x7F);
         imu_data.group_c.utc_time1.year = utc_time.year;
         imu_data.group_c.utc_time1.month = utc_time.month;
@@ -703,6 +737,11 @@ static void handle_message_cb(
         #warning "TODO - message handler - group B time data"
 
         parse_sample_time_fine(
+                (const struct XbusMessage *) message,
+                &rx_timestamp );
+
+        
+        parse_gps_sol_time(
                 (const struct XbusMessage *) message,
                 &rx_timestamp );
 
