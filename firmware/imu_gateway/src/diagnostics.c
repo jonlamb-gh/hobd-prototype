@@ -257,13 +257,16 @@ void diagnostics_init( void )
 void diagnostics_set_state(
         const uint8_t state )
 {
-    // get current time
-    const uint32_t now = time_get_ms();
+    if( state != hobd_heartbeat.state )
+    {
+        // get current time
+        const uint32_t now = time_get_ms();
 
-    hobd_heartbeat.state = state;
+        hobd_heartbeat.state = state;
 
-    // publish heartbeat message immediately
-    send_heartbeat( &now, 1 );
+        // publish heartbeat message immediately
+        send_heartbeat( &now, 1 );
+    }
 }
 
 
@@ -331,9 +334,22 @@ void diagnostics_set_warn_timeout_bits(
 //
 void diagnostics_update( void )
 {
-#warning "TODO - update node state as neede from error bits"
     // get current time
     const uint32_t now = time_get_ms();
+
+    // transition to an error state if any error bits are set
+    if( hobd_heartbeat.error_register != 0 )
+    {
+        diagnostics_set_state( HOBD_HEARTBEAT_STATE_ERROR );
+    }
+    else
+    {
+        // recover from errors
+        if( hobd_heartbeat.state == HOBD_HEARTBEAT_STATE_ERROR )
+        {
+            diagnostics_set_state( HOBD_HEARTBEAT_STATE_OK );
+        }
+    }
 
     // clear warning bits as needed
     clear_warn_set( &now, 0 );
