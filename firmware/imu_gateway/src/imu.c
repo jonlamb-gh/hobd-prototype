@@ -80,6 +80,10 @@ static uint8_t xbus_buffer[ XBUS_BUFFER_SIZE ];
 static imu_data_s imu_data;
 
 
+// last rx status byte time
+static uint32_t last_rx_status_time = 0;
+
+
 
 
 // *****************************************************
@@ -115,12 +119,13 @@ static uint8_t publish_group_j( void );
 
 
 //
-static void parse_status_byte(
-        const struct XbusMessage * const message );
+static void parse_sample_time_fine(
+        const struct XbusMessage * const message,
+        const uint32_t * const rx_timestamp );
 
 
 //
-static void parse_sample_time_fine(
+static void parse_gps_sol_time(
         const struct XbusMessage * const message,
         const uint32_t * const rx_timestamp );
 
@@ -168,12 +173,18 @@ static void parse_vel_ned(
 
 //
 static void parse_status_byte(
-        const struct XbusMessage * const message );
+        const struct XbusMessage * const message,
+        const uint32_t * const rx_timestamp );
 
 
 //
 static void handle_message_cb(
         struct XbusMessage const * message );
+
+
+//
+static void update_imu_fix_timeout(
+        const uint32_t * const now );
 
 
 
@@ -440,10 +451,38 @@ static void parse_sample_time_fine(
     {
         DEBUG_PUTS( "imu_sample_time_fine\n" );
 
-        imu_data.group_a.sample_time.rx_time = *rx_timestamp;
+        imu_data.group_a.sample_time.rx_time = (*rx_timestamp);
         imu_data.group_a.sample_time.sample_time = sample_time;
 
         imu_set_group_ready( IMU_GROUP_A_READY );
+    }
+}
+
+
+//
+static void parse_gps_sol_time(
+        const struct XbusMessage * const message,
+        const uint32_t * const rx_timestamp )
+{
+    XsGpsSol gps_sol;
+
+    const uint8_t status = XbusMessage_getDataItem(
+            &gps_sol,
+            XDI_GpsSol,
+            message );
+
+    if( status != 0 )
+    {
+        DEBUG_PUTS( "imu_gps_sol_time\n" );
+
+        imu_data.group_b.time1.rx_time = (*rx_timestamp);
+        imu_data.group_b.time1.week_number = gps_sol.week;
+        imu_data.group_b.time1.gps_fix_type = gps_sol.gps_fix;
+        imu_data.group_b.time1.flags = gps_sol.flags;
+        imu_data.group_b.time2.time_of_week = gps_sol.tow;
+        imu_data.group_b.time2.residual = gps_sol.residual;
+
+        imu_set_group_ready( IMU_GROUP_B_READY );
     }
 }
 
@@ -464,7 +503,7 @@ static void parse_utc_time(
     {
         DEBUG_PUTS( "imu_utc_time\n" );
 
-        imu_data.group_c.utc_time1.rx_time = *rx_timestamp;
+        imu_data.group_c.utc_time1.rx_time = (*rx_timestamp);
         imu_data.group_c.utc_time1.flags = (utc_time.flags & 0x7F);
         imu_data.group_c.utc_time1.year = utc_time.year;
         imu_data.group_c.utc_time1.month = utc_time.month;
@@ -648,7 +687,8 @@ static void parse_vel_ned(
 
 //
 static void parse_status_byte(
-        const struct XbusMessage * const message )
+        const struct XbusMessage * const message,
+        const uint32_t * const rx_timestamp )
 {
     uint8_t status_byte = 0;
 
@@ -660,6 +700,8 @@ static void parse_status_byte(
     if( status != 0 )
     {
         DEBUG_PUTS( "imu_status\n" );
+
+        last_rx_status_time = (*rx_timestamp);
 
         if( (status_byte & XS_STATUS_BIT_GPS_FIX) == 0 )
         {
@@ -698,6 +740,11 @@ static void handle_message_cb(
                 (const struct XbusMessage *) message,
                 &rx_timestamp );
 
+
+        parse_gps_sol_time(
+                (const struct XbusMessage *) message,
+                &rx_timestamp );
+
         parse_utc_time(
                 (const struct XbusMessage *) message,
                 &rx_timestamp );
@@ -716,7 +763,32 @@ static void handle_message_cb(
 
         parse_vel_ned( (const struct XbusMessage *) message );
 
-        parse_status_byte( (const struct XbusMessage *) message );
+        parse_status_byte(
+                (const struct XbusMessage *) message,
+                &rx_timestamp );
+    }
+}
+
+
+//
+static void update_imu_fix_timeout(
+        const uint32_t * const now )
+{
+    const uint16_t warn = diagnostics_get_warn();
+
+    // if warn not set
+    if( (warn & HOBD_HEARTBEAT_WARN_NO_IMU_FIX) == 0 )
+    {
+        // get time since last rx update
+        const uint32_t delta = time_get_delta(
+                &last_rx_status_time,
+                now );
+
+        // set warning if interval met/exceeded
+        if( delta >= IMU_FIX_WARN_TIMEOUT )
+        {
+            diagnostics_set_warn( HOBD_HEARTBEAT_WARN_NO_IMU_FIX );
+        }
     }
 }
 
@@ -883,6 +955,12 @@ uint8_t imu_update( void )
             imu_clear_group_ready( IMU_GROUP_J_READY );
         }
     }
+
+    // get current time
+    const uint32_t now = time_get_ms();
+
+    // update IMU fix status/warning
+    update_imu_fix_timeout( &now );
 
     return ret;
 }

@@ -34,6 +34,10 @@
 #define IMU_GROUP_J_READY (1 << 9)
 
 
+// ms
+#define IMU_FIX_WARN_TIMEOUT (5000UL)
+
+
 
 
 // IMU message data group

@@ -17,6 +17,30 @@
 
 
 
+//
+#define DIAGNOSTICS_CLEAR_SET_NONE (0x0000)
+
+
+// ms
+#define DIAGNOSTICS_WARN_SET_CLEAR_INTERVAL (5000UL)
+
+
+// error state
+// ms
+#define DIAGNOSTICS_SLOW_BLINK_INTERVAL (2000UL)
+
+
+// GPS lock
+// ms
+#define DIAGNOSTICS_MED_BLINK_INTERVAL (500UL)
+
+
+// IMU lock
+// ms
+#define DIAGNOSTICS_FAST_BLINK_INTERVAL (100UL)
+
+
+
 
 //
 void diagnostics_init( void );
@@ -57,6 +81,11 @@ uint16_t diagnostics_get_error( void );
 //
 void diagnostics_clear_error(
         const uint16_t error );
+
+
+//
+void diagnostics_set_warn_timeout_bits(
+        const uint16_t bits );
 
 
 //

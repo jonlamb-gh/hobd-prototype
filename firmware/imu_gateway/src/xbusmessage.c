@@ -232,6 +232,14 @@ bool XbusMessage_getDataItem(void* item, enum XsDataIdentifier id, struct XbusMe
                 raw = XbusUtility_readU8( &((XsUtcTime*) item)->min, raw );
                 raw = XbusUtility_readU8( &((XsUtcTime*) item)->sec, raw );
                 raw = XbusUtility_readU8( &((XsUtcTime*) item)->flags, raw );
+                break;
+
+            case XDI_GpsSol:
+                raw = XbusUtility_readU32( &((XsGpsSol*) item)->tow, raw );
+                raw = XbusUtility_readU32( (uint32_t*) &((XsGpsSol*) item)->residual, raw );
+                raw = XbusUtility_readU16( &((XsGpsSol*) item)->week, raw );
+                raw = XbusUtility_readU8( &((XsGpsSol*) item)->gps_fix, raw );
+                raw = XbusUtility_readU8( &((XsGpsSol*) item)->flags, raw );
 				break;
 
 			default:
