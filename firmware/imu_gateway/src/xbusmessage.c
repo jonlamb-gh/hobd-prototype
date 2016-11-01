@@ -204,9 +204,19 @@ bool XbusMessage_getDataItem(void* item, enum XsDataIdentifier id, struct XbusMe
 
 			case XDI_DeltaV:
 			case XDI_Acceleration:
+            case XDI_FreeAcceleration:
 			case XDI_RateOfTurn:
 			case XDI_MagneticField:
+            case XDI_VelocityXYZ:
 				readFloats(item, raw, 3);
+				break;
+
+            case XDI_LatLon:
+				readFloats(item, raw, 2);
+				break;
+
+            case XDI_AltitudeEllipsoid:
+				readFloats(item, raw, 1);
 				break;
 
 			default:
@@ -217,44 +227,5 @@ bool XbusMessage_getDataItem(void* item, enum XsDataIdentifier id, struct XbusMe
 	else
 	{
 		return false;
-	}
-}
-
-/*!
- * \brief Get a string description for the passed data identifier.
- */
-char const* XbusMessage_dataDescription(enum XsDataIdentifier id)
-{
-	switch (id)
-	{
-		case XDI_PacketCounter:
-			return "Packet counter";
-
-		case XDI_SampleTimeFine:
-			return "Sample time fine";
-
-		case XDI_Quaternion:
-			return "Quaternion";
-
-		case XDI_DeltaV:
-			return "Velocity increment";
-
-		case XDI_Acceleration:
-			return "Acceleration";
-
-		case XDI_RateOfTurn:
-			return "Rate of turn";
-
-		case XDI_DeltaQ:
-			return "Orientation increment";
-
-		case XDI_MagneticField:
-			return "Magnetic field";
-
-		case XDI_StatusWord:
-			return "Status word";
-
-		default:
-			return "Unknown data type";
 	}
 }

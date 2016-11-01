@@ -245,6 +245,124 @@ static void parse_rate_of_turn(
 
 
 //
+static void parse_accel(
+        const struct XbusMessage * const message )
+{
+#warning "USING FreeAcceleration instead of Acceleration"
+    float accel[3];
+
+    const uint8_t status = XbusMessage_getDataItem(
+            accel,
+            XDI_FreeAcceleration,
+            message );
+
+    if( status != 0 )
+    {
+        DEBUG_PUTS( "imu_accel\n" );
+
+        imu_data.group_d.accel1.x = accel[ 0 ];
+        imu_data.group_d.accel1.y = accel[ 1 ];
+        imu_data.group_d.accel2.z = accel[ 2 ];
+
+        imu_set_group_ready( IMU_GROUP_D_READY );
+    }
+}
+
+
+//
+static void parse_magf(
+        const struct XbusMessage * const message )
+{
+    float magf[3];
+
+    const uint8_t status = XbusMessage_getDataItem(
+            magf,
+            XDI_MagneticField,
+            message );
+
+    if( status != 0 )
+    {
+        DEBUG_PUTS( "imu_magf\n" );
+
+        imu_data.group_e.magf1.x = magf[ 0 ];
+        imu_data.group_e.magf1.y = magf[ 1 ];
+        imu_data.group_e.magf2.z = magf[ 2 ];
+
+        imu_set_group_ready( IMU_GROUP_E_READY );
+    }
+}
+
+
+//
+static void parse_pos_ll(
+        const struct XbusMessage * const message )
+{
+    float lat_lon[2];
+
+    const uint8_t status = XbusMessage_getDataItem(
+            lat_lon,
+            XDI_LatLon,
+            message );
+
+    if( status != 0 )
+    {
+        DEBUG_PUTS( "imu_pos_ll\n" );
+
+        imu_data.group_f.pos_llh1.latitude = lat_lon[ 0 ];
+        imu_data.group_f.pos_llh1.longitude = lat_lon[ 1 ];
+
+        imu_set_group_ready( IMU_GROUP_F_READY );
+    }
+}
+
+
+//
+static void parse_pos_h(
+        const struct XbusMessage * const message )
+{
+    float height;
+
+    const uint8_t status = XbusMessage_getDataItem(
+            &height,
+            XDI_AltitudeEllipsoid,
+            message );
+
+    if( status != 0 )
+    {
+        DEBUG_PUTS( "imu_pos_h\n" );
+
+        imu_data.group_g.pos_llh2.height = height;
+
+        imu_set_group_ready( IMU_GROUP_G_READY );
+    }
+}
+
+
+//
+static void parse_vel_ned(
+        const struct XbusMessage * const message )
+{
+    float vel[3];
+
+    const uint8_t status = XbusMessage_getDataItem(
+            vel,
+            XDI_VelocityXYZ,
+            message );
+
+    if( status != 0 )
+    {
+        DEBUG_PUTS( "imu_vel_ned\n" );
+
+        imu_data.group_h.vel_ned1.north = vel[ 0 ];
+        imu_data.group_h.vel_ned1.east = vel[ 1 ];
+        imu_data.group_h.vel_ned2.down = vel[ 2 ];
+
+        imu_set_group_ready( IMU_GROUP_H_READY );
+    }
+}
+
+
+//
 static void handle_message_cb( struct XbusMessage const * message )
 {
     if( message->length > (uint16_t) sizeof(xbus_buffer) )
@@ -259,27 +377,17 @@ static void handle_message_cb( struct XbusMessage const * message )
         parse_orient_quat( (const struct XbusMessage *) message );
 
         parse_rate_of_turn( (const struct XbusMessage *) message );
+
+        parse_accel( (const struct XbusMessage *) message );
+
+        parse_magf( (const struct XbusMessage *) message );
+
+        parse_pos_ll( (const struct XbusMessage *) message );
+
+        parse_pos_h( (const struct XbusMessage *) message );
+
+        parse_vel_ned( (const struct XbusMessage *) message );
     }
-
-
-
-    // TODO
-//    float ori[4];
-//    if (XbusMessage_getDataItem(ori, XDI_Quaternion, message))
-//    {
-//        pc.printf(" Orientation: (% .3f, % .3f, % .3f, % .3f)", ori[0], ori[1],
-//                ori[2], ori[3]);
-//    }
-//    float acc[3];
-//    if (XbusMessage_getDataItem(acc, XDI_Acceleration, message))
-//    {
-//        pc.printf(" Acceleration: (% .3f, % .3f, % .3f)", acc[0], acc[1], acc[2]);
-//    }
-//    float gyr[3];
-//    if (XbusMessage_getDataItem(gyr, XDI_RateOfTurn, message))
-//    {
-//        pc.printf(" Rate Of Turn: (% .3f, % .3f, % .3f)", gyr[0], gyr[1], gyr[2]);
-//    }
 }
 
 

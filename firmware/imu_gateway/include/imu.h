@@ -29,6 +29,7 @@
 #define IMU_GROUP_E_READY (1 << 4)
 #define IMU_GROUP_F_READY (1 << 5)
 #define IMU_GROUP_G_READY (1 << 6)
+#define IMU_GROUP_H_READY (1 << 7)
 
 
 
@@ -107,12 +108,17 @@ typedef struct
         //
         //
         hobd_imu_pos_llh1_s pos_llh1;
-        //
-        //
-        hobd_imu_pos_llh2_s pos_llh2;
     } group_f;
     //
     // IMU_GROUP_G_READY
+    struct
+    {
+        //
+        //
+        hobd_imu_pos_llh2_s pos_llh2;
+    } group_g;
+    //
+    // IMU_GROUP_H_READY
     struct
     {
         //
@@ -121,7 +127,7 @@ typedef struct
         //
         //
         hobd_imu_vel_ned2_s vel_ned2;
-    } group_g;
+    } group_h;
 } imu_data_s;
 
 

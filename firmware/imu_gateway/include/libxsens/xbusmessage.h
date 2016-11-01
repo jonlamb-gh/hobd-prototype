@@ -49,16 +49,33 @@ enum XsMessageId
 /*! \brief Xbus data message type IDs. */
 enum XsDataIdentifier
 {
-	XDI_PacketCounter  = 0x1020,
-	XDI_SampleTimeFine = 0x1060,
-	XDI_Quaternion     = 0x2010,
-	XDI_DeltaV         = 0x4010,
-	XDI_Acceleration   = 0x4020,
-	XDI_RateOfTurn     = 0x8020,
-	XDI_DeltaQ         = 0x8030,
-	XDI_MagneticField  = 0xC020,
-	XDI_StatusWord     = 0xE020,
+    XDI_UtcTime           = 0x1010,
+	XDI_PacketCounter     = 0x1020,
+    XDI_ltow              = 0x1030,
+	XDI_SampleTimeFine    = 0x1060,
+	XDI_Quaternion        = 0x2010,
+	XDI_DeltaV            = 0x4010,
+	XDI_Acceleration      = 0x4020,
+    XDI_FreeAcceleration  = 0x4030,
+    XDI_AltitudeEllipsoid = 0x5020,
+    XDI_LatLon            = 0x5040,
+	XDI_RateOfTurn        = 0x8020,
+	XDI_DeltaQ            = 0x8030,
+    XDI_GpsDop            = 0x8830,
+    XDI_GpsSol            = 0x8840,
+    XDI_GpsTimeUtc        = 0x8880,
+	XDI_MagneticField     = 0xC020,
+	XDI_StatusWord        = 0xE020,
+    XDI_VelocityXYZ       = 0xD010
 };
+
+// TODO - parsers for
+// XDI_UtcTime = 0x1010
+// XDI_ltow = 0x1030
+// XDI_GpsDop = 0x8830
+// XDI_GpsSol = 0x8840
+// XDI_GpsTimeUtc = 0x8880
+
 
 /*!
  * \brief Low level format to use when formating Xbus messages for transmission.
@@ -108,7 +125,6 @@ struct OutputConfiguration
 
 size_t XbusMessage_format(uint8_t* raw, struct XbusMessage const* message, enum XbusLowLevelFormat format);
 bool XbusMessage_getDataItem(void* item, enum XsDataIdentifier id, struct XbusMessage const* message);
-char const* XbusMessage_dataDescription(enum XsDataIdentifier id);
 
 #ifdef __cplusplus
 }
