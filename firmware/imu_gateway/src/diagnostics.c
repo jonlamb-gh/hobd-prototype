@@ -173,7 +173,7 @@ static void update_led(
         const uint32_t * const now )
 {
     const uint8_t gps_fix = ((hobd_heartbeat.warning_register & HOBD_HEARTBEAT_WARN_NO_GPS_FIX) == 0) ? 1 : 0;
-    const uint8_t imu_fix = ((hobd_heartbeat.warning_register & HOBD_HEARTBEAT_WARN_NO_GPS_FIX) == 0) ? 1 : 0;
+    const uint8_t imu_fix = ((hobd_heartbeat.warning_register & HOBD_HEARTBEAT_WARN_NO_IMU_FIX) == 0) ? 1 : 0;
 
     // update state
     if( hobd_heartbeat.state != HOBD_HEARTBEAT_STATE_OK )
