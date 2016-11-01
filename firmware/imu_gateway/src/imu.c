@@ -196,6 +196,61 @@ static uint8_t publish_group_e( void )
 
 
 //
+static void parse_sample_time_fine(
+        const struct XbusMessage * const message,
+        const uint32_t * const rx_timestamp )
+{
+    uint32_t sample_time;
+
+    const uint8_t status = XbusMessage_getDataItem(
+            &sample_time,
+            XDI_SampleTimeFine,
+            message );
+
+    if( status != 0 )
+    {
+        DEBUG_PUTS( "imu_sample_time_fine\n" );
+
+        imu_data.group_a.sample_time.rx_time = *rx_timestamp;
+        imu_data.group_a.sample_time.sample_time = sample_time;
+
+        imu_set_group_ready( IMU_GROUP_A_READY );
+    }
+}
+
+
+//
+static void parse_utc_time(
+        const struct XbusMessage * const message,
+        const uint32_t * const rx_timestamp )
+{
+    XsUtcTime utc_time;
+
+    const uint8_t status = XbusMessage_getDataItem(
+            &utc_time,
+            XDI_UtcTime,
+            message );
+
+    if( status != 0 )
+    {
+        DEBUG_PUTS( "imu_utc_time\n" );
+
+        imu_data.group_c.utc_time1.rx_time = *rx_timestamp;
+        imu_data.group_c.utc_time1.flags = utc_time.flags;
+        imu_data.group_c.utc_time1.year = utc_time.year;
+        imu_data.group_c.utc_time1.month = utc_time.month;
+        imu_data.group_c.utc_time2.day = utc_time.day;
+        imu_data.group_c.utc_time2.hour = utc_time.hour;
+        imu_data.group_c.utc_time2.min = utc_time.min;
+        imu_data.group_c.utc_time2.sec = utc_time.sec;
+        imu_data.group_c.utc_time2.nanosec = utc_time.nanosec;
+
+        imu_set_group_ready( IMU_GROUP_C_READY );
+    }
+}
+
+
+//
 static void parse_orient_quat(
         const struct XbusMessage * const message )
 {
@@ -365,6 +420,8 @@ static void parse_vel_ned(
 //
 static void handle_message_cb( struct XbusMessage const * message )
 {
+    const uint32_t rx_timestamp = time_get_ms();
+
     if( message->length > (uint16_t) sizeof(xbus_buffer) )
     {
         diagnostics_set_error( HOBD_HEARTBEAT_ERROR_IMU_RX_OVERFLOW );
@@ -372,7 +429,11 @@ static void handle_message_cb( struct XbusMessage const * message )
     else if( message->data != NULL )
     {
         // TODO
-        #warning "TODO - message handler"
+        #warning "TODO - message handler - group B time data"
+
+        parse_sample_time_fine(
+                (const struct XbusMessage *) message,
+                &rx_timestamp );
 
         parse_orient_quat( (const struct XbusMessage *) message );
 

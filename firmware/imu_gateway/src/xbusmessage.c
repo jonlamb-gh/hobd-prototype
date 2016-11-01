@@ -219,6 +219,17 @@ bool XbusMessage_getDataItem(void* item, enum XsDataIdentifier id, struct XbusMe
 				readFloats(item, raw, 1);
 				break;
 
+            case XDI_UtcTime:
+                raw = XbusUtility_readU32( &((XsUtcTime*) item)->nanosec, raw );
+                raw = XbusUtility_readU16( &((XsUtcTime*) item)->year, raw );
+                raw = XbusUtility_readU8( &((XsUtcTime*) item)->month, raw );
+                raw = XbusUtility_readU8( &((XsUtcTime*) item)->day, raw );
+                raw = XbusUtility_readU8( &((XsUtcTime*) item)->hour, raw );
+                raw = XbusUtility_readU8( &((XsUtcTime*) item)->min, raw );
+                raw = XbusUtility_readU8( &((XsUtcTime*) item)->sec, raw );
+                raw = XbusUtility_readU8( &((XsUtcTime*) item)->flags, raw );
+				break;
+
 			default:
 				return false;
 		}

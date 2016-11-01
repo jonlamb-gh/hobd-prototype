@@ -123,6 +123,27 @@ struct OutputConfiguration
 	uint16_t freq;
 };
 
+
+typedef struct
+{
+    uint32_t nanosec;
+
+    uint16_t year;
+
+    uint8_t month;
+
+    uint8_t day;
+
+    uint8_t hour;
+
+    uint8_t min;
+
+    uint8_t sec;
+
+    uint8_t flags;
+} XsUtcTime;
+
+
 size_t XbusMessage_format(uint8_t* raw, struct XbusMessage const* message, enum XbusLowLevelFormat format);
 bool XbusMessage_getDataItem(void* item, enum XsDataIdentifier id, struct XbusMessage const* message);
 
