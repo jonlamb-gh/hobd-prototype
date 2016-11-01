@@ -68,6 +68,10 @@ static sbp_state_t sbp_state;
 static gps_data_s gps_data;
 
 
+// last rx GPS time
+static uint32_t last_rx_gps_time = 0;
+
+
 // SBP callback nodes
 static sbp_msg_callbacks_node_t heartbeat_callback_node;
 static sbp_msg_callbacks_node_t gps_time_node;
@@ -158,6 +162,11 @@ static uint8_t publish_group_c( void );
 static uint8_t publish_group_d( void );
 static uint8_t publish_group_e( void );
 static uint8_t publish_group_f( void );
+
+
+//
+static void update_gps_fix_timeout(
+        const uint32_t * const now );
 
 
 
@@ -274,15 +283,18 @@ static void gps_time_callback(
 {
     DEBUG_PUTS( "gps_time\n" );
 
-    const uint32_t rx_timestamp = time_get_ms();
-
     const msg_gps_time_t * const gps_time = (const msg_gps_time_t*) msg;
 
-    gps_data.group_a.time1.rx_time = rx_timestamp;
+    last_rx_gps_time = time_get_ms();
+
+    gps_data.group_a.time1.rx_time = last_rx_gps_time;
     gps_data.group_a.time1.time_of_week = gps_time->tow;
     gps_data.group_a.time2.week_number = gps_time->wn;
     gps_data.group_a.time2.residual = gps_time->ns;
     gps_data.group_a.time2.flags = gps_time->flags;
+
+    // clear GPS fix warn
+    diagnostics_clear_warn( HOBD_HEARTBEAT_WARN_NO_GPS_FIX );
 
     gps_set_group_ready( GPS_GROUP_A_READY );
 }
@@ -542,6 +554,23 @@ static uint8_t publish_group_f( void )
 }
 
 
+//
+static void update_gps_fix_timeout(
+        const uint32_t * const now )
+{
+    // get time since last rx update
+    const uint32_t delta = time_get_delta(
+            &last_rx_gps_time,
+            now );
+
+    // set warning if interval met/exceeded
+    if( delta >= GPS_FIX_WARN_TIMEOUT )
+    {
+        diagnostics_set_warn( HOBD_HEARTBEAT_WARN_NO_GPS_FIX );
+    }
+}
+
+
 
 
 // *****************************************************
@@ -743,6 +772,12 @@ uint8_t gps_update( void )
             diagnostics_set_warn( HOBD_HEARTBEAT_WARN_CANBUS );
         }
     }
+
+    // get current time
+    const uint32_t now = time_get_ms();
+
+    // update GPS fix status/warning
+    update_gps_fix_timeout( &now );
 
     return ret;
 }

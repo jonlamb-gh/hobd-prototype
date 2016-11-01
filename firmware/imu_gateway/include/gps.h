@@ -45,6 +45,10 @@
 #define GPS_GROUP_F_READY (1 << 5)
 
 
+// ms
+#define GPS_FIX_WARN_TIMEOUT (5000UL)
+
+
 
 
 // GPS message data group

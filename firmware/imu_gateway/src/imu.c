@@ -80,6 +80,10 @@ static uint8_t xbus_buffer[ XBUS_BUFFER_SIZE ];
 static imu_data_s imu_data;
 
 
+// last rx status byte time
+static uint32_t last_rx_status_time = 0;
+
+
 
 
 // *****************************************************
@@ -112,11 +116,6 @@ static uint8_t publish_group_f( void );
 static uint8_t publish_group_h( void );
 static uint8_t publish_group_i( void );
 static uint8_t publish_group_j( void );
-
-
-//
-static void parse_status_byte(
-        const struct XbusMessage * const message );
 
 
 //
@@ -168,12 +167,18 @@ static void parse_vel_ned(
 
 //
 static void parse_status_byte(
-        const struct XbusMessage * const message );
+        const struct XbusMessage * const message,
+        const uint32_t * const rx_timestamp );
 
 
 //
 static void handle_message_cb(
         struct XbusMessage const * message );
+
+
+//
+static void update_imu_fix_timeout(
+        const uint32_t * const now );
 
 
 
@@ -648,7 +653,8 @@ static void parse_vel_ned(
 
 //
 static void parse_status_byte(
-        const struct XbusMessage * const message )
+        const struct XbusMessage * const message,
+        const uint32_t * const rx_timestamp )
 {
     uint8_t status_byte = 0;
 
@@ -660,6 +666,8 @@ static void parse_status_byte(
     if( status != 0 )
     {
         DEBUG_PUTS( "imu_status\n" );
+
+        last_rx_status_time = (*rx_timestamp);
 
         if( (status_byte & XS_STATUS_BIT_GPS_FIX) == 0 )
         {
@@ -716,7 +724,26 @@ static void handle_message_cb(
 
         parse_vel_ned( (const struct XbusMessage *) message );
 
-        parse_status_byte( (const struct XbusMessage *) message );
+        parse_status_byte(
+                (const struct XbusMessage *) message,
+                &rx_timestamp );
+    }
+}
+
+
+//
+static void update_imu_fix_timeout(
+        const uint32_t * const now )
+{
+    // get time since last rx update
+    const uint32_t delta = time_get_delta(
+            &last_rx_status_time,
+            now );
+
+    // set warning if interval met/exceeded
+    if( delta >= IMU_FIX_WARN_TIMEOUT )
+    {
+        diagnostics_set_warn( HOBD_HEARTBEAT_WARN_NO_IMU_FIX );
     }
 }
 
@@ -883,6 +910,12 @@ uint8_t imu_update( void )
             imu_clear_group_ready( IMU_GROUP_J_READY );
         }
     }
+
+    // get current time
+    const uint32_t now = time_get_ms();
+
+    // update IMU fix status/warning
+    update_imu_fix_timeout( &now );
 
     return ret;
 }
