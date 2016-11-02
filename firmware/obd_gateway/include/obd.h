@@ -23,6 +23,7 @@
 //
 #define OBD_GROUP_NONE_READY (0x0000)
 #define OBD_GROUP_A_READY (1 << 0)
+#define OBD_GROUP_B_READY (1 << 1)
 
 
 // ms
@@ -38,47 +39,21 @@ typedef struct
     //
     uint16_t ready_groups;
     //
-    // GPS_GROUP_A_READY
-//    struct
-//    {
-//        //
-//        //
-//        hobd_gps_time1_s time1;
-//        //
-//        //
-//        hobd_gps_time2_s time2;
-//    } group_a;
-//    //
-//    // GPS_GROUP_B_READY
-//    struct
-//    {
-//        //
-//        //
-//        hobd_gps_pos_llh1_s pos_llh1;
-//        //
-//        //
-//        hobd_gps_pos_llh2_s pos_llh2;
-//        //
-//        //
-//        hobd_gps_pos_llh3_s pos_llh3;
-//        //
-//        //
-//        hobd_gps_pos_llh4_s pos_llh4;
-//    } group_b;
-//    //
-//    // GPS_GROUP_C_READY
-//    struct
-//    {
-//        //
-//        //
-//        hobd_gps_baseline_ned1_s baseline_ned1;
-//        //
-//        //
-//        hobd_gps_baseline_ned2_s baseline_ned2;
-//        //
-//        //
-//        hobd_gps_baseline_ned3_s baseline_ned3;
-//    } group_c;
+    // OBD_GROUP_A_READY
+    struct
+    {
+        //
+        //
+        hobd_obd1_s obd1;
+    } group_a;
+    //
+    // OBD_GROUP_B_READY
+    struct
+    {
+        //
+        //
+        hobd_obd2_s obd2;
+    } group_b;
 } obd_data_s;
 
 

@@ -32,6 +32,10 @@
 // static global types/macros
 // *****************************************************
 
+//
+#define OBD_BUFFER_SIZE (512)
+
+
 // UART bridge is on UART1
 #define UART_RX_INTERRUPT USART1_RX_vect
 #define UART_UCSRA UCSR1A
@@ -64,6 +68,10 @@ static obd_data_s obd_data;
 
 // last rx time
 static uint32_t last_rx_time = 0;
+
+
+// OBD rx buffer
+static uint8_t obd_buffer[ OBD_BUFFER_SIZE ];
 
 
 
