@@ -27,12 +27,12 @@
 
 //
 #define UART_BAUDRATE (115200UL)
-#define OBD_BAUDRATE (115200UL)
+#define OBD_BAUDRATE (10400UL)
 
 
 //
-#define PIN_RX (0)
-#define PIN_TX (1)
+#define PIN_TX (0)
+#define PIN_RX (1)
 
 
 //
