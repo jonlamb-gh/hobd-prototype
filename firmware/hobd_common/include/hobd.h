@@ -73,6 +73,11 @@
 #define HOBD_CAN_ID_IMU_MAGF2 (0x070)
 
 
+// OBD ID's
+#define HOBD_CAN_ID_OBD1 (0x080)
+#define HOBD_CAN_ID_OBD2 (0x081)
+
+
 //
 #define HOBD_HEARTBEAT_STATE_INVALID (0x00)
 #define HOBD_HEARTBEAT_STATE_INIT (0x01)
@@ -1019,6 +1024,77 @@ typedef struct
     //
     float z;
 } hobd_imu_magf2_s;
+
+
+/**
+ * @brief On-board diagnostics 1 message.
+ *
+ * Message size (CAN frame DLC): 7 bytes
+ * CAN frame ID: \ref HOBD_CAN_ID_OBD1
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    uint8_t engine_on : 1;
+    //
+    //
+    uint8_t gear : 4;
+    //
+    //
+    uint8_t reserved : 3;
+    //
+    //
+    uint16_t engine_rpm;
+    //
+    //
+    uint8_t wheel_speed;
+    //
+    //
+    uint8_t battery_volt;
+    //
+    //
+    uint8_t tps_volt;
+    //
+    //
+    uint8_t tps_percent;
+} hobd_obd1_s;
+
+
+/**
+ * @brief On-board diagnostics 2 message.
+ *
+ * Message size (CAN frame DLC): 8 bytes
+ * CAN frame ID: \ref HOBD_CAN_ID_OBD2
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    uint8_t ect_volt;
+    //
+    //
+    uint8_t ect_temp;
+    //
+    //
+    uint8_t iat_volt;
+    //
+    //
+    uint8_t iat_temp;
+    //
+    //
+    uint8_t map_volt;
+    //
+    //
+    uint8_t map_pressure;
+    //
+    //
+    uint16_t fuel_injectors;
+} hobd_obd2_s;
 
 
 

@@ -1,8 +1,10 @@
 /**
- * @file hobd.h
- * @brief Honda OBD Protocol.
+ * @file hobd_uart.h
+ * @brief Honda OBD Uart Protocol.
  *
  * @todo hobd protocol notes.
+ *
+ * Data rate: 10,400 bps
  *
  * Initialization sequence:
  *   -# pull k-line low for 70 ms
@@ -22,8 +24,8 @@
 
 
 
-#ifndef HOBD_H
-#define HOBD_H
+#ifndef HOBD_UART_H
+#define HOBD_UART_H
 
 
 
@@ -169,4 +171,4 @@ typedef struct
 
 
 
-#endif  /* HOBD_H */
+#endif  /* HOBD_UART_H */

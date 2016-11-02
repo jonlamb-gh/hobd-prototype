@@ -22,6 +22,7 @@
 #include "time.h"
 #include "canbus.h"
 #include "diagnostics.h"
+#include "hobd_uart.h"
 #include "obd.h"
 
 
