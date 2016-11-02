@@ -74,6 +74,11 @@ static uint32_t last_rx_time = 0;
 static uint8_t obd_buffer[ OBD_BUFFER_SIZE ];
 
 
+// OBD rx packet counters
+static uint16_t rx_count_table_16 = 0;
+static uint16_t rx_count_table_209 = 0;
+
+
 
 
 // *****************************************************
@@ -87,6 +92,28 @@ static void hw_init( void );
 //
 static void update_rx_timeout(
         const uint32_t * const now );
+
+
+//
+static uint8_t obd_checksum(
+        const uint8_t * const buffer,
+        const uint16_t len );
+
+
+//
+static uint8_t obd_packet_type(
+        const uint8_t * const buffer,
+        const uint16_t len );
+
+
+//
+static uint8_t process_buffer( void );
+
+
+//
+static void parse_response(
+        const hobd_table_response_s * const response,
+        const uint32_t * const rx_timestamp );
 
 
 
@@ -147,6 +174,180 @@ static void update_rx_timeout(
             diagnostics_set_warn( HOBD_HEARTBEAT_WARN_NO_OBD_ECU );
         }
     }
+}
+
+
+//
+static uint8_t obd_checksum(
+        const uint8_t * const buffer,
+        const uint16_t len )
+{
+    uint16_t cs = 0;
+    uint16_t idx = 0;
+
+    for( idx = 0; idx < len; idx += 1 )
+    {
+        cs += (uint16_t) buffer[ idx ];
+    }
+
+    if( cs > 0x0100 )
+    {
+        cs = (0x0100 - (cs & 0x00FF));
+    }
+    else
+    {
+        cs = (0x0100 - cs);
+    }
+
+    return (uint8_t) (cs & 0xFF);
+}
+
+
+//
+static uint8_t obd_packet_type(
+        const uint8_t * const buffer,
+        const uint16_t len )
+{
+    uint8_t packet_type = HOBD_PACKET_TYPE_INVALID;
+
+    const hobd_packet_header_s * const header =
+            (hobd_packet_header_s*) buffer;
+
+    // min size = 3 byte header plus 1 byte checksum
+    const uint16_t min_len = (uint16_t) (sizeof(*header) + 1);
+
+    // check packet length
+    if( (len >= min_len) && ((uint16_t) header->size >= min_len) && ((uint16_t) header->size <= len) )
+    {
+        // check packet type
+        if( header->type != HOBD_PACKET_TYPE_INVALID )
+        {
+            const uint8_t packet_checksum = buffer[ header->size - 1 ];
+
+            const uint8_t real_checksum = obd_checksum(
+                    buffer,
+                    (uint16_t) header->size );
+
+            // check checksum
+            if( packet_checksum == real_checksum )
+            {
+                // valid
+                packet_type = header->type;
+            }
+        }
+    }
+
+    return packet_type;
+}
+
+
+//
+static uint8_t process_buffer( void )
+{
+    uint8_t ret = 0;
+    uint32_t rx_timestamp = 0;
+    uint16_t rb_data = RING_BUFFER_NO_DATA;
+    uint16_t idx = 0;
+
+    // get the rx timestamp if we have data to process
+    if( ring_buffer_available( &rx_buffer ) != 0 )
+    {
+        rx_timestamp = time_get_ms();
+    }
+
+    // fill up the OBD buffer
+    do
+    {
+        rb_data = ring_buffer_getc( &rx_buffer );
+
+        if( rb_data != RING_BUFFER_NO_DATA )
+        {
+            obd_buffer[ idx ] = (uint8_t) (rb_data & 0xFF);
+            idx += 1;
+        }
+
+        if( idx >= OBD_BUFFER_SIZE )
+        {
+            rb_data = RING_BUFFER_NO_DATA;
+            diagnostics_set_error( HOBD_HEARTBEAT_ERROR_OBD_RX_OVERFLOW );
+        }
+    }
+    while( rb_data != RING_BUFFER_NO_DATA );
+
+    // check if a valid packet
+    const uint8_t packet_type = obd_packet_type(
+            &obd_buffer[ 0 ],
+            idx );
+
+    // process response types
+    if( packet_type == HOBD_PACKET_TYPE_RESPONSE )
+    {
+        const hobd_packet_header_s * const header =
+                (hobd_packet_header_s*) &obd_buffer[ 0 ];
+
+        if( header->subtype == HOBD_PACKET_SUBTYPE_TABLE_SUBGROUP )
+        {
+            const hobd_table_response_s * const response =
+                    (hobd_table_response_s*) &obd_buffer[ 0 ];
+
+            parse_response(
+                    response,
+                    &rx_timestamp );
+        }
+    }
+
+    return ret;
+}
+
+
+//
+static void parse_response(
+        const hobd_table_response_s * const response,
+        const uint32_t * const rx_timestamp )
+{
+    // number of bytes in the table response payload
+    const uint8_t registers_size = (response->header.size - sizeof(*response) - 1);
+
+     if( response->table == HOBD_TABLE_16 )
+     {
+         if( registers_size >= (uint8_t) sizeof(hobd_table_16_s) )
+         {
+            DEBUG_PUTS( "obd_table_0x10(16)\n" );
+
+            const hobd_table_16_s * const table_data =
+                    (hobd_table_16_s*) &((uint8_t*) response)[ sizeof(*response) ];
+
+            rx_count_table_16 += 1;
+
+            obd_data.group_a.time.rx_time = (*rx_timestamp);
+            obd_data.group_a.time.counter_1 = rx_count_table_16;
+            obd_data.group_a.time.counter_1 = rx_count_table_209;
+
+            last_rx_time = (*rx_timestamp);
+
+            obd_set_group_ready( OBD_GROUP_A_READY );
+         }
+     }
+     else if( response->table == HOBD_TABLE_209 )
+     {
+         if( registers_size >= (uint8_t) sizeof(hobd_table_209_s) )
+         {
+            DEBUG_PUTS( "obd_table_0xD1(209)\n" );
+
+            const hobd_table_209_s * const table_data =
+                       (hobd_table_209_s*) &((uint8_t*) response)[ sizeof(*response) ];
+
+            rx_count_table_209 += 1;
+
+            obd_data.group_b.time.rx_time = (*rx_timestamp);
+            obd_data.group_b.time.counter_1 = rx_count_table_16;
+            obd_data.group_b.time.counter_1 = rx_count_table_209;
+
+            last_rx_time = (*rx_timestamp);
+
+            obd_set_group_ready( OBD_GROUP_B_READY );
+         }
+     }
 }
 
 
@@ -235,7 +436,8 @@ uint8_t obd_update( void )
 {
     uint8_t ret = 0;
 
-    // TODO
+    // process any available data in the rx buffer
+    ret = process_buffer();
 
     // get current time
     const uint32_t now = time_get_ms();

@@ -113,13 +113,7 @@ typedef struct
 {
     //
     //
-    uint8_t type;
-    //
-    //
-    uint8_t size;
-    //
-    //
-    uint8_t subtype;
+    hobd_packet_header_s header;
     //
     //
     uint8_t table;
@@ -137,13 +131,7 @@ typedef struct
 {
     //
     //
-    uint8_t type;
-    //
-    //
-    uint8_t size;
-    //
-    //
-    uint8_t subtype;
+    hobd_packet_header_s header;
     //
     //
     uint8_t table;
@@ -160,13 +148,7 @@ typedef struct
 {
     //
     //
-    uint8_t type;
-    //
-    //
-    uint8_t size;
-    //
-    //
-    uint8_t subtype;
+    hobd_packet_header_s header;
     //
     //
     uint8_t data;
@@ -218,7 +200,7 @@ typedef struct
     //
     //
     uint16_t fuel_injectors;
-} hobd_table_10_s;
+} hobd_table_16_s;
 
 
 //
