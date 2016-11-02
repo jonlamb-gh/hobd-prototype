@@ -734,12 +734,9 @@ static void handle_message_cb(
     }
     else if( message->data != NULL )
     {
-        #warning "TODO - message handler - group B time data"
-
         parse_sample_time_fine(
                 (const struct XbusMessage *) message,
                 &rx_timestamp );
-
 
         parse_gps_sol_time(
                 (const struct XbusMessage *) message,
