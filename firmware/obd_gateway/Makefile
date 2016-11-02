@@ -54,7 +54,7 @@ PROGRAMMER_MCU=at90can128
 
 # Name of our project
 # (use a single word, e.g. 'myproject')
-PROJECTNAME=hobd-gateway
+PROJECTNAME=obd-gateway
 
 # Source files
 # List C/C++/Assembly source files:
@@ -69,13 +69,14 @@ PRJSRC= ../avrcan_at90can128/bsp/src/timer8_drv.c \
 	../avrcan_at90can128/bsp/src/can_drv.c \
 	../avrcan_at90can128/bsp/src/can_lib.c \
 	src/time.c \
-	src/diagnostic_table.c \
-	src/can_communication.c \
-	src/hobd_communication.c \
+	src/ring_buffer.c \
+	src/canbus.c \
+	src/diagnostics.c \
+	src/obd.c \
 	src/main.c
 
 # additional includes (e.g. -I/path/to/mydir)
-INC=-Iinclude -I../avrcan_at90can128/bsp/include
+INC=-Iinclude -I../hobd_common/include -I../avrcan_at90can128/bsp/include
 
 # libraries to link in (e.g. -lmylib)
 LIBS=-lm
@@ -127,11 +128,14 @@ HEXFORMAT=ihex
 CFLAGS=-I. $(INC) -g -mmcu=$(MCU) -O$(OPTLEVEL) \
 	-fpack-struct -fshort-enums            \
 	-funsigned-bitfields -funsigned-char   \
+	-std=gnu99 \
 	-Wall               \
 	-DBUILD_TARGET_AVR \
-	-DBUILD_TYPE_DEBUG \
 	-Wa,-ahlms=$(firstword                  \
 	$(filter %.lst, $(<:.c=.lst)))
+
+# DEBUG/IMU
+CFLAGS += -DBUILD_TYPE_DEBUG
 
 # c++ specific flags
 CPPFLAGS=-fno-exceptions               \

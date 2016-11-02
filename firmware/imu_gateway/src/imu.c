@@ -734,12 +734,9 @@ static void handle_message_cb(
     }
     else if( message->data != NULL )
     {
-        #warning "TODO - message handler - group B time data"
-
         parse_sample_time_fine(
                 (const struct XbusMessage *) message,
                 &rx_timestamp );
-
 
         parse_gps_sol_time(
                 (const struct XbusMessage *) message,
@@ -803,6 +800,8 @@ static void update_imu_fix_timeout(
 uint8_t imu_init( void )
 {
     uint8_t ret = 0;
+
+    memset( &imu_data, 0, sizeof(imu_data) );
 
     ring_buffer_init( &rx_buffer );
 

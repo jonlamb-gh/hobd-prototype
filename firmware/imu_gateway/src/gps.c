@@ -589,6 +589,8 @@ uint8_t gps_init( void )
     uint8_t ret = 0;
     int8_t sbp_status = 0;
 
+    memset( &gps_data, 0, sizeof(gps_data) );
+
     ring_buffer_init( &rx_buffer );
 
     sbp_state_init( &sbp_state );

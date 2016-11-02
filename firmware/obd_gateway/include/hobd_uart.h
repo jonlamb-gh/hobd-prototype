@@ -1,8 +1,10 @@
 /**
- * @file hobd.h
- * @brief Honda OBD Protocol.
+ * @file hobd_uart.h
+ * @brief Honda OBD Uart Protocol.
  *
  * @todo hobd protocol notes.
+ *
+ * Data rate: 10,400 bps
  *
  * Initialization sequence:
  *   -# pull k-line low for 70 ms
@@ -22,13 +24,13 @@
 
 
 
-#ifndef HOBD_H
-#define HOBD_H
+#ifndef HOBD_UART_H
+#define HOBD_UART_H
 
 
 
 
-#include <stdint.h>
+#include <inttypes.h>
 
 
 
@@ -85,6 +87,10 @@
 #define HOBD_TABLE_32 (0x20)
 
 
+//
+#define HOBD_TABLE_209 (0xD1)
+
+
 
 
 //
@@ -99,7 +105,7 @@ typedef struct
     //
     //
     uint8_t subtype;
-} hobd_packet_header;
+} hobd_packet_header_s;
 
 
 //
@@ -107,13 +113,7 @@ typedef struct
 {
     //
     //
-    uint8_t type;
-    //
-    //
-    uint8_t size;
-    //
-    //
-    uint8_t subtype;
+    hobd_packet_header_s header;
     //
     //
     uint8_t table;
@@ -123,7 +123,7 @@ typedef struct
     //
     //
     uint8_t register_cnt;
-} hobd_table_query;
+} hobd_table_query_s;
 
 
 //
@@ -131,13 +131,7 @@ typedef struct
 {
     //
     //
-    uint8_t type;
-    //
-    //
-    uint8_t size;
-    //
-    //
-    uint8_t subtype;
+    hobd_packet_header_s header;
     //
     //
     uint8_t table;
@@ -146,7 +140,7 @@ typedef struct
     uint8_t register_offset;
     //
     // register data follows after register_offset
-} hobd_table_response;
+} hobd_table_response_s;
 
 
 //
@@ -154,19 +148,82 @@ typedef struct
 {
     //
     //
-    uint8_t type;
-    //
-    //
-    uint8_t size;
-    //
-    //
-    uint8_t subtype;
+    hobd_packet_header_s header;
     //
     //
     uint8_t data;
-} hobd_init_command;
+} hobd_init_command_s;
+
+
+//
+typedef struct
+{
+    //
+    //
+    uint16_t engine_rpm;
+    //
+    //
+    uint8_t tps_volt;
+    //
+    //
+    uint8_t tps_percent;
+    //
+    //
+    uint8_t ect_volt;
+    //
+    //
+    uint8_t ect_temp;
+    //
+    //
+    uint8_t iat_volt;
+    //
+    //
+    uint8_t iat_temp;
+    //
+    //
+    uint8_t map_volt;
+    //
+    //
+    uint8_t map_pressure;
+    //
+    //
+    uint8_t reserved_0;
+    //
+    //
+    uint8_t reserved_1;
+    //
+    //
+    uint8_t battery_volt;
+    //
+    //
+    uint8_t wheel_speed;
+    //
+    //
+    uint16_t fuel_injectors;
+} hobd_table_16_s;
+
+
+//
+typedef struct
+{
+    //
+    //
+    uint8_t gear;
+    //
+    //
+    uint8_t reserved_0;
+    //
+    //
+    uint8_t reserved_1;
+    //
+    //
+    uint8_t reserved_2;
+    //
+    //
+    uint8_t engine_on;
+} hobd_table_209_s;
 
 
 
 
-#endif  /* HOBD_H */
+#endif  /* HOBD_UART_H */

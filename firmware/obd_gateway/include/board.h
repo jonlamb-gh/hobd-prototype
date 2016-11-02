@@ -22,17 +22,26 @@
 #include <avr/interrupt.h>
 #include <avr/wdt.h>
 #include <avr/pgmspace.h>
-#include <stdint.h>
-
-#ifndef BUILD_TYPE_DEBUG
-#define BUILD_TYPE_DEBUG
-#endif
 
 
 
 
 //
+#define NODE_ID (0x05)
+
+
+//
+#define HARDWARE_VERSION (1)
+
+
+//
+#define FIRMWARE_VERSION (1)
+
+
+#ifndef BOOL
+#include <inttypes.h>
 typedef uint8_t BOOL;
+#endif
 
 
 //
@@ -90,13 +99,13 @@ typedef uint8_t BOOL;
 
 
 //
-#define HOBD_UART UART_1
 #define DEBUG_UART UART_0
+#define OBD_UART UART_1
 
 
 //
-#define DEBUG_BAUDDRATE (57600UL)
-#define HOBD_BAUDRATE (10400UL)
+#define DEBUG_BAUDRATE (57600UL)
+#define OBD_BAUDRATE (115200UL)
 
 
 //
@@ -136,11 +145,20 @@ typedef uint8_t BOOL;
 
 //
 #ifdef BUILD_TYPE_DEBUG
-#define DEBUG_PUTS(x) {Uart_select(DEBUG_UART); uart_put_string((uint8_t*) x); Uart_select(HOBD_UART);}
-#define DEBUG_PRINTF(...) {Uart_select(DEBUG_UART); uart_mini_printf(__VA_ARGS__); Uart_select(HOBD_UART);}
+#define DEBUG_PUTS( x ) \
+{ \
+    Uart_select( DEBUG_UART ); \
+    uart_put_string( (uint8_t*) x ); \
+}
+
+#define DEBUG_PRINTF( ... ) \
+{ \
+    Uart_select( DEBUG_UART ); \
+    uart_mini_printf( __VA_ARGS__ ); \
+}
 #else
-#define DEBUG_PUTS(x)
-#define DEBUG_PRINTF(x)
+#define DEBUG_PUTS( x )
+#define DEBUG_PRINTF( ... )
 #endif
 
 
