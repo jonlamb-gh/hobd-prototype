@@ -323,6 +323,20 @@ static void parse_response(
             obd_data.group_a.time.counter_1 = rx_count_table_16;
             obd_data.group_a.time.counter_1 = rx_count_table_209;
 
+            obd_data.group_a.obd1.engine_rpm = table_data->engine_rpm;
+            obd_data.group_a.obd1.wheel_speed = table_data->wheel_speed;
+            obd_data.group_a.obd1.battery_volt = table_data->battery_volt;
+            obd_data.group_a.obd1.tps_volt = table_data->tps_volt;
+            obd_data.group_a.obd1.tps_percent = table_data->tps_percent;
+
+            obd_data.group_a.obd2.ect_volt = table_data->ect_volt;
+            obd_data.group_a.obd2.ect_temp = table_data->ect_temp;
+            obd_data.group_a.obd2.iat_volt = table_data->iat_volt;
+            obd_data.group_a.obd2.iat_temp = table_data->iat_temp;
+            obd_data.group_a.obd2.map_volt = table_data->map_volt;
+            obd_data.group_a.obd2.map_pressure = table_data->map_pressure;
+            obd_data.group_a.obd2.fuel_injectors = table_data->fuel_injectors;
+
             last_rx_time = (*rx_timestamp);
 
             obd_set_group_ready( OBD_GROUP_A_READY );
@@ -342,6 +356,9 @@ static void parse_response(
             obd_data.group_b.time.rx_time = (*rx_timestamp);
             obd_data.group_b.time.counter_1 = rx_count_table_16;
             obd_data.group_b.time.counter_1 = rx_count_table_209;
+
+            obd_data.group_b.obd3.engine_on = table_data->engine_on;
+            obd_data.group_b.obd3.gear = table_data->gear;
 
             last_rx_time = (*rx_timestamp);
 

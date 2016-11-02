@@ -48,6 +48,9 @@ typedef struct
         //
         //
         hobd_obd1_s obd1;
+        //
+        //
+        hobd_obd2_s obd2;
     } group_a;
     //
     // OBD_GROUP_B_READY
@@ -58,7 +61,7 @@ typedef struct
         hobd_obd_time_s time;
         //
         //
-        hobd_obd2_s obd2;
+        hobd_obd3_s obd3;
     } group_b;
 } obd_data_s;
 

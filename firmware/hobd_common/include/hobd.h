@@ -77,6 +77,7 @@
 #define HOBD_CAN_ID_OBD_TIME (0x080)
 #define HOBD_CAN_ID_OBD1 (0x081)
 #define HOBD_CAN_ID_OBD2 (0x082)
+#define HOBD_CAN_ID_OBD3 (0x083)
 
 
 //
@@ -1053,22 +1054,13 @@ typedef struct
 /**
  * @brief On-board diagnostics 1 message.
  *
- * Message size (CAN frame DLC): 7 bytes
+ * Message size (CAN frame DLC): 6 bytes
  * CAN frame ID: \ref HOBD_CAN_ID_OBD1
  * Transmit rate: TODO ms
  *
  */
 typedef struct
 {
-    //
-    //
-    uint8_t engine_on : 1;
-    //
-    //
-    uint8_t gear : 4;
-    //
-    //
-    uint8_t reserved : 3;
     //
     //
     uint16_t engine_rpm;
@@ -1119,6 +1111,28 @@ typedef struct
     //
     uint16_t fuel_injectors;
 } hobd_obd2_s;
+
+
+/**
+ * @brief On-board diagnostics 3 message.
+ *
+ * Message size (CAN frame DLC): 1 bytes
+ * CAN frame ID: \ref HOBD_CAN_ID_OBD3
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    uint8_t engine_on : 1;
+    //
+    //
+    uint8_t gear : 4;
+    //
+    //
+    uint8_t reserved : 3;
+} hobd_obd3_s;
 
 
 
