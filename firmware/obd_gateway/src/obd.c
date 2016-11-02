@@ -95,6 +95,14 @@ static void update_rx_timeout(
 
 
 //
+static uint8_t publish_group_a( void );
+
+
+//
+static uint8_t publish_group_b( void );
+
+
+//
 static uint8_t obd_checksum(
         const uint8_t * const buffer,
         const uint16_t len );
@@ -174,6 +182,49 @@ static void update_rx_timeout(
             diagnostics_set_warn( HOBD_HEARTBEAT_WARN_NO_OBD_ECU );
         }
     }
+}
+
+
+//
+static uint8_t publish_group_a( void )
+{
+    uint8_t ret = 0;
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_OBD_TIME,
+            (uint8_t) sizeof(obd_data.group_a.time),
+            (const uint8_t *) &obd_data.group_a.time );
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_OBD1,
+            (uint8_t) sizeof(obd_data.group_a.obd1),
+            (const uint8_t *) &obd_data.group_a.obd1 );
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_OBD2,
+            (uint8_t) sizeof(obd_data.group_a.obd2),
+            (const uint8_t *) &obd_data.group_a.obd2 );
+
+    return ret;
+}
+
+
+//
+static uint8_t publish_group_b( void )
+{
+    uint8_t ret = 0;
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_OBD_TIME,
+            (uint8_t) sizeof(obd_data.group_b.time),
+            (const uint8_t *) &obd_data.group_b.time );
+
+    ret |= canbus_send(
+            HOBD_CAN_ID_OBD3,
+            (uint8_t) sizeof(obd_data.group_b.obd3),
+            (const uint8_t *) &obd_data.group_b.obd3 );
+
+    return ret;
 }
 
 
@@ -455,6 +506,23 @@ uint8_t obd_update( void )
 
     // process any available data in the rx buffer
     ret = process_buffer();
+
+    // check for any ready groups
+    if( obd_data.ready_groups != OBD_GROUP_NONE_READY )
+    {
+        // handle groups in order/priority
+        if( obd_is_group_ready( OBD_GROUP_A_READY ) != 0 )
+        {
+            ret |= publish_group_a();
+            obd_clear_group_ready( OBD_GROUP_A_READY );
+        }
+
+        if( obd_is_group_ready( OBD_GROUP_B_READY ) != 0 )
+        {
+            ret |= publish_group_b();
+            obd_clear_group_ready( OBD_GROUP_B_READY );
+        }
+    }
 
     // get current time
     const uint32_t now = time_get_ms();
