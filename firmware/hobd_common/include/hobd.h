@@ -74,8 +74,9 @@
 
 
 // OBD ID's
-#define HOBD_CAN_ID_OBD1 (0x080)
-#define HOBD_CAN_ID_OBD2 (0x081)
+#define HOBD_CAN_ID_OBD_TIME (0x080)
+#define HOBD_CAN_ID_OBD1 (0x081)
+#define HOBD_CAN_ID_OBD2 (0x082)
 
 
 //
@@ -1024,6 +1025,28 @@ typedef struct
     //
     float z;
 } hobd_imu_magf2_s;
+
+
+/**
+ * @brief On-board diagnostics time message.
+ *
+ * Message size (CAN frame DLC): 8 bytes
+ * CAN frame ID: \ref HOBD_CAN_ID_OBD_TIME
+ * Transmit rate: TODO ms
+ *
+ */
+typedef struct
+{
+    //
+    //
+    uint32_t rx_time; /*!< Local rx millisecond timestamp when the OBD data was received. [milliseconds] */
+    //
+    //
+    uint16_t counter_1;
+    //
+    //
+    uint16_t counter_2;
+} hobd_obd_time_s;
 
 
 /**

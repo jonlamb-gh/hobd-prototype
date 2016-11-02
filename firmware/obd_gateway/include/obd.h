@@ -44,12 +44,18 @@ typedef struct
     {
         //
         //
+        hobd_obd_time_s time;
+        //
+        //
         hobd_obd1_s obd1;
     } group_a;
     //
     // OBD_GROUP_B_READY
     struct
     {
+        //
+        //
+        hobd_obd_time_s time;
         //
         //
         hobd_obd2_s obd2;
