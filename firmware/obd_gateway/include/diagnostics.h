@@ -25,6 +25,11 @@
 #define DIAGNOSTICS_WARN_SET_CLEAR_INTERVAL (5000UL)
 
 
+// waiting for data
+// ms
+#define DIAGNOSTICS_BLINK_INTERVAL (100UL)
+
+
 
 
 //

@@ -25,6 +25,14 @@
 // static global types/macros
 // *****************************************************
 
+//
+typedef enum
+{
+    LED_STATE_OFF,
+    LED_STATE_BLINK,
+    LED_STATE_ON
+} led_state_kind;
+
 
 
 
@@ -49,8 +57,25 @@ static uint32_t warn_clear_set = DIAGNOSTICS_CLEAR_SET_NONE;
 
 
 //
+static led_state_kind led_state = LED_STATE_OFF;
+
+
+//
+static uint32_t last_led_toggle = 0;
+
+
+//
 static const uint16_t CAN_ID_HEARTBEAT =
         (uint16_t) (HOBD_CAN_ID_HEARTBEAT_BASE + NODE_ID);
+
+
+//
+static const uint32_t led_blink_intervals[] =
+{
+    [LED_STATE_OFF] = 0,
+    [LED_STATE_BLINK] = DIAGNOSTICS_BLINK_INTERVAL,
+    [LED_STATE_ON] = 0
+};
 
 
 
@@ -70,6 +95,11 @@ static void send_heartbeat(
 static void clear_warn_set(
         const uint32_t * const now,
         const uint8_t clear_now );
+
+
+//
+static void update_led(
+        const uint32_t * const now );
 
 
 
@@ -136,6 +166,57 @@ static void clear_warn_set(
 }
 
 
+//
+static void update_led(
+        const uint32_t * const now )
+{
+    const uint8_t connected = ((hobd_heartbeat.warning_register & HOBD_HEARTBEAT_WARN_NO_OBD_ECU) == 0) ? 1 : 0;
+
+    // update state
+    if( hobd_heartbeat.state != HOBD_HEARTBEAT_STATE_OK )
+    {
+        // node is in an error state
+        led_state = LED_STATE_OFF;
+    }
+    else if( connected != 0 )
+    {
+        // connected
+        led_state = LED_STATE_ON;
+    }
+    else
+    {
+        // waiting for data
+        led_state = LED_STATE_BLINK;
+    }
+
+    // update LED
+    if( led_state == LED_STATE_OFF )
+    {
+        led_off();
+    }
+    else if( led_state == LED_STATE_ON )
+    {
+        led_on();
+    }
+    else
+    {
+        // get time since last toggle
+        const uint32_t delta = time_get_delta(
+                &last_led_toggle,
+                now );
+
+        // toggle if interval met/exceeded
+        if( delta >= led_blink_intervals[ led_state ] )
+        {
+            // update last toggle timestamp, ms
+            last_led_toggle = (*now);
+
+            led_toggle();
+        }
+    }
+}
+
+
 
 
 // *****************************************************
@@ -152,6 +233,8 @@ void diagnostics_init( void )
     hobd_heartbeat.counter = 0;
     hobd_heartbeat.error_register = 0;
     hobd_heartbeat.warning_register = 0;
+
+    led_off();
 }
 
 
@@ -255,6 +338,9 @@ void diagnostics_update( void )
 
     // clear warning bits as needed
     clear_warn_set( &now, 0 );
+
+    // update LED indicator
+    update_led( &now );
 
     // publish heartbeat message as needed
     send_heartbeat( &now, 0 );
