@@ -161,6 +161,8 @@ uint8_t obd_init( void )
 {
     uint8_t ret = 0;
 
+    memset( &obd_data, 0, sizeof(obd_data) );
+
     ring_buffer_init( &rx_buffer );
 
     hw_init();

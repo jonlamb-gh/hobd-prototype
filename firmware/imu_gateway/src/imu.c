@@ -801,6 +801,8 @@ uint8_t imu_init( void )
 {
     uint8_t ret = 0;
 
+    memset( &imu_data, 0, sizeof(imu_data) );
+
     ring_buffer_init( &rx_buffer );
 
     const struct XbusParserCallback xbus_callbacks =
