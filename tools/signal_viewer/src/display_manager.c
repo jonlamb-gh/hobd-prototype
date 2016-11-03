@@ -115,6 +115,9 @@ static void on_resize(
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity();
 
+    dm_context.win_width = (unsigned long) w;
+    dm_context.win_height = (unsigned long) h;
+
     // update projection
     gluOrtho2D(
             0.0,

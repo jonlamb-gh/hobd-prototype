@@ -104,9 +104,12 @@ static void draw_table_base(
     const GLdouble base_y = 5.0;
 
     char string[256];
-    const GLdouble bound_x = 300.0;
+    char buffer_string[256];
+    const GLdouble bound_x = 370.0;
     const GLdouble table_name_xoff = 5.0;
     const GLdouble table_name_yoff = 15.0;
+    const GLdouble text_delta_y = 20.0;
+    const GLdouble text_col_b_xoff = 160.0;
 
     render_line(
             base_x,
@@ -117,7 +120,7 @@ static void draw_table_base(
     snprintf(
             string,
             sizeof(string),
-            "ID: 0x%lX (%lu) - DLC %lu - '%s'",
+            "ID: 0x%04lX (%lu) - DLC %lu - '%s'",
             table->can_id,
             table->can_id,
             table->can_dlc,
@@ -135,6 +138,35 @@ static void draw_table_base(
             base_x + bound_x,
             base_y + table_name_yoff + 5);
 
+    if( table->can_dlc == 0 )
+    {
+        snprintf(
+                buffer_string,
+                sizeof(buffer_string),
+                " NA" );
+    }
+    else
+    {
+        memset( buffer_string, 0, sizeof(buffer_string) );
+
+        unsigned long idx = 0;
+        for( idx = 0; idx < table->can_dlc; idx += 1 )
+        {
+            char hex_string[4];
+
+            snprintf(
+                    hex_string,
+                    sizeof(hex_string),
+                    " %02X",
+                    (unsigned int) table->buffer[ table->can_dlc - idx - 1] );
+
+            strncat(
+                    buffer_string,
+                    hex_string,
+                    sizeof(buffer_string) );
+        }
+    }
+
     snprintf(
             string,
             sizeof(string),
@@ -143,7 +175,19 @@ static void draw_table_base(
 
     render_text_2d(
             base_x + table_name_xoff,
-            base_y + 2 * table_name_yoff,
+            base_y + table_name_yoff + text_delta_y,
+            string,
+            NULL );
+
+    snprintf(
+            string,
+            sizeof(string),
+            "data[M-L]:%s",
+            buffer_string );
+
+    render_text_2d(
+            base_x + table_name_xoff + text_col_b_xoff,
+            base_y + table_name_yoff + text_delta_y,
             string,
             NULL );
 }
@@ -164,15 +208,20 @@ void st_render(
 
     glColor4d( 0.0, 0.0, 0.0, 1.0 );
 
+    glLineWidth( 2.0f );
+
     const signal_table_s test_table =
     {
-        .rx_time = 1,
-        .can_id = 0x100,
-        .can_dlc = 8,
-        .table_name = "test-table"
+        .rx_time = 123456789,
+        .can_id = HOBD_CAN_ID_OBD2,
+        .can_dlc = sizeof(hobd_obd2_s),
+        .table_name = "OBD 2",
+        .buffer = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 }
     };
 
     draw_table_base( &test_table );
+
+    glLineWidth( 1.0f );
 
     glPopMatrix();
 }
