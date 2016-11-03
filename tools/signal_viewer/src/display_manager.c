@@ -108,13 +108,53 @@ static void on_resize(
         const int w,
         const int h )
 {
+    // set viewport
+    glViewport( 0, 0, w, h );
 
+    // set projection
+    glMatrixMode( GL_PROJECTION );
+    glLoadIdentity();
+
+    // update projection
+    gluOrtho2D(
+            0.0,
+            (double) dm_context.win_width,
+            (double) dm_context.win_height,
+            0.0 );
+
+    // set modelview
+    glMatrixMode( GL_MODELVIEW );
+    glLoadIdentity();
+
+    // signal redraw
+    glutPostRedisplay();
 }
 
 
 //
-static void on_draw( void )
+static void on_render( void )
 {
+    // clear buffers
+    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT );
+
+    // reset white background
+    glClearColor( 1.0, 1.0, 1.0, 1.0 );
+
+    // reset color
+    glColor4d( 1.0, 1.0, 1.0, 1.0 );
+
+    // set default line width
+    glLineWidth( 1.0f );
+
+    // set default point size
+    glPointSize( 1.0f );
+
+    // redraw signal tables
+    st_render(
+            &dm_context.signal_tables[ 0 ],
+            ST_SIGNAL_COUNT );
+
+    // swap buffer
     glutSwapBuffers();
 }
 
@@ -180,7 +220,7 @@ int dm_init(
         glutMouseFunc( on_mouse );
         glutMotionFunc( on_mouse_motion );
         glutReshapeFunc( on_resize );
-        glutDisplayFunc( on_draw );
+        glutDisplayFunc( on_render );
 
         // set config flags
         glDisable( GL_DEPTH );
@@ -196,6 +236,9 @@ int dm_init(
         // alpha blending config
         glEnable( GL_BLEND );
         glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+
+        // configure 2D
+        glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
         // main loop returns on window exit
         glutSetOption( GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_GLUTMAINLOOP_RETURNS );

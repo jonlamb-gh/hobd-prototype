@@ -4,6 +4,7 @@
 TARGET := bin/hobd-signal-viewer
 
 SRCS := src/time_domain.c \
+	src/signal_table.c \
 	src/display_manager.c \
 	src/main.c
 

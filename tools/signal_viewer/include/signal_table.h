@@ -18,6 +18,12 @@
 
 
 
+//
+#define ST_SIGNAL_COUNT (38)
+
+
+
+
 // enforce 1 byte alignment so we can do linear packing
 #pragma pack(push)
 #pragma pack(1)
@@ -38,6 +44,9 @@ typedef struct
     //
     //
     unsigned long can_dlc;
+    //
+    //
+    char table_name[ 256 ];
     //
     //
     union
@@ -165,6 +174,14 @@ typedef struct
 
 // restore alignment
 #pragma pack(pop)
+
+
+
+
+//
+void st_render(
+        const signal_table_s * const signals,
+        const unsigned long signals_len );
 
 
 

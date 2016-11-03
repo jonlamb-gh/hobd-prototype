@@ -16,6 +16,7 @@
 #include <signal.h>
 #include "gl_headers.h"
 #include "time_domain.h"
+#include "signal_table.h"
 
 
 
@@ -61,6 +62,9 @@ typedef struct
     //
     // monotonic
     timestamp_ms last_redraw_time;
+    //
+    //
+    signal_table_s signal_tables[ ST_SIGNAL_COUNT ];
     //
     //
     sig_atomic_t *exit_signal_ptr;
