@@ -243,6 +243,8 @@ void dm_update(
 
             // process glut events
             glutMainLoopEvent();
+
+            dm_context.last_redraw_time = time_get_monotonic_timestamp();
         }
         else
         {
