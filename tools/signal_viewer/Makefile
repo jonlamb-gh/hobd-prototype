@@ -1,13 +1,15 @@
 ##########################################################
 ##########################################################
 
-TARGET	:= bin/hobd-signal-viewer
+TARGET := bin/hobd-signal-viewer
 
-SRCS    :=  src/main.c
+SRCS := src/time_domain.c \
+	src/display_manager.c \
+	src/main.c
 
-OBJS    := $(SRCS:.c=.o)
-DEPS    := $(SRCS:.c=.dep)
-XDEPS   := $(wildcard $(DEPS))
+OBJS := $(SRCS:.c=.o)
+DEPS := $(SRCS:.c=.dep)
+XDEPS := $(wildcard $(DEPS))
 
 CC = gcc
 
@@ -18,11 +20,14 @@ CCFLAGS += -Wall -Wextra \
           -Wwrite-strings -Wstrict-prototypes -Wold-style-definition \
           -Wnested-externs -Wmissing-include-dirs
 
+# include GL EXT
+CCFLAGS += -DGL_GLEXT_PROTOTYPES -DGLX_GLXEXT_PROTOTYPES
+
 LDFLAGS =
 
-INCLUDES =
+INCLUDES = -Iinclude
 
-LIBS = -lm
+LIBS = -lrt -lglut -lGLU -lGL -lX11 -lm
 
 all: dirs $(TARGET)
 
