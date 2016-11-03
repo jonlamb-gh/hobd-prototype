@@ -25,7 +25,7 @@ CCFLAGS += -DGL_GLEXT_PROTOTYPES -DGLX_GLXEXT_PROTOTYPES
 
 LDFLAGS =
 
-INCLUDES = -Iinclude
+INCLUDES = -Iinclude -I../../firmware/hobd_common/include
 
 LIBS = -lrt -lglut -lGLU -lGL -lX11 -lm
 

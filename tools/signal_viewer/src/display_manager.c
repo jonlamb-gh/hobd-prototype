@@ -15,6 +15,7 @@
 #include "gl_headers.h"
 #include "math_util.h"
 #include "time_domain.h"
+#include "signal_table.h"
 #include "display_manager.h"
 
 
