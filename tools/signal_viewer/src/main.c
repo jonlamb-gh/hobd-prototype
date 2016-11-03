@@ -115,6 +115,7 @@ int main( int argc, char **argv )
         // update display manager
         dm_update( &time_to_redraw );
 
+        // TODO - adjust this mechanism as IO gets added
         if( time_to_redraw > 0 )
         {
             time_sleep_ms( m_min(time_to_redraw,5) );
