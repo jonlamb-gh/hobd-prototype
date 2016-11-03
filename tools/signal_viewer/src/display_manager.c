@@ -66,7 +66,10 @@ static void on_key(
         const int x,
         const int y )
 {
-
+    if( (key == '\e') || (key == 'q') )
+    {
+        on_close();
+    }
 }
 
 
