@@ -78,7 +78,17 @@ timestamp_ms time_get_since(
 
 
 //
+timestamp_ms time_get_since_monotonic(
+        const timestamp_ms const value );
+
+
+//
 timestamp_ms time_get_until(
+        const timestamp_ms const value );
+
+
+//
+timestamp_ms time_get_until_monotonic(
         const timestamp_ms const value );
 
 

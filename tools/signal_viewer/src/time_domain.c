@@ -79,28 +79,31 @@ static timestamp_ms get_timestamp(
 void time_sleep_ms(
         const timestamp_ms interval )
 {
-    struct timespec req = { .tv_sec = 0, .tv_nsec = 0 };
-    struct timespec rem = { .tv_sec = 0, .tv_nsec = 0 };
-    const time_t sec = (time_t) (interval / 1000ULL);
-
-    // subtract seconds
-    const timestamp_ms rtime = interval - (sec * 1000UL);
-
-    // get remainder
-    req.tv_sec = sec;
-    req.tv_nsec = (long int) (rtime * 1000000ULL);
-
-    // sleep, account for interrupts
-    while( nanosleep( &req, &rem ) == -1 )
+    if( interval != 0 )
     {
-        // swap
-        req.tv_sec = rem.tv_sec;
-        req.tv_nsec = rem.tv_nsec;
+        struct timespec req = { .tv_sec = 0, .tv_nsec = 0 };
+        struct timespec rem = { .tv_sec = 0, .tv_nsec = 0 };
+        const time_t sec = (time_t) (interval / 1000ULL);
 
-        // error
-        if( errno == EINVAL )
+        // subtract seconds
+        const timestamp_ms rtime = interval - (sec * 1000UL);
+
+        // get remainder
+        req.tv_sec = sec;
+        req.tv_nsec = (long int) (rtime * 1000000ULL);
+
+        // sleep, account for interrupts
+        while( nanosleep( &req, &rem ) == -1 )
         {
-            break;
+            // swap
+            req.tv_sec = rem.tv_sec;
+            req.tv_nsec = rem.tv_nsec;
+
+            // error
+            if( errno == EINVAL )
+            {
+                break;
+            }
         }
     }
 }
@@ -138,12 +141,46 @@ timestamp_ms time_get_since(
 
 
 //
+timestamp_ms time_get_since_monotonic(
+        const timestamp_ms const value )
+{
+    timestamp_ms delta = 0;
+
+    const timestamp_ms now = time_get_monotonic_timestamp();
+
+    if( now > value )
+    {
+        delta = (now - value);
+    }
+
+    return delta;
+}
+
+
+//
 timestamp_ms time_get_until(
         const timestamp_ms const value )
 {
     timestamp_ms delta = 0;
 
     const timestamp_ms now = time_get_timestamp();
+
+    if( value > now )
+    {
+        delta = (value - now);
+    }
+
+    return delta;
+}
+
+
+//
+timestamp_ms time_get_until_monotonic(
+        const timestamp_ms const value )
+{
+    timestamp_ms delta = 0;
+
+    const timestamp_ms now = time_get_monotonic_timestamp();
 
     if( value > now )
     {
