@@ -398,5 +398,24 @@ void st_process_can_frame(
         const config_s * const config,
         st_state_s * const state )
 {
-    // TODO
+    if( config->freeze_frame_enabled == FALSE )
+    {
+        // get a pointer to the data if we have a table for the frame
+        signal_table_s * const table = get_table_by_can_id(
+                can_frame->id,
+                state );
+
+        // copy new data
+        if( table != NULL )
+        {
+            table->native_rx_time = can_frame->native_rx_timestamp;
+            table->rx_time = can_frame->rx_timestamp;
+            table->rx_time_mono = can_frame->rx_timestamp_mono;
+
+            memcpy(
+                    table->buffer,
+                    can_frame->data,
+                    table->can_dlc );
+        }
+    }
 }

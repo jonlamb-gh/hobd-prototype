@@ -41,7 +41,13 @@ typedef struct
 {
     //
     //
+    timestamp_ms native_rx_time;
+    //
+    //
     timestamp_ms rx_time;
+    //
+    //
+    timestamp_ms rx_time_mono;
     //
     //
     unsigned long can_id;
