@@ -14,6 +14,7 @@
 #include <signal.h>
 
 #include "math_util.h"
+#include "can.h"
 #include "display_manager.h"
 
 

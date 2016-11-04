@@ -11,6 +11,7 @@ SRCS := src/render_hobd_obd_time.c \
 	src/time_domain.c \
 	src/signal_table.c \
 	src/display_manager.c \
+	src/can.c \
 	src/main.c
 
 OBJS := $(SRCS:.c=.o)
