@@ -17,6 +17,7 @@
 #include "gl_headers.h"
 #include "time_domain.h"
 #include "signal_table.h"
+#include "config.h"
 
 
 
@@ -51,23 +52,17 @@ typedef struct
     int win_id; /*!< Window identifier.
                  * Value \ref GUI_WINDOW_ID_INVALID means invalid. */
     //
-    //
-    unsigned long win_width; /*!< Window width. [pixels] */
-    //
-    //
-    unsigned long win_height; /*!< Window height. [pixels] */
-    //
-    //
-    char win_title[ 1024 ]; /*!< Window title string. */
-    //
     // monotonic
     timestamp_ms last_redraw_time;
     //
     //
-    signal_table_s signal_tables[ ST_SIGNAL_COUNT ];
+    st_state_s st_state;
     //
     //
     sig_atomic_t *exit_signal_ptr;
+    //
+    //
+    config_s config;
 } dm_context_s;
 
 

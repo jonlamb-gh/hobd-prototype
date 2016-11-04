@@ -14,6 +14,7 @@
 
 
 #include "time_domain.h"
+#include "config.h"
 
 
 
@@ -30,6 +31,8 @@
 
 
 #include "hobd.h"
+
+
 
 
 //
@@ -172,6 +175,21 @@ typedef struct
 } signal_table_s;
 
 
+//
+typedef struct
+{
+    //
+    //
+    timestamp_ms last_update;
+    //
+    //
+    timestamp_ms last_update_mono;
+    //
+    //
+    signal_table_s signal_tables[ ST_SIGNAL_COUNT ];
+} st_state_s;
+
+
 // restore alignment
 #pragma pack(pop)
 
@@ -180,8 +198,8 @@ typedef struct
 
 //
 void st_render(
-        const signal_table_s * const signals,
-        const unsigned long signals_len );
+        const config_s * const config,
+        st_state_s * const state );
 
 
 

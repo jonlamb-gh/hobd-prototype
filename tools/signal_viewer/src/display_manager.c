@@ -70,6 +70,10 @@ static void on_key(
     {
         on_close();
     }
+    else if( key == 'f' )
+    {
+        dm_context.config.freeze_frame_enabled = !dm_context.config.freeze_frame_enabled;
+    }
 }
 
 
@@ -115,14 +119,14 @@ static void on_resize(
     glMatrixMode( GL_PROJECTION );
     glLoadIdentity();
 
-    dm_context.win_width = (unsigned long) w;
-    dm_context.win_height = (unsigned long) h;
+    dm_context.config.win_width = (unsigned long) w;
+    dm_context.config.win_height = (unsigned long) h;
 
     // update projection
     gluOrtho2D(
             0.0,
-            (double) dm_context.win_width,
-            (double) dm_context.win_height,
+            (double) dm_context.config.win_width,
+            (double) dm_context.config.win_height,
             0.0 );
 
     // set modelview
@@ -154,8 +158,8 @@ static void on_render( void )
 
     // redraw signal tables
     st_render(
-            &dm_context.signal_tables[ 0 ],
-            ST_SIGNAL_COUNT );
+            &dm_context.config,
+            &dm_context.st_state );
 
     // swap buffer
     glutSwapBuffers();
@@ -193,9 +197,12 @@ int dm_init(
     dm_context.exit_signal_ptr = exit_signal;
 
     // set window data
-    strncpy( dm_context.win_title, window_title, sizeof(dm_context.win_title) );
-    dm_context.win_width = window_width;
-    dm_context.win_height = window_height;
+    strncpy(
+            dm_context.config.win_title,
+            window_title,
+            sizeof(dm_context.config.win_title) );
+    dm_context.config.win_width = window_width;
+    dm_context.config.win_height = window_height;
 
     // init GL
     glutInit( &dm_context.gl_argc, dm_context.gl_argv );
@@ -204,10 +211,12 @@ int dm_init(
     glutInitDisplayMode( GLUT_RGB | GLUT_DOUBLE );
 
     // win size
-    glutInitWindowSize( dm_context.win_width, dm_context.win_height );
+    glutInitWindowSize(
+            dm_context.config.win_width,
+            dm_context.config.win_height );
 
     // create display window
-    dm_context.win_id = glutCreateWindow( dm_context.win_title );
+    dm_context.win_id = glutCreateWindow( dm_context.config.win_title );
     if( dm_context.win_id < 0 )
     {
         dm_context.win_id = DM_WINDOW_ID_INVALID;

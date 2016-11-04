@@ -98,6 +98,8 @@ void render_line(
 
 //
 static void render_page_header(
+        const config_s * const config,
+        const st_state_s * const state,
         const unsigned long page_number )
 {
     char string[256];
@@ -113,9 +115,6 @@ static void render_page_header(
 
     glLineWidth( 2.0f );
 
-    const timestamp_ms now = time_get_timestamp();
-    const timestamp_ms now_monotonic = time_get_monotonic_timestamp();
-
     render_line(
             base_x,
             base_y,
@@ -126,7 +125,7 @@ static void render_page_header(
             string,
             sizeof(string),
             "%s",
-            asctime_r( time_get_localtime( now ), date ) );
+            asctime_r( time_get_localtime( state->last_update ), date ) );
 
     render_text_2d(
             date_xoff,
@@ -138,7 +137,7 @@ static void render_page_header(
             string,
             sizeof(string),
             "ms: %llu",
-            now );
+            state->last_update );
 
     render_text_2d(
             mstime_xoff,
@@ -150,7 +149,7 @@ static void render_page_header(
             string,
             sizeof(string),
             "ms-mono: %llu",
-            now_monotonic );
+            state->last_update_mono );
 
     render_text_2d(
             monotime_xoff,
@@ -174,6 +173,7 @@ static void render_page_header(
 
 //
 static void render_table_base(
+        const config_s * const config,
         const signal_table_s * const table )
 {
     char string[256];
@@ -278,12 +278,20 @@ static void render_table_base(
 
 //
 void st_render(
-        const signal_table_s * const signals,
-        const unsigned long signals_len )
+        const config_s * const config,
+        st_state_s * const state )
 {
     glPushMatrix();
 
     glColor4d( 0.0, 0.0, 0.0, 1.0 );
+
+    if( config->freeze_frame_enabled == FALSE )
+    {
+        state->last_update = time_get_timestamp();
+        state->last_update_mono = time_get_monotonic_timestamp();
+    }
+
+
 
     const signal_table_s test_table =
     {
@@ -294,11 +302,9 @@ void st_render(
         .buffer = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 }
     };
 
-    render_page_header( 1 );
+    render_page_header( config, state, 1 );
 
-    render_table_base( &test_table );
-
-//    glLineWidth( 1.0f );
+    render_table_base( config, &test_table );
 
     glPopMatrix();
 }
