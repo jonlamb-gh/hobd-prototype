@@ -24,11 +24,11 @@
 // *****************************************************
 
 //
-#define WINDOW_WIDTH (1200UL)
+#define WINDOW_WIDTH (800UL)
 
 
 //
-#define WINDOW_HEIGHT (800UL)
+#define WINDOW_HEIGHT (600UL)
 
 
 //

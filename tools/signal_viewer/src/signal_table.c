@@ -63,6 +63,14 @@ void render_hobd_obd2(
         const GLdouble base_y );
 
 
+//
+void render_hobd_obd3(
+        const config_s * const config,
+        const hobd_obd3_s * const data,
+        const GLdouble base_x,
+        const GLdouble base_y );
+
+
 
 
 // *****************************************************
@@ -75,7 +83,7 @@ static void render_page_header(
         const st_state_s * const state,
         const unsigned long page_number )
 {
-    char string[256];
+    char string[512];
     char date[64];
     const GLdouble base_x = 0.0;
     const GLdouble base_y = 25.0;
@@ -151,8 +159,8 @@ static void render_table_base(
         const GLdouble base_x,
         const GLdouble base_y )
 {
-    char string[256];
-    char buffer_string[256];
+    char string[512];
+    char buffer_string[512];
     const GLdouble bound_x = 370.0;
     const GLdouble table_name_xoff = 5.0;
     const GLdouble table_name_yoff = 15.0;
@@ -319,12 +327,12 @@ void st_render(
     render_hobd_obd1( config, &test2_table.obd1, 415.0, 80.0 );
 
 
-    render_table_base( config, &test3_table, 800.0, 40.0 );
-    render_hobd_obd2( config, &test3_table.obd2, 815.0, 80.0 );
+    render_table_base( config, &test3_table, 5.0, 340.0 );
+    render_hobd_obd2( config, &test3_table.obd2, 20.0, 380.0 );
 
 
-    render_table_base( config, &test4_table, 5.0, 340.0 );
-    render_hobd_obd2( config, &test4_table.obd2, 20.0, 380.0 );
+    render_table_base( config, &test4_table, 400.0, 340.0 );
+    render_hobd_obd3( config, &test4_table.obd3, 415.0, 380.0 );
 
 
 

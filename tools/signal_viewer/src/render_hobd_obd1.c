@@ -60,7 +60,7 @@ void render_hobd_obd1(
         const GLdouble base_x,
         const GLdouble base_y )
 {
-    char string[256];
+    char string[512];
     GLdouble delta_y = 5.0;
     const GLdouble bound_x = 355.0;
     const GLdouble text_yoff = 15.0;
@@ -75,7 +75,7 @@ void render_hobd_obd1(
     snprintf(
             string,
             sizeof(string),
-            "engine_rpm: %lu",
+            "engine_rpm                                  : %lu",
             (unsigned long) data->engine_rpm );
 
     render_text_2d(
@@ -95,7 +95,7 @@ void render_hobd_obd1(
     snprintf(
             string,
             sizeof(string),
-            "wheel_speed: %lu",
+            "wheel_speed                                : %lu",
             (unsigned long) data->wheel_speed );
 
     render_text_2d(
@@ -117,7 +117,7 @@ void render_hobd_obd1(
     snprintf(
             string,
             sizeof(string),
-            "battery_volt: %lu",
+            "battery_volt                                  : %lu",
             (unsigned long) data->battery_volt );
 
     render_text_2d(
@@ -139,7 +139,7 @@ void render_hobd_obd1(
     snprintf(
             string,
             sizeof(string),
-            "tps_volt: %lu",
+            "tps_volt                                        : %lu",
             (unsigned long) data->tps_volt );
 
     render_text_2d(
@@ -161,7 +161,7 @@ void render_hobd_obd1(
     snprintf(
             string,
             sizeof(string),
-            "tps_percent: %lu",
+            "tps_percent                                  : %lu",
             (unsigned long) data->tps_percent );
 
     render_text_2d(

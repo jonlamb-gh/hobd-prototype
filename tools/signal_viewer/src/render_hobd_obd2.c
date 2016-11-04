@@ -60,7 +60,7 @@ void render_hobd_obd2(
         const GLdouble base_x,
         const GLdouble base_y )
 {
-    char string[256];
+    char string[512];
     GLdouble delta_y = 5.0;
     const GLdouble bound_x = 355.0;
     const GLdouble text_yoff = 15.0;
@@ -75,7 +75,7 @@ void render_hobd_obd2(
     snprintf(
             string,
             sizeof(string),
-            "ect_volt: %lu",
+            "ect_volt                                       : %lu",
             (unsigned long) data->ect_volt );
 
     render_text_2d(
@@ -95,7 +95,7 @@ void render_hobd_obd2(
     snprintf(
             string,
             sizeof(string),
-            "ect_temp: %lu",
+            "ect_temp                                     : %lu",
             (unsigned long) data->ect_temp );
 
     render_text_2d(
@@ -117,7 +117,7 @@ void render_hobd_obd2(
     snprintf(
             string,
             sizeof(string),
-            "iat_volt: %lu",
+            "iat_volt                                        : %lu",
             (unsigned long) data->iat_volt );
 
     render_text_2d(
@@ -139,7 +139,7 @@ void render_hobd_obd2(
     snprintf(
             string,
             sizeof(string),
-            "iat_temp: %lu",
+            "iat_temp                                      : %lu",
             (unsigned long) data->iat_temp );
 
     render_text_2d(
@@ -161,7 +161,7 @@ void render_hobd_obd2(
     snprintf(
             string,
             sizeof(string),
-            "map_volt: %lu",
+            "map_volt                                     : %lu",
             (unsigned long) data->map_volt );
 
     render_text_2d(
@@ -183,7 +183,7 @@ void render_hobd_obd2(
     snprintf(
             string,
             sizeof(string),
-            "map_pressure: %lu",
+            "map_pressure                              : %lu",
             (unsigned long) data->map_pressure );
 
     render_text_2d(
@@ -205,7 +205,7 @@ void render_hobd_obd2(
     snprintf(
             string,
             sizeof(string),
-            "fuel_injectors: %lu",
+            "fuel_injectors                               : %lu",
             (unsigned long) data->fuel_injectors );
 
     render_text_2d(
