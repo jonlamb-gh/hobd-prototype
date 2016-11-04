@@ -15,6 +15,7 @@
 #include "gl_headers.h"
 #include "math_util.h"
 #include "time_domain.h"
+#include "render.h"
 #include "signal_table.h"
 
 
@@ -38,63 +39,35 @@
 // static declarations
 // *****************************************************
 
+//
+void render_hobd_obd_time(
+        const config_s * const config,
+        const hobd_obd_time_s * const data,
+        const GLdouble base_x,
+        const GLdouble base_y );
+
+
+//
+void render_hobd_obd1(
+        const config_s * const config,
+        const hobd_obd1_s * const data,
+        const GLdouble base_x,
+        const GLdouble base_y );
+
+
+//
+void render_hobd_obd2(
+        const config_s * const config,
+        const hobd_obd2_s * const data,
+        const GLdouble base_x,
+        const GLdouble base_y );
+
 
 
 
 // *****************************************************
 // static definitions
 // *****************************************************
-
-//
-void render_text_2d(
-        const GLdouble cx,
-        const GLdouble cy,
-        const char * const text,
-        const void * const font )
-{
-    // local vars
-    const char *ptr = text;
-    void *m_font = GLUT_BITMAP_HELVETICA_12;
-
-    // set font
-    if( font != NULL )
-    {
-        m_font = (void*) font;
-    }
-
-    // save state
-    glPushMatrix();
-
-    // start at
-    glRasterPos2d( cx, cy );
-
-    // render each char
-    while( *ptr != '\0' )
-    {
-        glutBitmapCharacter( m_font, *ptr );
-        ptr += 1;
-    }
-
-    // restore state
-    glPopMatrix();
-}
-
-
-//
-void render_line(
-        const GLdouble x1,
-        const GLdouble y1,
-        const GLdouble x2,
-        const GLdouble y2 )
-{
-    glBegin( GL_LINES );
-
-    glVertex2d( x1, y1 );
-    glVertex2d( x2, y2 );
-
-    glEnd();
-}
-
 
 //
 static void render_page_header(
@@ -174,12 +147,12 @@ static void render_page_header(
 //
 static void render_table_base(
         const config_s * const config,
-        const signal_table_s * const table )
+        const signal_table_s * const table,
+        const GLdouble base_x,
+        const GLdouble base_y )
 {
     char string[256];
     char buffer_string[256];
-    const GLdouble base_x = 5.0;
-    const GLdouble base_y = 40.0;
     const GLdouble bound_x = 370.0;
     const GLdouble table_name_xoff = 5.0;
     const GLdouble table_name_yoff = 15.0;
@@ -293,7 +266,27 @@ void st_render(
 
 
 
-    const signal_table_s test_table =
+    // TESTING
+
+    const signal_table_s test1_table =
+    {
+        .rx_time = 123456789,
+        .can_id = HOBD_CAN_ID_OBD_TIME,
+        .can_dlc = sizeof(hobd_obd_time_s),
+        .table_name = "OBD Time",
+        .buffer = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 }
+    };
+
+    const signal_table_s test2_table =
+    {
+        .rx_time = 123456789,
+        .can_id = HOBD_CAN_ID_OBD1,
+        .can_dlc = sizeof(hobd_obd1_s),
+        .table_name = "OBD 1",
+        .buffer = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 }
+    };
+
+    const signal_table_s test3_table =
     {
         .rx_time = 123456789,
         .can_id = HOBD_CAN_ID_OBD2,
@@ -302,9 +295,38 @@ void st_render(
         .buffer = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 }
     };
 
+    const signal_table_s test4_table =
+    {
+        .rx_time = 123456789,
+        .can_id = HOBD_CAN_ID_OBD3,
+        .can_dlc = sizeof(hobd_obd3_s),
+        .table_name = "OBD 3",
+        .buffer = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 }
+    };
+
+
+
+
+
     render_page_header( config, state, 1 );
 
-    render_table_base( config, &test_table );
+
+    render_table_base( config, &test1_table, 5.0, 40.0 );
+    render_hobd_obd_time( config, &test1_table.obd_time, 20.0, 80.0 );
+
+
+    render_table_base( config, &test2_table, 400.0, 40.0 );
+    render_hobd_obd1( config, &test2_table.obd1, 415.0, 80.0 );
+
+
+    render_table_base( config, &test3_table, 800.0, 40.0 );
+    render_hobd_obd2( config, &test3_table.obd2, 815.0, 80.0 );
+
+
+    render_table_base( config, &test4_table, 5.0, 340.0 );
+    render_hobd_obd2( config, &test4_table.obd2, 20.0, 380.0 );
+
+
 
     glPopMatrix();
 }

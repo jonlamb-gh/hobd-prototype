@@ -3,7 +3,11 @@
 
 TARGET := bin/hobd-signal-viewer
 
-SRCS := src/time_domain.c \
+SRCS := src/render_hobd_obd_time.c \
+	src/render_hobd_obd1.c \
+	src/render_hobd_obd2.c \
+	src/render.c \
+	src/time_domain.c \
 	src/signal_table.c \
 	src/display_manager.c \
 	src/main.c
