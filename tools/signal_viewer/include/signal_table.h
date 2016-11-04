@@ -14,6 +14,7 @@
 
 
 #include "time_domain.h"
+#include "can_frame.h"
 #include "config.h"
 
 
@@ -175,6 +176,10 @@ typedef struct
 } signal_table_s;
 
 
+// restore alignment
+#pragma pack(pop)
+
+
 //
 typedef struct
 {
@@ -190,14 +195,23 @@ typedef struct
 } st_state_s;
 
 
-// restore alignment
-#pragma pack(pop)
 
 
+//
+void st_init(
+        const config_s * const config,
+        st_state_s * const state );
 
 
 //
 void st_render(
+        const config_s * const config,
+        st_state_s * const state );
+
+
+//
+void st_process_can_frame(
+        const can_frame_s * const can_frame,
         const config_s * const config,
         st_state_s * const state );
 

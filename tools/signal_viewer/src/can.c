@@ -14,6 +14,7 @@
 
 #include "canlib.h"
 #include "time_domain.h"
+#include "can_frame.h"
 #include "can.h"
 
 
@@ -60,7 +61,7 @@ int can_open(
     if( handle < 0 )
     {
         printf( "failed to open CAN channel at index %lu\n", system_id );
-        handle = -1;
+        handle = CAN_HANDLE_INVALID;
     }
 
     if( handle >= 0 )
@@ -77,7 +78,7 @@ int can_open(
         {
             printf( "failed to set CAN bus parameters\n" );
             (void) canClose( handle );
-            handle = -1;
+            handle = CAN_HANDLE_INVALID;
         }
     }
 
@@ -90,7 +91,7 @@ int can_open(
         {
             printf( "failed to set CAN bus output control\n" );
             (void) canClose( handle );
-            handle = -1;
+            handle = CAN_HANDLE_INVALID;
         }
     }
 
@@ -101,7 +102,7 @@ int can_open(
         {
             printf( "failed to set CAN bus on-state\n" );
             (void) canClose( handle );
-            handle = -1;
+            handle = CAN_HANDLE_INVALID;
         }
     }
 
@@ -111,7 +112,7 @@ int can_open(
 
 //
 void can_close(
-        const can_handle handle )
+        const can_handle_s handle )
 {
     if( handle >= 0 )
     {
@@ -122,7 +123,7 @@ void can_close(
 
 //
 int can_read(
-        const can_handle handle,
+        const can_handle_s handle,
         const timestamp_ms timeout,
         can_frame_s * const frame )
 {
@@ -138,7 +139,7 @@ int can_read(
 
         if( timeout == 0 )
         {
-            // blocking
+            // returns immediately
             can_stat = canRead(
                     (canHandle) handle,
                     &msg_id,

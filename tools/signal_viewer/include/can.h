@@ -14,38 +14,19 @@
 
 
 #include "time_domain.h"
+#include "can_frame.h"
 
 
 
 
 //
-typedef int can_handle;
+#define CAN_HANDLE_INVALID (-1)
 
 
 
 
 //
-typedef struct
-{
-    //
-    //
-    unsigned long id;
-    //
-    //
-    unsigned long dlc;
-    //
-    //
-    timestamp_ms native_rx_timestamp;
-    //
-    //
-    timestamp_ms rx_timestamp;
-    //
-    //
-    timestamp_ms rx_timestamp_mono;
-    //
-    //
-    unsigned char data[8];
-} can_frame_s;
+typedef int can_handle_s;
 
 
 
@@ -57,12 +38,12 @@ int can_open(
 
 //
 void can_close(
-        const can_handle handle );
+        const can_handle_s handle );
 
 
 //
 int can_read(
-        const can_handle handle,
+        const can_handle_s handle,
         const timestamp_ms timeout,
         can_frame_s * const frame );
 

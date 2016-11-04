@@ -15,6 +15,7 @@
 #include "gl_headers.h"
 #include "math_util.h"
 #include "time_domain.h"
+#include "can_frame.h"
 #include "render.h"
 #include "signal_table.h"
 
@@ -76,6 +77,26 @@ void render_hobd_obd3(
 // *****************************************************
 // static definitions
 // *****************************************************
+
+//
+static signal_table_s *get_table_by_can_id(
+        const unsigned long can_id,
+        st_state_s * const state )
+{
+    signal_table_s *table = NULL;
+
+    unsigned long idx = 0;
+    for( idx = 0; (idx < ST_SIGNAL_COUNT) && (table == NULL); idx += 1 )
+    {
+        if( state->signal_tables[ idx ].can_id == can_id )
+        {
+            table = &state->signal_tables[ idx ];
+        }
+    }
+
+    return table;
+}
+
 
 //
 static void render_page_header(
@@ -258,6 +279,57 @@ static void render_table_base(
 // *****************************************************
 
 //
+void st_init(
+        const config_s * const config,
+        st_state_s * const state )
+{
+    {
+        signal_table_s * const table = &state->signal_tables[ 0 ];
+
+        table->can_id = HOBD_CAN_ID_OBD_TIME;
+        table->can_dlc = (unsigned long) sizeof( table->obd_time );
+        snprintf(
+                table->table_name,
+                sizeof(table->table_name),
+                "OBD Time" );
+    }
+
+    {
+        signal_table_s * const table = &state->signal_tables[ 1 ];
+
+        table->can_id = HOBD_CAN_ID_OBD1;
+        table->can_dlc = (unsigned long) sizeof( table->obd1 );
+        snprintf(
+                table->table_name,
+                sizeof(table->table_name),
+                "OBD 1" );
+    }
+
+    {
+        signal_table_s * const table = &state->signal_tables[ 2 ];
+
+        table->can_id = HOBD_CAN_ID_OBD2;
+        table->can_dlc = (unsigned long) sizeof( table->obd2 );
+        snprintf(
+                table->table_name,
+                sizeof(table->table_name),
+                "OBD 2" );
+    }
+
+    {
+        signal_table_s * const table = &state->signal_tables[ 3 ];
+
+        table->can_id = HOBD_CAN_ID_OBD3;
+        table->can_dlc = (unsigned long) sizeof( table->obd3 );
+        snprintf(
+                table->table_name,
+                sizeof(table->table_name),
+                "OBD 3" );
+    }
+}
+
+
+//
 void st_render(
         const config_s * const config,
         st_state_s * const state )
@@ -272,69 +344,59 @@ void st_render(
         state->last_update_mono = time_get_monotonic_timestamp();
     }
 
+    // get table pointers
+    signal_table_s * const table0 = get_table_by_can_id(
+            HOBD_CAN_ID_OBD_TIME,
+            state );
 
+    signal_table_s * const table1 = get_table_by_can_id(
+            HOBD_CAN_ID_OBD1,
+            state );
 
-    // TESTING
+    signal_table_s * const table2 = get_table_by_can_id(
+            HOBD_CAN_ID_OBD2,
+            state );
 
-    const signal_table_s test1_table =
-    {
-        .rx_time = 123456789,
-        .can_id = HOBD_CAN_ID_OBD_TIME,
-        .can_dlc = sizeof(hobd_obd_time_s),
-        .table_name = "OBD Time",
-        .buffer = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 }
-    };
+    signal_table_s * const table3 = get_table_by_can_id(
+            HOBD_CAN_ID_OBD3,
+            state );
 
-    const signal_table_s test2_table =
-    {
-        .rx_time = 123456789,
-        .can_id = HOBD_CAN_ID_OBD1,
-        .can_dlc = sizeof(hobd_obd1_s),
-        .table_name = "OBD 1",
-        .buffer = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 }
-    };
-
-    const signal_table_s test3_table =
-    {
-        .rx_time = 123456789,
-        .can_id = HOBD_CAN_ID_OBD2,
-        .can_dlc = sizeof(hobd_obd2_s),
-        .table_name = "OBD 2",
-        .buffer = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 }
-    };
-
-    const signal_table_s test4_table =
-    {
-        .rx_time = 123456789,
-        .can_id = HOBD_CAN_ID_OBD3,
-        .can_dlc = sizeof(hobd_obd3_s),
-        .table_name = "OBD 3",
-        .buffer = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 }
-    };
-
-
-
-
-
+    // draw tables
     render_page_header( config, state, 1 );
 
+    if( table0 != NULL )
+    {
+        render_table_base( config, table0, 5.0, 40.0 );
+        render_hobd_obd_time( config, &table0->obd_time, 20.0, 80.0 );
+    }
 
-    render_table_base( config, &test1_table, 5.0, 40.0 );
-    render_hobd_obd_time( config, &test1_table.obd_time, 20.0, 80.0 );
+    if( table1 != NULL )
+    {
+        render_table_base( config, table1, 400.0, 40.0 );
+        render_hobd_obd1( config, &table1->obd1, 415.0, 80.0 );
+    }
 
+    if( table2 != NULL )
+    {
+        render_table_base( config, table2, 5.0, 340.0 );
+        render_hobd_obd2( config, &table2->obd2, 20.0, 380.0 );
+    }
 
-    render_table_base( config, &test2_table, 400.0, 40.0 );
-    render_hobd_obd1( config, &test2_table.obd1, 415.0, 80.0 );
-
-
-    render_table_base( config, &test3_table, 5.0, 340.0 );
-    render_hobd_obd2( config, &test3_table.obd2, 20.0, 380.0 );
-
-
-    render_table_base( config, &test4_table, 400.0, 340.0 );
-    render_hobd_obd3( config, &test4_table.obd3, 415.0, 380.0 );
-
-
+    if( table3 != NULL )
+    {
+        render_table_base( config, table3, 400.0, 340.0 );
+        render_hobd_obd3( config, &table3->obd3, 415.0, 380.0 );
+    }
 
     glPopMatrix();
+}
+
+
+//
+void st_process_can_frame(
+        const can_frame_s * const can_frame,
+        const config_s * const config,
+        st_state_s * const state )
+{
+    // TODO
 }

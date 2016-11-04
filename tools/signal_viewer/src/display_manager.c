@@ -204,6 +204,9 @@ int dm_init(
     dm_context.config.win_width = window_width;
     dm_context.config.win_height = window_height;
 
+    // create signal tables
+    st_init( &dm_context.config, &dm_context.st_state );
+
     // init GL
     glutInit( &dm_context.gl_argc, dm_context.gl_argv );
 
