@@ -34,7 +34,7 @@ LDFLAGS =
 
 INCLUDES = -Iinclude -I../../firmware/hobd_common/include
 
-LIBS = -lrt -lglut -lGLU -lGL -lX11 -lm
+LIBS = -lrt -lglut -lGLU -lGL -lX11 -lm -lcanlib
 
 all: dirs $(TARGET)
 
