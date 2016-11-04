@@ -97,19 +97,96 @@ void render_line(
 
 
 //
-static void draw_table_base(
+static void render_page_header(
+        const unsigned long page_number )
+{
+    char string[256];
+    char date[64];
+    const GLdouble base_x = 0.0;
+    const GLdouble base_y = 25.0;
+    const GLdouble bound_x = 1200.0;
+    const GLdouble text_yoff = 15.0;
+    const GLdouble date_xoff = 5.0;
+    const GLdouble mstime_xoff = 200.0;
+    const GLdouble monotime_xoff = 400.0;
+    const GLdouble page_xoff = 600.0;
+
+    glLineWidth( 2.0f );
+
+    const timestamp_ms now = time_get_timestamp();
+    const timestamp_ms now_monotonic = time_get_monotonic_timestamp();
+
+    render_line(
+            base_x,
+            base_y,
+            base_x + bound_x,
+            base_y );
+
+    snprintf(
+            string,
+            sizeof(string),
+            "%s",
+            asctime_r( time_get_localtime( now ), date ) );
+
+    render_text_2d(
+            date_xoff,
+            text_yoff,
+            string,
+            NULL );
+
+    snprintf(
+            string,
+            sizeof(string),
+            "ms: %llu",
+            now );
+
+    render_text_2d(
+            mstime_xoff,
+            text_yoff,
+            string,
+            NULL );
+
+    snprintf(
+            string,
+            sizeof(string),
+            "ms-mono: %llu",
+            now_monotonic );
+
+    render_text_2d(
+            monotime_xoff,
+            text_yoff,
+            string,
+            NULL );
+
+    snprintf(
+            string,
+            sizeof(string),
+            "Page %lu",
+            page_number );
+
+    render_text_2d(
+            page_xoff,
+            text_yoff,
+            string,
+            NULL );
+}
+
+
+//
+static void render_table_base(
         const signal_table_s * const table )
 {
-    const GLdouble base_x = 5.0;
-    const GLdouble base_y = 5.0;
-
     char string[256];
     char buffer_string[256];
+    const GLdouble base_x = 5.0;
+    const GLdouble base_y = 40.0;
     const GLdouble bound_x = 370.0;
     const GLdouble table_name_xoff = 5.0;
     const GLdouble table_name_yoff = 15.0;
     const GLdouble text_delta_y = 20.0;
     const GLdouble text_col_b_xoff = 160.0;
+
+    glLineWidth( 2.0f );
 
     render_line(
             base_x,
@@ -208,8 +285,6 @@ void st_render(
 
     glColor4d( 0.0, 0.0, 0.0, 1.0 );
 
-    glLineWidth( 2.0f );
-
     const signal_table_s test_table =
     {
         .rx_time = 123456789,
@@ -219,9 +294,11 @@ void st_render(
         .buffer = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08 }
     };
 
-    draw_table_base( &test_table );
+    render_page_header( 1 );
 
-    glLineWidth( 1.0f );
+    render_table_base( &test_table );
+
+//    glLineWidth( 1.0f );
 
     glPopMatrix();
 }
