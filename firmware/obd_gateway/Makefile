@@ -135,7 +135,7 @@ CFLAGS=-I. $(INC) -g -mmcu=$(MCU) -O$(OPTLEVEL) \
 	$(filter %.lst, $(<:.c=.lst)))
 
 # DEBUG/IMU
-CFLAGS += -DBUILD_TYPE_DEBUG
+#CFLAGS += -DBUILD_TYPE_DEBUG
 
 # c++ specific flags
 CPPFLAGS=-fno-exceptions               \
