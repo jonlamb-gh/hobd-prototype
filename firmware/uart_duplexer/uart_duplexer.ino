@@ -38,7 +38,11 @@
 //
 #define PIN_KLINE (12)
 
+#define PIN_LED (13)
 
+
+
+static bool led_state = false;
 
 
 // *****************************************************
@@ -78,6 +82,8 @@ void setup( void )
 {
     pinMode( PIN_RX, INPUT );
     pinMode( PIN_TX, INPUT );
+    pinMode( PIN_LED, OUTPUT );
+    digitalWrite( PIN_LED, led_state );
 
     delay( STARTUP_DELAY );
 
@@ -95,5 +101,8 @@ void loop( void )
         const byte rx_byte = (byte) obd_serial.read();
 
         Serial.write( rx_byte );
+
+        led_state = !led_state;
+        digitalWrite( PIN_LED, led_state );
     }
 }
