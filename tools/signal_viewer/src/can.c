@@ -68,11 +68,11 @@ int can_open(
     {
         const canStatus can_stat1 = canSetBusParams(
                 handle,
-                BAUD_1M,
-                0,
-                0,
-                0,
-                0,
+                BAUD_500K,
+                4,
+                3,
+                2,
+                1,
                 0 );
         if( can_stat1 != canOK )
         {
@@ -158,7 +158,7 @@ int can_read(
                     &msg_dlc,
                     &msg_flag,
                     &tstamp,
-                    timeout );
+                    (unsigned long) timeout );
         }
 
         if( can_stat == canOK )
