@@ -137,6 +137,8 @@ static void init( void )
             HOBD_HEARTBEAT_WARN_CANBUS |
             HOBD_HEARTBEAT_WARN_OBDBUS );
 
+    diagnostics_set_warn( HOBD_HEARTBEAT_WARN_NO_OBD_ECU );
+
     time_sleep_ms( 5 );
 
     DEBUG_PUTS( "init : pass\n" );
