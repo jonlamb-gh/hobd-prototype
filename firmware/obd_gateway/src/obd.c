@@ -322,6 +322,8 @@ static uint8_t process_buffer( void )
 
     if( header->type == HOBD_PACKET_TYPE_RESPONSE )
     {
+        DEBUG_PUTS( "resp1\n" );
+
         // wait for next byte
         while( ring_buffer_available( &rx_buffer ) == 0 );
 
@@ -347,6 +349,7 @@ static uint8_t process_buffer( void )
             (header->type == HOBD_PACKET_TYPE_RESPONSE) &&
             (header->subtype == HOBD_PACKET_SUBTYPE_TABLE_SUBGROUP) )
     {
+        DEBUG_PRINTF( "resp2 - len %u\n", header->size );
         uint8_t idx = (uint8_t) sizeof(*header);
 
         do
@@ -360,24 +363,25 @@ static uint8_t process_buffer( void )
             }
         }
         while( idx < header->size );
-    }
 
-    // check if a valid packet
-    const uint8_t packet_type = obd_packet_type(
-            &obd_buffer[ 0 ],
-            (uint16_t) header->size );
+        // check if a valid packet
+        const uint8_t packet_type = obd_packet_type(
+                &obd_buffer[ 0 ],
+                (uint16_t) header->size );
 
-    // process response types
-    if( packet_type == HOBD_PACKET_TYPE_RESPONSE )
-    {
-        if( header->subtype == HOBD_PACKET_SUBTYPE_TABLE_SUBGROUP )
+        // process response types
+        if( packet_type == HOBD_PACKET_TYPE_RESPONSE )
         {
-            const hobd_table_response_s * const response =
-                    (hobd_table_response_s*) &obd_buffer[ 0 ];
+            if( header->subtype == HOBD_PACKET_SUBTYPE_TABLE_SUBGROUP )
+            {
+                DEBUG_PUTS( "resp3\n" );
+                const hobd_table_response_s * const response =
+                        (hobd_table_response_s*) &obd_buffer[ 0 ];
 
-            parse_response(
-                    response,
-                    &rx_timestamp );
+                parse_response(
+                        response,
+                        &rx_timestamp );
+            }
         }
     }
 
