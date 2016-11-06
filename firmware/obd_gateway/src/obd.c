@@ -275,9 +275,10 @@ static uint8_t obd_packet_type(
         {
             const uint8_t packet_checksum = buffer[ header->size - 1 ];
 
+            // excludes the checksum byte
             const uint8_t real_checksum = obd_checksum(
                     buffer,
-                    (uint16_t) header->size );
+                    (uint16_t) header->size - 1 );
 
             // check checksum
             if( packet_checksum == real_checksum )
@@ -322,8 +323,6 @@ static uint8_t process_buffer( void )
 
     if( header->type == HOBD_PACKET_TYPE_RESPONSE )
     {
-        DEBUG_PUTS( "resp1\n" );
-
         // wait for next byte
         while( ring_buffer_available( &rx_buffer ) == 0 );
 
@@ -349,7 +348,6 @@ static uint8_t process_buffer( void )
             (header->type == HOBD_PACKET_TYPE_RESPONSE) &&
             (header->subtype == HOBD_PACKET_SUBTYPE_TABLE_SUBGROUP) )
     {
-        DEBUG_PRINTF( "resp2 - len %u\n", header->size );
         uint8_t idx = (uint8_t) sizeof(*header);
 
         do
@@ -374,9 +372,10 @@ static uint8_t process_buffer( void )
         {
             if( header->subtype == HOBD_PACKET_SUBTYPE_TABLE_SUBGROUP )
             {
-                DEBUG_PUTS( "resp3\n" );
                 const hobd_table_response_s * const response =
                         (hobd_table_response_s*) &obd_buffer[ 0 ];
+
+                diagnostics_clear_warn( HOBD_HEARTBEAT_WARN_NO_OBD_ECU );
 
                 parse_response(
                         response,
