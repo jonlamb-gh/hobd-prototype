@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <inttypes.h>
 
 #include "gl_headers.h"
 #include "math_util.h"
@@ -46,6 +47,305 @@
 // *****************************************************
 // static definitions
 // *****************************************************
+
+//
+static GLdouble render_errors(
+        const uint16_t errors,
+        const GLdouble base_x,
+        const GLdouble base_y )
+{
+    char string[512];
+    GLdouble delta_y = 0.0;
+    const void * const font = GLUT_BITMAP_HELVETICA_10;
+
+    if( (errors & HOBD_HEARTBEAT_ERROR_OBD_RX_OVERFLOW) != 0 )
+    {
+        snprintf(
+            string,
+            sizeof(string),
+            "- ERROR OBD RX OVERFLOW" );
+
+        render_text_2d(
+                base_x,
+                base_y + delta_y,
+                string,
+                font );
+
+        delta_y += 15.0;
+    }
+
+    if( (errors & HOBD_HEARTBEAT_ERROR_IMU_RX_OVERFLOW) != 0 )
+    {
+        snprintf(
+            string,
+            sizeof(string),
+            "- ERROR IMU RX OVERFLOW" );
+
+        render_text_2d(
+                base_x,
+                base_y + delta_y,
+                string,
+                font );
+
+        delta_y += 15.0;
+    }
+
+    if( (errors & HOBD_HEARTBEAT_ERROR_CANBUS) != 0 )
+    {
+        snprintf(
+            string,
+            sizeof(string),
+            "- ERROR CAN BUS" );
+
+        render_text_2d(
+                base_x,
+                base_y + delta_y,
+                string,
+                font );
+
+        delta_y += 15.0;
+    }
+
+    if( (errors & HOBD_HEARTBEAT_ERROR_IMUBUS) != 0 )
+    {
+        snprintf(
+            string,
+            sizeof(string),
+            "- ERROR IMU BUS" );
+
+        render_text_2d(
+                base_x,
+                base_y + delta_y,
+                string,
+                font );
+
+        delta_y += 15.0;
+    }
+
+    if( (errors & HOBD_HEARTBEAT_ERROR_GPSBUS) != 0 )
+    {
+        snprintf(
+            string,
+            sizeof(string),
+            "- ERROR GPS BUS" );
+
+        render_text_2d(
+                base_x,
+                base_y + delta_y,
+                string,
+                font );
+
+        delta_y += 15.0;
+    }
+
+    if( (errors & HOBD_HEARTBEAT_ERROR_OBDBUS) != 0 )
+    {
+        snprintf(
+            string,
+            sizeof(string),
+            "- ERROR OBD BUS" );
+
+        render_text_2d(
+                base_x,
+                base_y + delta_y,
+                string,
+                font );
+
+        delta_y += 15.0;
+    }
+
+    if( (errors & HOBD_HEARTBEAT_ERROR_GPS_ANT1) != 0 )
+    {
+        snprintf(
+            string,
+            sizeof(string),
+            "- ERROR GPS ANTENNA 1" );
+
+        render_text_2d(
+                base_x,
+                base_y + delta_y,
+                string,
+                font );
+
+        delta_y += 15.0;
+    }
+
+    if( (errors & HOBD_HEARTBEAT_ERROR_GPS_ANT2) != 0 )
+    {
+        snprintf(
+            string,
+            sizeof(string),
+            "- ERROR GPS ANTENNA 2" );
+
+        render_text_2d(
+                base_x,
+                base_y + delta_y,
+                string,
+                font );
+
+        delta_y += 15.0;
+    }
+
+    if( (errors & HOBD_HEARTBEAT_ERROR_GPS_STATUS) != 0 )
+    {
+        snprintf(
+            string,
+            sizeof(string),
+            "- ERROR GPS STATUS" );
+
+        render_text_2d(
+                base_x,
+                base_y + delta_y,
+                string,
+                font );
+
+        delta_y += 15.0;
+    }
+
+    if( (errors & HOBD_HEARTBEAT_ERROR_IMU_STATUS) != 0 )
+    {
+        snprintf(
+            string,
+            sizeof(string),
+            "- ERROR IMU STATUS" );
+
+        render_text_2d(
+                base_x,
+                base_y + delta_y,
+                string,
+                font );
+
+        delta_y += 15.0;
+    }
+
+    return delta_y;
+}
+
+
+//
+static GLdouble render_warnings(
+        const uint16_t warnings,
+        const GLdouble base_x,
+        const GLdouble base_y )
+{
+    char string[512];
+    GLdouble delta_y = 0.0;
+    const void * const font = GLUT_BITMAP_HELVETICA_10;
+
+    if( (warnings & HOBD_HEARTBEAT_WARN_CANBUS) != 0 )
+    {
+        snprintf(
+            string,
+            sizeof(string),
+            "- WARN CAN BUS" );
+
+        render_text_2d(
+                base_x,
+                base_y + delta_y,
+                string,
+                font );
+
+        delta_y += 15.0;
+    }
+
+    if( (warnings & HOBD_HEARTBEAT_WARN_IMUBUS) != 0 )
+    {
+        snprintf(
+            string,
+            sizeof(string),
+            "- WARN IMU BUS" );
+
+        render_text_2d(
+                base_x,
+                base_y + delta_y,
+                string,
+                font );
+
+        delta_y += 15.0;
+    }
+
+    if( (warnings & HOBD_HEARTBEAT_WARN_GPSBUS) != 0 )
+    {
+        snprintf(
+            string,
+            sizeof(string),
+            "- WARN GPS BUS" );
+
+        render_text_2d(
+                base_x,
+                base_y + delta_y,
+                string,
+                font );
+
+        delta_y += 15.0;
+    }
+
+    if( (warnings & HOBD_HEARTBEAT_WARN_OBDBUS) != 0 )
+    {
+        snprintf(
+            string,
+            sizeof(string),
+            "- WARN OBD BUS" );
+
+        render_text_2d(
+                base_x,
+                base_y + delta_y,
+                string,
+                font );
+
+        delta_y += 15.0;
+    }
+
+    if( (warnings & HOBD_HEARTBEAT_WARN_NO_GPS_FIX) != 0 )
+    {
+        snprintf(
+            string,
+            sizeof(string),
+            "- WARN NO GPS FIX" );
+
+        render_text_2d(
+                base_x,
+                base_y + delta_y,
+                string,
+                font );
+
+        delta_y += 15.0;
+    }
+
+    if( (warnings & HOBD_HEARTBEAT_WARN_NO_IMU_FIX) != 0 )
+    {
+        snprintf(
+            string,
+            sizeof(string),
+            "- WARN NO IMU FIX" );
+
+        render_text_2d(
+                base_x,
+                base_y + delta_y,
+                string,
+                font );
+
+        delta_y += 15.0;
+    }
+
+    if( (warnings & HOBD_HEARTBEAT_WARN_NO_OBD_ECU) != 0 )
+    {
+        snprintf(
+            string,
+            sizeof(string),
+            "- WARN NO OBD ECU DATA" );
+
+        render_text_2d(
+                base_x,
+                base_y + delta_y,
+                string,
+                font );
+
+        delta_y += 15.0;
+    }
+
+    return delta_y;
+}
 
 
 
@@ -221,5 +521,19 @@ void render_hobd_heartbeat(
             base_x,
             base_y + text_yoff + delta_y,
             base_x + bound_x,
+            base_y + text_yoff + delta_y );
+
+    delta_y += 20.0;
+
+    delta_y += render_errors(
+            data->error_register,
+            base_x + 10.0,
+            base_y + text_yoff + delta_y );
+
+    delta_y += 10.0;
+
+    delta_y += render_warnings(
+            data->warning_register,
+            base_x + 10.0,
             base_y + text_yoff + delta_y );
 }
