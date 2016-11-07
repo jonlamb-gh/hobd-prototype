@@ -41,35 +41,9 @@
 // *****************************************************
 
 //
-void render_hobd_obd_time(
+void render_page1(
         const config_s * const config,
-        const hobd_obd_time_s * const data,
-        const GLdouble base_x,
-        const GLdouble base_y );
-
-
-//
-void render_hobd_obd1(
-        const config_s * const config,
-        const hobd_obd1_s * const data,
-        const GLdouble base_x,
-        const GLdouble base_y );
-
-
-//
-void render_hobd_obd2(
-        const config_s * const config,
-        const hobd_obd2_s * const data,
-        const GLdouble base_x,
-        const GLdouble base_y );
-
-
-//
-void render_hobd_obd3(
-        const config_s * const config,
-        const hobd_obd3_s * const data,
-        const GLdouble base_x,
-        const GLdouble base_y );
+        st_state_s * const state );
 
 
 
@@ -77,26 +51,6 @@ void render_hobd_obd3(
 // *****************************************************
 // static definitions
 // *****************************************************
-
-//
-static signal_table_s *get_table_by_can_id(
-        const unsigned long can_id,
-        st_state_s * const state )
-{
-    signal_table_s *table = NULL;
-
-    unsigned long idx = 0;
-    for( idx = 0; (idx < ST_SIGNAL_COUNT) && (table == NULL); idx += 1 )
-    {
-        if( state->signal_tables[ idx ].can_id == can_id )
-        {
-            table = &state->signal_tables[ idx ];
-        }
-    }
-
-    return table;
-}
-
 
 //
 static void render_page_header(
@@ -168,105 +122,6 @@ static void render_page_header(
     render_text_2d(
             page_xoff,
             text_yoff,
-            string,
-            NULL );
-}
-
-
-//
-static void render_table_base(
-        const config_s * const config,
-        const signal_table_s * const table,
-        const GLdouble base_x,
-        const GLdouble base_y )
-{
-    char string[512];
-    char buffer_string[512];
-    const GLdouble bound_x = 370.0;
-    const GLdouble table_name_xoff = 5.0;
-    const GLdouble table_name_yoff = 15.0;
-    const GLdouble text_delta_y = 20.0;
-    const GLdouble text_col_b_xoff = 160.0;
-
-    glLineWidth( 2.0f );
-
-    render_line(
-            base_x,
-            base_y,
-            base_x + bound_x,
-            base_y );
-
-    snprintf(
-            string,
-            sizeof(string),
-            "ID: 0x%04lX (%lu) - DLC %lu - '%s'",
-            table->can_id,
-            table->can_id,
-            table->can_dlc,
-            table->table_name );
-
-    render_text_2d(
-            base_x + table_name_xoff,
-            base_y + table_name_yoff,
-            string,
-            NULL );
-
-    render_line(
-            base_x,
-            base_y + table_name_yoff + 5,
-            base_x + bound_x,
-            base_y + table_name_yoff + 5);
-
-    if( table->can_dlc == 0 )
-    {
-        snprintf(
-                buffer_string,
-                sizeof(buffer_string),
-                " NA" );
-    }
-    else
-    {
-        memset( buffer_string, 0, sizeof(buffer_string) );
-
-        unsigned long idx = 0;
-        for( idx = 0; idx < table->can_dlc; idx += 1 )
-        {
-            char hex_string[4];
-
-            snprintf(
-                    hex_string,
-                    sizeof(hex_string),
-                    " %02X",
-                    (unsigned int) table->buffer[ table->can_dlc - idx - 1] );
-
-            strncat(
-                    buffer_string,
-                    hex_string,
-                    sizeof(buffer_string) );
-        }
-    }
-
-    snprintf(
-            string,
-            sizeof(string),
-            "Rx (ms): %llu",
-            table->rx_time );
-
-    render_text_2d(
-            base_x + table_name_xoff,
-            base_y + table_name_yoff + text_delta_y,
-            string,
-            NULL );
-
-    snprintf(
-            string,
-            sizeof(string),
-            "data[M-L]:%s",
-            buffer_string );
-
-    render_text_2d(
-            base_x + table_name_xoff + text_col_b_xoff,
-            base_y + table_name_yoff + text_delta_y,
             string,
             NULL );
 }
@@ -344,51 +199,36 @@ void st_render(
         state->last_update_mono = time_get_monotonic_timestamp();
     }
 
-    // get table pointers
-    signal_table_s * const table0 = get_table_by_can_id(
-            HOBD_CAN_ID_OBD_TIME,
-            state );
+    // render page header
+    render_page_header( config, state, (config->active_page_index + 1) );
 
-    signal_table_s * const table1 = get_table_by_can_id(
-            HOBD_CAN_ID_OBD1,
-            state );
-
-    signal_table_s * const table2 = get_table_by_can_id(
-            HOBD_CAN_ID_OBD2,
-            state );
-
-    signal_table_s * const table3 = get_table_by_can_id(
-            HOBD_CAN_ID_OBD3,
-            state );
-
-    // draw tables
-    render_page_header( config, state, 1 );
-
-    if( table0 != NULL )
+    // render page
+    if( config->active_page_index == ST_PAGE_1 )
     {
-        render_table_base( config, table0, 5.0, 40.0 );
-        render_hobd_obd_time( config, &table0->obd_time, 20.0, 80.0 );
-    }
-
-    if( table1 != NULL )
-    {
-        render_table_base( config, table1, 400.0, 40.0 );
-        render_hobd_obd1( config, &table1->obd1, 415.0, 80.0 );
-    }
-
-    if( table2 != NULL )
-    {
-        render_table_base( config, table2, 5.0, 340.0 );
-        render_hobd_obd2( config, &table2->obd2, 20.0, 380.0 );
-    }
-
-    if( table3 != NULL )
-    {
-        render_table_base( config, table3, 400.0, 340.0 );
-        render_hobd_obd3( config, &table3->obd3, 415.0, 380.0 );
+        render_page1( config, state );
     }
 
     glPopMatrix();
+}
+
+
+//
+signal_table_s *st_get_table_by_can_id(
+        const unsigned long can_id,
+        st_state_s * const state )
+{
+    signal_table_s *table = NULL;
+
+    unsigned long idx = 0;
+    for( idx = 0; (idx < ST_SIGNAL_COUNT) && (table == NULL); idx += 1 )
+    {
+        if( state->signal_tables[ idx ].can_id == can_id )
+        {
+            table = &state->signal_tables[ idx ];
+        }
+    }
+
+    return table;
 }
 
 
@@ -401,7 +241,7 @@ void st_process_can_frame(
     if( config->freeze_frame_enabled == FALSE )
     {
         // get a pointer to the data if we have a table for the frame
-        signal_table_s * const table = get_table_by_can_id(
+        signal_table_s * const table = st_get_table_by_can_id(
                 can_frame->id,
                 state );
 

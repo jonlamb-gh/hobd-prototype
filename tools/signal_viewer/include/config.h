@@ -44,6 +44,9 @@ typedef struct
     //
     //
     bool freeze_frame_enabled;
+    //
+    //
+    unsigned long active_page_index;
 } config_s;
 
 

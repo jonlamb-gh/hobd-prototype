@@ -16,7 +16,8 @@
 #include "math_util.h"
 #include "time_domain.h"
 #include "render.h"
-#include "signal_table.h"
+#include "config.h"
+#include "signal_table_def.h"
 
 
 
