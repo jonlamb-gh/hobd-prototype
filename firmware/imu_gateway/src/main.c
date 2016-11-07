@@ -97,12 +97,6 @@ static void init( void )
 
     // enable interrupts
     enable_interrupt();
-    wdt_reset();
-    time_sleep_ms( 50 );
-    wdt_reset();
-    time_sleep_ms( 50 );
-    wdt_reset();
-    time_sleep_ms( 50 );
 
     //
     const uint8_t can_status = canbus_init();
@@ -129,7 +123,6 @@ static void init( void )
 
     // reset watchdog
     wdt_reset();
-    time_sleep_ms( 50 );
 
     //
     if( can_status != 0 )

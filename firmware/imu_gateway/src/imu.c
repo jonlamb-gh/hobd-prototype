@@ -244,12 +244,23 @@ static uint8_t process_buffer( void )
 //
 static void *xbus_alloc_cb( size_t size )
 {
+    void *memory = NULL;
+
+#ifdef BUILD_TYPE_DEBUG
     if( size > sizeof(xbus_buffer) )
     {
         diagnostics_set_error( HOBD_HEARTBEAT_ERROR_IMU_RX_OVERFLOW );
     }
 
-    return (void*) &xbus_buffer[0];
+    memory = (void*) &xbus_buffer[0];
+#else
+    if( size <= sizeof(xbus_buffer) )
+    {
+        memory = (void*) &xbus_buffer[0];
+    }
+#endif
+
+    return memory;
 }
 
 
