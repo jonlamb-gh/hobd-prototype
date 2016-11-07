@@ -1,5 +1,5 @@
 /**
- * @file render_hobd_obd3.c
+ * @file render_hobd_imu_time2.c
  * @brief TODO.
  *
  */
@@ -55,9 +55,9 @@
 // *****************************************************
 
 //
-void render_hobd_obd3(
+void render_hobd_imu_time2(
         const config_s * const config,
-        const hobd_obd3_s * const data,
+        const hobd_imu_time2_s * const data,
         const GLdouble base_x,
         const GLdouble base_y )
 {
@@ -76,8 +76,8 @@ void render_hobd_obd3(
     snprintf(
             string,
             sizeof(string),
-            "engine_on                                    : %lu",
-            (unsigned long) data->engine_on );
+            "time_of_week                               : %lu",
+            (unsigned long) data->time_of_week );
 
     render_text_2d(
             base_x + text_xoff,
@@ -96,8 +96,8 @@ void render_hobd_obd3(
     snprintf(
             string,
             sizeof(string),
-            "gear                                            : %lu",
-            (unsigned long) data->gear );
+            "residual                                       : %ld",
+            (long int) data->residual );
 
     render_text_2d(
             base_x + text_xoff,

@@ -74,6 +74,31 @@ static void on_key(
     {
         dm_context.config.freeze_frame_enabled = !dm_context.config.freeze_frame_enabled;
     }
+    else if( (key == 'm') || (key == ' ') )
+    {
+        dm_context.config.active_page_index += 1;
+
+        if( dm_context.config.active_page_index >= ST_PAGE_COUNT )
+        {
+            dm_context.config.active_page_index = ST_PAGE_1;
+        }
+    }
+    else if( key == '1' )
+    {
+        dm_context.config.active_page_index = ST_PAGE_1;
+    }
+    else if( key == '2' )
+    {
+        dm_context.config.active_page_index = ST_PAGE_2;
+    }
+    else if( key == '3' )
+    {
+        dm_context.config.active_page_index = ST_PAGE_3;
+    }
+    else if( key == '4' )
+    {
+        dm_context.config.active_page_index = ST_PAGE_4;
+    }
 }
 
 
