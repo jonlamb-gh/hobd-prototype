@@ -97,8 +97,6 @@ static void init( void )
 
     // enable interrupts
     enable_interrupt();
-    time_sleep_ms( 10 );
-    wdt_reset();
 
     //
     const uint8_t can_status = canbus_init();
@@ -184,6 +182,10 @@ int main( void )
 
     //
     diagnostics_set_state( HOBD_HEARTBEAT_STATE_OK );
+
+    // enable/flush
+    imu_enable();
+    gps_enable();
 
     //
     while( 1 )
