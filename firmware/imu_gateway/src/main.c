@@ -97,8 +97,12 @@ static void init( void )
 
     // enable interrupts
     enable_interrupt();
-    time_sleep_ms( 10 );
     wdt_reset();
+    time_sleep_ms( 50 );
+    wdt_reset();
+    time_sleep_ms( 50 );
+    wdt_reset();
+    time_sleep_ms( 50 );
 
     //
     const uint8_t can_status = canbus_init();
@@ -125,6 +129,7 @@ static void init( void )
 
     // reset watchdog
     wdt_reset();
+    time_sleep_ms( 50 );
 
     //
     if( can_status != 0 )
@@ -157,8 +162,6 @@ static void init( void )
     diagnostics_set_warn( HOBD_HEARTBEAT_WARN_NO_GPS_FIX );
     diagnostics_set_warn( HOBD_HEARTBEAT_WARN_NO_IMU_FIX );
 
-    time_sleep_ms( 5 );
-
     DEBUG_PUTS( "init : pass\n" );
 
     // reset watchdog
@@ -184,6 +187,10 @@ int main( void )
 
     //
     diagnostics_set_state( HOBD_HEARTBEAT_STATE_OK );
+
+    // enable/flush
+    imu_enable();
+    gps_enable();
 
     //
     while( 1 )
