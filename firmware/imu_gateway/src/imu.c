@@ -718,6 +718,10 @@ static void parse_status_byte(
         {
             diagnostics_set_error( HOBD_HEARTBEAT_ERROR_IMU_STATUS );
         }
+        else
+        {
+            diagnostics_clear_warn( HOBD_HEARTBEAT_ERROR_IMU_STATUS );
+        }
     }
 }
 

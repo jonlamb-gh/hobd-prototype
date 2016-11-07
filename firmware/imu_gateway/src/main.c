@@ -97,6 +97,8 @@ static void init( void )
 
     // enable interrupts
     enable_interrupt();
+    time_sleep_ms( 10 );
+    wdt_reset();
 
     //
     const uint8_t can_status = canbus_init();
