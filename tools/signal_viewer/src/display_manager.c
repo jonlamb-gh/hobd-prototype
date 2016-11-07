@@ -74,7 +74,7 @@ static void on_key(
     {
         dm_context.config.freeze_frame_enabled = !dm_context.config.freeze_frame_enabled;
     }
-    else if( key == 'm' )
+    else if( (key == 'm') || (key == ' ') )
     {
         dm_context.config.active_page_index += 1;
 
@@ -82,6 +82,18 @@ static void on_key(
         {
             dm_context.config.active_page_index = ST_PAGE_1;
         }
+    }
+    else if( key == '1' )
+    {
+        dm_context.config.active_page_index = ST_PAGE_1;
+    }
+    else if( key == '2' )
+    {
+        dm_context.config.active_page_index = ST_PAGE_2;
+    }
+    else if( key == '3' )
+    {
+        dm_context.config.active_page_index = ST_PAGE_3;
     }
 }
 

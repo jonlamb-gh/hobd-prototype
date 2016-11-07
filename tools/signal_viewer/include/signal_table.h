@@ -28,7 +28,8 @@
 //
 #define ST_PAGE_1 (0)
 #define ST_PAGE_2 (1)
-#define ST_PAGE_COUNT (2)
+#define ST_PAGE_3 (2)
+#define ST_PAGE_COUNT (3)
 
 
 

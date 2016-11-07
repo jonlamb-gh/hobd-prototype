@@ -8,8 +8,14 @@ SRCS := src/render_hobd_obd_time.c \
 	src/render_hobd_obd2.c \
 	src/render_hobd_obd3.c \
 	src/render_hobd_heartbeat.c \
+	src/render_hobd_gps_time1.c \
+	src/render_hobd_gps_time2.c \
+	src/render_hobd_imu_sample_time.c \
+	src/render_hobd_imu_time1.c \
+	src/render_hobd_imu_time2.c \
 	src/render_page1.c \
 	src/render_page2.c \
+	src/render_page3.c \
 	src/render.c \
 	src/time_domain.c \
 	src/signal_table.c \
@@ -56,6 +62,9 @@ $(OBJS): %.o: %.c %.dep
 
 $(DEPS): %.dep: %.c Makefile
 	$(CC) $(CCFLAGS) $(INCLUDES) -MM $< > $@
+
+install:
+	cp $(TARGET) /usr/local/bin/
 
 clean:
 	-rm -f src/*.o
