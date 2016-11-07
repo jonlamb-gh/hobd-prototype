@@ -58,7 +58,10 @@ typedef struct
         unsigned char buffer[8];
         //
         //
-        hobd_heartbeat_s heartbeat;
+        hobd_heartbeat_s heartbeat_obd_gateway;
+        //
+        //
+        hobd_heartbeat_s heartbeat_imu_gateway;
         //
         //
         hobd_gps_time1_s gps_time1;

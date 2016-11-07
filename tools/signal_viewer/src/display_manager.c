@@ -74,6 +74,15 @@ static void on_key(
     {
         dm_context.config.freeze_frame_enabled = !dm_context.config.freeze_frame_enabled;
     }
+    else if( key == 'm' )
+    {
+        dm_context.config.active_page_index += 1;
+
+        if( dm_context.config.active_page_index >= ST_PAGE_COUNT )
+        {
+            dm_context.config.active_page_index = ST_PAGE_1;
+        }
+    }
 }
 
 

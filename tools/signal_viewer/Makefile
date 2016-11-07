@@ -7,7 +7,9 @@ SRCS := src/render_hobd_obd_time.c \
 	src/render_hobd_obd1.c \
 	src/render_hobd_obd2.c \
 	src/render_hobd_obd3.c \
+	src/render_hobd_heartbeat.c \
 	src/render_page1.c \
+	src/render_page2.c \
 	src/render.c \
 	src/time_domain.c \
 	src/signal_table.c \

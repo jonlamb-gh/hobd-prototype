@@ -46,6 +46,12 @@ void render_page1(
         st_state_s * const state );
 
 
+//
+void render_page2(
+        const config_s * const config,
+        st_state_s * const state );
+
+
 
 
 // *****************************************************
@@ -141,6 +147,28 @@ void st_init(
     {
         signal_table_s * const table = &state->signal_tables[ 0 ];
 
+        table->can_id = HOBD_CAN_ID_HEARTBEAT_OBD_GATEWAY;
+        table->can_dlc = (unsigned long) sizeof( table->heartbeat_obd_gateway );
+        snprintf(
+                table->table_name,
+                sizeof(table->table_name),
+                "OBD Heartbeat" );
+    }
+
+    {
+        signal_table_s * const table = &state->signal_tables[ 1 ];
+
+        table->can_id = HOBD_CAN_ID_HEARTBEAT_IMU_GATEWAY;
+        table->can_dlc = (unsigned long) sizeof( table->heartbeat_imu_gateway );
+        snprintf(
+                table->table_name,
+                sizeof(table->table_name),
+                "IMU Heartbeat" );
+    }
+
+    {
+        signal_table_s * const table = &state->signal_tables[ 2 ];
+
         table->can_id = HOBD_CAN_ID_OBD_TIME;
         table->can_dlc = (unsigned long) sizeof( table->obd_time );
         snprintf(
@@ -150,7 +178,7 @@ void st_init(
     }
 
     {
-        signal_table_s * const table = &state->signal_tables[ 1 ];
+        signal_table_s * const table = &state->signal_tables[ 3 ];
 
         table->can_id = HOBD_CAN_ID_OBD1;
         table->can_dlc = (unsigned long) sizeof( table->obd1 );
@@ -161,7 +189,7 @@ void st_init(
     }
 
     {
-        signal_table_s * const table = &state->signal_tables[ 2 ];
+        signal_table_s * const table = &state->signal_tables[ 4 ];
 
         table->can_id = HOBD_CAN_ID_OBD2;
         table->can_dlc = (unsigned long) sizeof( table->obd2 );
@@ -172,7 +200,7 @@ void st_init(
     }
 
     {
-        signal_table_s * const table = &state->signal_tables[ 3 ];
+        signal_table_s * const table = &state->signal_tables[ 5 ];
 
         table->can_id = HOBD_CAN_ID_OBD3;
         table->can_dlc = (unsigned long) sizeof( table->obd3 );
@@ -206,6 +234,10 @@ void st_render(
     if( config->active_page_index == ST_PAGE_1 )
     {
         render_page1( config, state );
+    }
+    else if( config->active_page_index == ST_PAGE_2 )
+    {
+        render_page2( config, state );
     }
 
     glPopMatrix();

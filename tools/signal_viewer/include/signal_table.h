@@ -22,13 +22,13 @@
 
 
 //
-#define ST_SIGNAL_COUNT (38)
+#define ST_SIGNAL_COUNT (39)
 
 
 //
 #define ST_PAGE_1 (0)
 #define ST_PAGE_2 (1)
-#define ST_PAGE_3 (2)
+#define ST_PAGE_COUNT (2)
 
 
 
