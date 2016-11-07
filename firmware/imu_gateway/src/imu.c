@@ -720,7 +720,7 @@ static void parse_status_byte(
         }
         else
         {
-            diagnostics_clear_warn( HOBD_HEARTBEAT_ERROR_IMU_STATUS );
+            diagnostics_clear_error( HOBD_HEARTBEAT_ERROR_IMU_STATUS );
         }
     }
 }
