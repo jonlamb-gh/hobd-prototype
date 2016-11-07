@@ -155,6 +155,8 @@ static void init( void )
     diagnostics_set_warn( HOBD_HEARTBEAT_WARN_NO_GPS_FIX );
     diagnostics_set_warn( HOBD_HEARTBEAT_WARN_NO_IMU_FIX );
 
+    time_sleep_ms( 5 );
+
     DEBUG_PUTS( "init : pass\n" );
 
     // reset watchdog
