@@ -95,6 +95,10 @@ static void on_key(
     {
         dm_context.config.active_page_index = ST_PAGE_3;
     }
+    else if( key == '4' )
+    {
+        dm_context.config.active_page_index = ST_PAGE_4;
+    }
 }
 
 

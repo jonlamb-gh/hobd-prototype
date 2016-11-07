@@ -58,6 +58,12 @@ void render_page3(
         st_state_s * const state );
 
 
+//
+void render_page4(
+        const config_s * const config,
+        st_state_s * const state );
+
+
 
 
 // *****************************************************
@@ -128,8 +134,9 @@ static void render_page_header(
     snprintf(
             string,
             sizeof(string),
-            "Page %lu",
-            page_number );
+            "Page %lu / %lu",
+            page_number,
+            ST_PAGE_COUNT );
 
     render_text_2d(
             page_xoff,
@@ -261,6 +268,61 @@ void st_init(
                 sizeof(table->table_name),
                 "IMU Time 2" );
     }
+
+    {
+        signal_table_s * const table = &state->signal_tables[ index++ ];
+
+        table->can_id = HOBD_CAN_ID_GPS_BASELINE_NED1;
+        table->can_dlc = (unsigned long) sizeof( table->gps_baseline_ned1 );
+        snprintf(
+                table->table_name,
+                sizeof(table->table_name),
+                "GPS Baseline NED 1" );
+    }
+
+    {
+        signal_table_s * const table = &state->signal_tables[ index++ ];
+
+        table->can_id = HOBD_CAN_ID_GPS_POS_LLH1;
+        table->can_dlc = (unsigned long) sizeof( table->gps_pos_llh1 );
+        snprintf(
+                table->table_name,
+                sizeof(table->table_name),
+                "GPS Position LLH 1" );
+    }
+
+    {
+        signal_table_s * const table = &state->signal_tables[ index++ ];
+
+        table->can_id = HOBD_CAN_ID_GPS_POS_LLH2;
+        table->can_dlc = (unsigned long) sizeof( table->gps_pos_llh2 );
+        snprintf(
+                table->table_name,
+                sizeof(table->table_name),
+                "GPS Position LLH 2" );
+    }
+
+    {
+        signal_table_s * const table = &state->signal_tables[ index++ ];
+
+        table->can_id = HOBD_CAN_ID_GPS_POS_LLH3;
+        table->can_dlc = (unsigned long) sizeof( table->gps_pos_llh3 );
+        snprintf(
+                table->table_name,
+                sizeof(table->table_name),
+                "GPS Position LLH 3" );
+    }
+
+    {
+        signal_table_s * const table = &state->signal_tables[ index++ ];
+
+        table->can_id = HOBD_CAN_ID_GPS_POS_LLH4;
+        table->can_dlc = (unsigned long) sizeof( table->gps_pos_llh4 );
+        snprintf(
+                table->table_name,
+                sizeof(table->table_name),
+                "GPS Position LLH 4" );
+    }
 }
 
 
@@ -294,6 +356,10 @@ void st_render(
     else if( config->active_page_index == ST_PAGE_3 )
     {
         render_page3( config, state );
+    }
+    else if( config->active_page_index == ST_PAGE_4 )
+    {
+        render_page4( config, state );
     }
 
     glPopMatrix();
