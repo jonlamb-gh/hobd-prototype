@@ -407,9 +407,9 @@ void st_process_can_frame(
             table->rx_time_mono = can_frame->rx_timestamp_mono;
 
             memcpy(
-                    table->buffer,
-                    can_frame->data,
-                    table->can_dlc );
+                    (void*) &table->buffer[ 0 ],
+                    (void*) &can_frame->data[ 0 ],
+                    (size_t) table->can_dlc );
         }
     }
 }

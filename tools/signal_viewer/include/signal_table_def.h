@@ -55,7 +55,7 @@ typedef struct
     {
         //
         //
-        unsigned char buffer[8];
+        unsigned char buffer[ 8 ];
         //
         //
         hobd_heartbeat_s heartbeat_obd_gateway;
