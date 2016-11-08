@@ -92,7 +92,7 @@ void render_page1(
         render_table_base( table1, 400.0, 40.0 );
         render_hobd_heartbeat(
                 config,
-                &table0->heartbeat_imu_gateway,
+                &table1->heartbeat_imu_gateway,
                 415.0,
                 80.0 );
     }

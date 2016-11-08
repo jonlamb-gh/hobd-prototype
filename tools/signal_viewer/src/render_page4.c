@@ -147,7 +147,7 @@ void render_page4(
     if( table4 != NULL )
     {
         render_table_base( table4, 5.0, 460.0 );
-        render_hobd_gps_pos_llh4( config, &table2->gps_pos_llh4, 20.0, 500.0 );
+        render_hobd_gps_pos_llh4( config, &table4->gps_pos_llh4, 20.0, 500.0 );
     }
 
     glPopMatrix();
