@@ -92,12 +92,20 @@ int main( int argc, char **argv )
 {
     // CAN bus interface handle
     can_handle_s can_handle = CAN_HANDLE_INVALID;
+    char title[256];
 
     // hook up the control-c signal handler, sets exit signaled flag
-    signal( SIGINT, sig_handler );
+    (void) signal( SIGINT, sig_handler );
 
     // allow signals to interrupt
-    siginterrupt( SIGINT, 1 );
+    (void) siginterrupt( SIGINT, 1 );
+
+    // format base title string
+    snprintf(
+            title,
+            sizeof(title),
+            "%s",
+            WINDOW_TITLE );
 
     // check if CAN channel system ID was provided - unused if not provided
     if( (argc == 2) && (strlen(argv[1]) > 0) )
@@ -109,12 +117,24 @@ int main( int argc, char **argv )
             printf( "connected to CAN channel with system index %lu\n", (unsigned long) arg_val );
 
             can_handle = can_open( (unsigned long) arg_val );
+
+            strncat(
+                    title,
+                    " - Live Mode",
+                    sizeof(title) );
         }
+    }
+    else
+    {
+        strncat(
+                title,
+                " - Test Mode",
+                sizeof(title) );
     }
 
     // init display manager
     const int dm_init_status = dm_init(
-            WINDOW_TITLE,
+            title,
             WINDOW_WIDTH,
             WINDOW_HEIGHT,
             &global_exit_signal );

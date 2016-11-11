@@ -32,7 +32,7 @@ typedef int can_handle_s;
 
 
 //
-int can_open(
+can_handle_s can_open(
         const unsigned long system_id );
 
 

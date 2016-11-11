@@ -32,6 +32,7 @@ SRCS := src/render_hobd_obd_time.c \
 	src/signal_table.c \
 	src/display_manager.c \
 	src/can.c \
+	src/can_replay.c \
 	src/main.c
 
 OBJS := $(SRCS:.c=.o)
@@ -55,6 +56,10 @@ LDFLAGS =
 INCLUDES = -Iinclude -I../../firmware/hobd_common/include
 
 LIBS = -lrt -lglut -lGLU -lGL -lX11 -lm -lcanlib
+
+# CAN replay module
+INCLUDES += -I/usr/local/polysync -I/usr/local/polysync/pdm
+LIBS += -lpolysync -lpolysync_data_model
 
 all: dirs $(TARGET)
 
