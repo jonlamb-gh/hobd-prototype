@@ -53,7 +53,7 @@
 // *****************************************************
 
 //
-int can_open(
+can_handle_s can_open(
         const unsigned long system_id )
 {
     canHandle handle = canOpenChannel( system_id, 0x40 );

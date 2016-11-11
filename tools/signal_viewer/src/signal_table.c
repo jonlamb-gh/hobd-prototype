@@ -64,6 +64,12 @@ void render_page4(
         st_state_s * const state );
 
 
+//
+void render_page5(
+        const config_s * const config,
+        st_state_s * const state );
+
+
 
 
 // *****************************************************
@@ -323,6 +329,50 @@ void st_init(
                 sizeof(table->table_name),
                 "GPS Position LLH 4" );
     }
+
+    {
+        signal_table_s * const table = &state->signal_tables[ index++ ];
+
+        table->can_id = HOBD_CAN_ID_IMU_UTC_TIME1;
+        table->can_dlc = (unsigned long) sizeof( table->imu_utc_time1 );
+        snprintf(
+                table->table_name,
+                sizeof(table->table_name),
+                "IMU UTC Time 1" );
+    }
+
+    {
+        signal_table_s * const table = &state->signal_tables[ index++ ];
+
+        table->can_id = HOBD_CAN_ID_IMU_UTC_TIME2;
+        table->can_dlc = (unsigned long) sizeof( table->imu_utc_time2 );
+        snprintf(
+                table->table_name,
+                sizeof(table->table_name),
+                "IMU UTC Time 2" );
+    }
+
+    {
+        signal_table_s * const table = &state->signal_tables[ index++ ];
+
+        table->can_id = HOBD_CAN_ID_IMU_RATE_OF_TURN1;
+        table->can_dlc = (unsigned long) sizeof( table->imu_rate_of_turn1 );
+        snprintf(
+                table->table_name,
+                sizeof(table->table_name),
+                "IMU Rate of Turn 1" );
+    }
+
+    {
+        signal_table_s * const table = &state->signal_tables[ index++ ];
+
+        table->can_id = HOBD_CAN_ID_IMU_RATE_OF_TURN2;
+        table->can_dlc = (unsigned long) sizeof( table->imu_rate_of_turn2 );
+        snprintf(
+                table->table_name,
+                sizeof(table->table_name),
+                "IMU Rate of Turn 2" );
+    }
 }
 
 
@@ -360,6 +410,10 @@ void st_render(
     else if( config->active_page_index == ST_PAGE_4 )
     {
         render_page4( config, state );
+    }
+    else if( config->active_page_index == ST_PAGE_5 )
+    {
+        render_page5( config, state );
     }
 
     glPopMatrix();

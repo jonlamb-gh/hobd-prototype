@@ -32,7 +32,7 @@ typedef int can_handle_s;
 
 
 //
-int can_open(
+can_handle_s can_open(
         const unsigned long system_id );
 
 
@@ -43,6 +43,23 @@ void can_close(
 
 //
 int can_read(
+        const can_handle_s handle,
+        const timestamp_ms timeout,
+        can_frame_s * const frame );
+
+
+//
+can_handle_s can_replay_open(
+        const char * const file );
+
+
+//
+void can_replay_close(
+        const can_handle_s handle );
+
+
+//
+int can_replay_read(
         const can_handle_s handle,
         const timestamp_ms timeout,
         can_frame_s * const frame );
