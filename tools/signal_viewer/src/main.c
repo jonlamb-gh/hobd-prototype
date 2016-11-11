@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <ctype.h>
 #include <signal.h>
 
 #include "math_util.h"
@@ -92,6 +93,7 @@ int main( int argc, char **argv )
 {
     // CAN bus interface handle
     can_handle_s can_handle = CAN_HANDLE_INVALID;
+    unsigned int can_is_replay = 0;
     char title[256];
 
     // hook up the control-c signal handler, sets exit signaled flag
@@ -107,20 +109,36 @@ int main( int argc, char **argv )
             "%s",
             WINDOW_TITLE );
 
-    // check if CAN channel system ID was provided - unused if not provided
+    // check if CAN channel system ID or replay file path was provided
     if( (argc == 2) && (strlen(argv[1]) > 0) )
     {
-        const long arg_val = atol( argv[1] );
-
-        if( arg_val >= 0 )
+        if( isdigit(argv[1][0]) != 0 )
         {
-            printf( "connected to CAN channel with system index %lu\n", (unsigned long) arg_val );
+            const long arg_val = atol( argv[1] );
 
-            can_handle = can_open( (unsigned long) arg_val );
+            if( arg_val >= 0 )
+            {
+                printf( "connected to CAN channel with system index %lu\n", (unsigned long) arg_val );
+
+                can_handle = can_open( (unsigned long) arg_val );
+
+                strncat(
+                        title,
+                        " - Live Mode",
+                        sizeof(title) );
+            }
+        }
+        else if( strstr(argv[1], "plog" ) != NULL )
+        {
+            printf( "opening replay file: '%s'\n", argv[1] );
+
+            can_is_replay = 1;
+
+            can_handle = can_replay_open( argv[1] );
 
             strncat(
                     title,
-                    " - Live Mode",
+                    " - Replay Mode",
                     sizeof(title) );
         }
     }
@@ -156,10 +174,22 @@ int main( int argc, char **argv )
         {
             // check for any ready CAN frames to process
             can_frame_s rx_frame;
-            const int can_status = can_read(
-                    can_handle,
-                    m_min(time_to_redraw,5),
-                    &rx_frame );
+            int can_status = 1;
+
+            if( can_is_replay == 0 )
+            {
+                can_status = can_read(
+                        can_handle,
+                        m_min(time_to_redraw, 5),
+                        &rx_frame );
+            }
+            else
+            {
+                can_status = can_replay_read(
+                        can_handle,
+                        m_min(time_to_redraw, 5),
+                        &rx_frame );
+            }
 
             // if data ready
             if( can_status == 0 )
@@ -182,7 +212,14 @@ int main( int argc, char **argv )
         }
     }
 
-    can_close( can_handle );
+    if( can_is_replay == 0 )
+    {
+        can_close( can_handle );
+    }
+    else
+    {
+        can_replay_close( can_handle );
+    }
 
     dm_release();
 

@@ -57,9 +57,17 @@ INCLUDES = -Iinclude -I../../firmware/hobd_common/include
 
 LIBS = -lrt -lglut -lGLU -lGL -lX11 -lm -lcanlib
 
-# CAN replay module
-INCLUDES += -I/usr/local/polysync -I/usr/local/polysync/pdm
-LIBS += -lpolysync -lpolysync_data_model
+# CAN replay module uses PolySync
+PSYNC_HOME ?= /usr/local/polysync
+INCLUDES += -I$(PSYNC_HOME)/include \
+            -I$(PSYNC_HOME)/include/deps \
+            -I$(PSYNC_HOME)/include/deps/xsens \
+            -I$(PSYNC_HOME)/include/deps/dcps/C/SAC/ \
+            -I$(PSYNC_HOME)/include/deps/sys \
+            -I$(PSYNC_HOME)/pdm \
+            -I/usr/include/libxml2 \
+            `pkg-config --cflags gmodule-2.0`
+LIBS += -L$(PSYNC_HOME)/lib -lpolysync -lpolysync_data_model `pkg-config --libs gmodule-2.0` -lgthread-2.0
 
 all: dirs $(TARGET)
 
