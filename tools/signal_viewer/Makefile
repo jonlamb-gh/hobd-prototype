@@ -18,10 +18,15 @@ SRCS := src/render_hobd_obd_time.c \
 	src/render_hobd_gps_pos_llh2.c \
 	src/render_hobd_gps_pos_llh3.c \
 	src/render_hobd_gps_pos_llh4.c \
+	src/render_hobd_imu_utc_time1.c \
+	src/render_hobd_imu_utc_time2.c \
+	src/render_hobd_imu_rate_of_turn1.c \
+	src/render_hobd_imu_rate_of_turn2.c \
 	src/render_page1.c \
 	src/render_page2.c \
 	src/render_page3.c \
 	src/render_page4.c \
+	src/render_page5.c \
 	src/render.c \
 	src/time_domain.c \
 	src/signal_table.c \

@@ -30,7 +30,8 @@
 #define ST_PAGE_2 (1UL)
 #define ST_PAGE_3 (2UL)
 #define ST_PAGE_4 (3UL)
-#define ST_PAGE_COUNT (4UL)
+#define ST_PAGE_5 (4UL)
+#define ST_PAGE_COUNT (5UL)
 
 
 
