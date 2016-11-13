@@ -76,7 +76,7 @@ void render_hobd_gps_pos_llh2(
     snprintf(
             string,
             sizeof(string),
-            "latitude                                        : %f",
+            "latitude                                        : %4.10lf",
             (double) data->latitude );
 
     render_text_2d(
