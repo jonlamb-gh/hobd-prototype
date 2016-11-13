@@ -311,7 +311,7 @@ typedef struct
 {
     //
     //
-    double x; /*!< ECEF X coordinate. [meters] */
+    uint64_t x; /*!< ECEF X coordinate. [meters] */
 } hobd_gps_pos_ecef2_s;
 
 
@@ -327,7 +327,7 @@ typedef struct
 {
     //
     //
-    double y; /*!< ECEF Y coordinate. [meters] */
+    uint64_t y; /*!< ECEF Y coordinate. [meters] */
 } hobd_gps_pos_ecef3_s;
 
 
@@ -343,7 +343,7 @@ typedef struct
 {
     //
     //
-    double z; /*!< ECEF Z coordinate. [meters] */
+    uint64_t z; /*!< ECEF Z coordinate. [meters] */
 } hobd_gps_pos_ecef4_s;
 
 
@@ -389,7 +389,7 @@ typedef struct
 {
     //
     //
-    double latitude; /*!< Latitude. [degrees] */
+    uint64_t latitude; /*!< Latitude. [degrees] */
 } hobd_gps_pos_llh2_s;
 
 
@@ -405,7 +405,7 @@ typedef struct
 {
     //
     //
-    double longitude; /*!< Longitude. [degrees] */
+    uint64_t longitude; /*!< Longitude. [degrees] */
 } hobd_gps_pos_llh3_s;
 
 
@@ -421,7 +421,7 @@ typedef struct
 {
     //
     //
-    double height; /*!< Height. [meters] */
+    uint64_t height; /*!< Height. [meters] */
 } hobd_gps_pos_llh4_s;
 
 

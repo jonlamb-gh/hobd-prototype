@@ -354,7 +354,8 @@ void diagnostics_update( void )
     }
 
     // clear warning bits as needed
-    clear_warn_set( &now, 0 );
+#warning "TODO - fix clear warn set - disabled for now"
+    //clear_warn_set( &now, 0 );
 
     // update LED indicator
     update_led( &now );

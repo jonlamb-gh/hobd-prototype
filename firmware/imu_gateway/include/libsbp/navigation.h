@@ -21,7 +21,7 @@
  * and baseline position solutions. For position solutions, these
  * messages define several different position solutions: single-point
  * (SPP), RTK, and pseudo-absolute position solutions.
- * 
+ *
  * The SPP is the standalone, absolute GPS position solution using only
  * a single receiver. The RTK solution is the differential GPS
  * solution, which can use either a fixed/integer or floating carrier
@@ -43,7 +43,7 @@
  * counts the weeks and seconds of the week. The weeks begin at the
  * Saturday/Sunday transition. GPS week 0 began at the beginning of
  * the GPS time scale.
- * 
+ *
  * Within each week number, the GPS time of the week is between
  * between 0 and 604800 seconds (=60*60*24*7). Note that GPS time
  * does not accumulate leap seconds, and as of now, has a small
@@ -94,9 +94,9 @@ typedef struct __attribute__((packed)) {
 #define SBP_MSG_POS_ECEF         0x0200
 typedef struct __attribute__((packed)) {
   u32 tow;         /**< GPS Time of Week [ms] */
-  double x;           /**< ECEF X coordinate [m] */
-  double y;           /**< ECEF Y coordinate [m] */
-  double z;           /**< ECEF Z coordinate [m] */
+  uint64_t x;           /**< ECEF X coordinate [m] */
+  uint64_t y;           /**< ECEF Y coordinate [m] */
+  uint64_t z;           /**< ECEF Z coordinate [m] */
   u16 accuracy;    /**< Position accuracy estimate (not implemented). Defaults
 to 0.
  [mm] */
@@ -119,9 +119,9 @@ to 0.
 #define SBP_MSG_POS_LLH          0x0201
 typedef struct __attribute__((packed)) {
   u32 tow;           /**< GPS Time of Week [ms] */
-  double lat;           /**< Latitude [deg] */
-  double lon;           /**< Longitude [deg] */
-  double height;        /**< Height [m] */
+  uint64_t lat;           /**< Latitude [deg] */
+  uint64_t lon;           /**< Longitude [deg] */
+  uint64_t height;        /**< Height [m] */
   u16 h_accuracy;    /**< Horizontal position accuracy estimate (not
 implemented). Defaults to 0.
  [mm] */
