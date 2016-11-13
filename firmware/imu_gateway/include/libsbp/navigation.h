@@ -94,9 +94,9 @@ typedef struct __attribute__((packed)) {
 #define SBP_MSG_POS_ECEF         0x0200
 typedef struct __attribute__((packed)) {
   u32 tow;         /**< GPS Time of Week [ms] */
-  uint64_t x;           /**< ECEF X coordinate [m] */
-  uint64_t y;           /**< ECEF Y coordinate [m] */
-  uint64_t z;           /**< ECEF Z coordinate [m] */
+  u64 x;           /**< ECEF X coordinate [m] */
+  u64 y;           /**< ECEF Y coordinate [m] */
+  u64 z;           /**< ECEF Z coordinate [m] */
   u16 accuracy;    /**< Position accuracy estimate (not implemented). Defaults
 to 0.
  [mm] */
@@ -119,9 +119,9 @@ to 0.
 #define SBP_MSG_POS_LLH          0x0201
 typedef struct __attribute__((packed)) {
   u32 tow;           /**< GPS Time of Week [ms] */
-  uint64_t lat;           /**< Latitude [deg] */
-  uint64_t lon;           /**< Longitude [deg] */
-  uint64_t height;        /**< Height [m] */
+  u64 lat;           /**< Latitude [deg] */
+  u64 lon;           /**< Longitude [deg] */
+  u64 height;        /**< Height [m] */
   u16 h_accuracy;    /**< Horizontal position accuracy estimate (not
 implemented). Defaults to 0.
  [mm] */
