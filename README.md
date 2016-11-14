@@ -3,9 +3,9 @@
 On-board Diagnostics and Navigation for Honda CBR 1000 RR
 
 Firmware:
-  - OBD module
-  - IMU module
+  - OBD module - communicates with the Honda ECU, provides data over the CAN interface
+  - IMU module - communicates with the IMU and GPS systems, provides data over the CAN interface
 
 Tools:
-  - Signal Viewer
+  - Signal Viewer - simple OpenGL GUI for viewing the CAN signals
 
