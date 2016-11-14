@@ -74,8 +74,7 @@ void diagnostics_clear_error(
 
 
 //
-void diagnostics_set_warn_timeout_bits(
-        const uint16_t bits );
+void diagnostics_set_warn_timeout_bits( void );
 
 
 //

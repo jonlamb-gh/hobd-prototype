@@ -25,6 +25,14 @@
 // static global types/macros
 // *****************************************************
 
+
+//
+#define WARNING_STATE_IDX_CANBUS (0)
+#define WARNING_STATE_IDX_IMUBUS (1)
+#define WARNING_STATE_IDX_GPSBUS (2)
+#define WARNING_STATES_LENGTH (3)
+
+
 //
 typedef enum
 {
@@ -34,6 +42,18 @@ typedef enum
     LED_STATE_FAST_BLINK,
     LED_STATE_ON,
 } led_state_kind;
+
+
+//
+typedef struct
+{
+    //
+    //
+    uint16_t bit;
+    //
+    //
+    uint32_t last_set;
+} warning_set_state_s;
 
 
 
@@ -51,11 +71,7 @@ static uint32_t last_tx_heartbeat = 0;
 
 
 //
-static uint32_t last_warn_clear = 0;
-
-
-//
-static uint32_t warn_clear_set = DIAGNOSTICS_CLEAR_SET_NONE;
+static warning_set_state_s warning_states[ WARNING_STATES_LENGTH ];
 
 
 //
@@ -74,11 +90,11 @@ static const uint16_t CAN_ID_HEARTBEAT =
 //
 static const uint32_t led_blink_intervals[] =
 {
-    [LED_STATE_OFF] = 0,
-    [LED_STATE_SLOW_BLINK] = DIAGNOSTICS_SLOW_BLINK_INTERVAL,
-    [LED_STATE_MED_BLINK] = DIAGNOSTICS_MED_BLINK_INTERVAL,
-    [LED_STATE_FAST_BLINK] = DIAGNOSTICS_FAST_BLINK_INTERVAL,
-    [LED_STATE_ON] = 0
+    [LED_STATE_OFF]         = 0,
+    [LED_STATE_SLOW_BLINK]  = DIAGNOSTICS_SLOW_BLINK_INTERVAL,
+    [LED_STATE_MED_BLINK]   = DIAGNOSTICS_MED_BLINK_INTERVAL,
+    [LED_STATE_FAST_BLINK]  = DIAGNOSTICS_FAST_BLINK_INTERVAL,
+    [LED_STATE_ON]          = 0
 };
 
 
@@ -149,22 +165,28 @@ static void clear_warn_set(
         const uint32_t * const now,
         const uint8_t clear_now )
 {
-    // if any warning bits are to be cleared
-    if( warn_clear_set != DIAGNOSTICS_CLEAR_SET_NONE )
+    uint8_t idx = 0;
+    const uint16_t warnings = diagnostics_get_warn();
+
+    for( idx = 0; idx < WARNING_STATES_LENGTH; idx += 1 )
     {
-        // get time since last clear
-        const uint32_t delta = time_get_delta(
-                &last_warn_clear,
-                now );
-
-        // clear if interval met/exceeded
-        if( (clear_now != 0) || (delta >= DIAGNOSTICS_WARN_SET_CLEAR_INTERVAL) )
+        // if warning is currently set
+        if( (warnings & warning_states[ idx ].bit) != 0 )
         {
-            // update last clear timestamp, ms
-            last_warn_clear = (*now);
+            // get time since last set
+            const uint32_t delta = time_get_delta(
+                    &warning_states[ idx ].last_set,
+                    now );
 
-            // clear warning bits
-            diagnostics_clear_warn( warn_clear_set );
+            // clear if interval met/exceeded
+            if( (clear_now != 0) || (delta >= DIAGNOSTICS_WARN_SET_CLEAR_INTERVAL) )
+            {
+                // update last set timestamp, ms
+                warning_states[ idx ].last_set = (*now);
+
+                // clear warning bit
+                diagnostics_clear_warn( warning_states[ idx ].bit );
+            }
         }
     }
 }
@@ -251,6 +273,8 @@ void diagnostics_init( void )
     hobd_heartbeat.error_register = 0;
     hobd_heartbeat.warning_register = 0;
 
+    memset( &warning_states, 0, sizeof(warning_states) );
+
     led_off();
 }
 
@@ -284,6 +308,21 @@ void diagnostics_set_warn(
         const uint16_t warn )
 {
     hobd_heartbeat.warning_register |= warn;
+
+    if( (warn & HOBD_HEARTBEAT_WARN_CANBUS) != 0 )
+    {
+        warning_states[ WARNING_STATE_IDX_CANBUS ].last_set = time_get_ms();
+    }
+
+    if( (warn & HOBD_HEARTBEAT_WARN_IMUBUS) != 0 )
+    {
+        warning_states[ WARNING_STATE_IDX_IMUBUS ].last_set = time_get_ms();
+    }
+
+    if( (warn & HOBD_HEARTBEAT_WARN_GPSBUS) != 0 )
+    {
+        warning_states[ WARNING_STATE_IDX_GPSBUS ].last_set = time_get_ms();
+    }
 }
 
 
@@ -326,10 +365,19 @@ void diagnostics_clear_error(
 
 
 //
-void diagnostics_set_warn_timeout_bits(
-        const uint16_t bits )
+void diagnostics_set_warn_timeout_bits( void )
 {
-    warn_clear_set = bits;
+    // get current time
+    const uint32_t now = time_get_ms();
+
+    warning_states[ WARNING_STATE_IDX_CANBUS ].bit = HOBD_HEARTBEAT_WARN_CANBUS;
+    warning_states[ WARNING_STATE_IDX_CANBUS ].last_set = now;
+
+    warning_states[ WARNING_STATE_IDX_IMUBUS ].bit = HOBD_HEARTBEAT_WARN_IMUBUS;
+    warning_states[ WARNING_STATE_IDX_IMUBUS ].last_set = now;
+
+    warning_states[ WARNING_STATE_IDX_GPSBUS ].bit = HOBD_HEARTBEAT_WARN_GPSBUS;
+    warning_states[ WARNING_STATE_IDX_GPSBUS ].last_set = now;
 }
 
 
@@ -354,8 +402,7 @@ void diagnostics_update( void )
     }
 
     // clear warning bits as needed
-#warning "TODO - fix clear warn set - disabled for now"
-    //clear_warn_set( &now, 0 );
+    clear_warn_set( &now, 0 );
 
     // update LED indicator
     update_led( &now );
