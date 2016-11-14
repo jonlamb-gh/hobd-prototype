@@ -133,9 +133,9 @@ static void init( void )
     }
 
     // set the warn clear set, bits that are cleared on a timer
-    diagnostics_set_warn_timeout_bits(
-            HOBD_HEARTBEAT_WARN_CANBUS |
-            HOBD_HEARTBEAT_WARN_OBDBUS );
+    diagnostics_set_warn_timeout_bits();
+
+    diagnostics_set_warn( HOBD_HEARTBEAT_WARN_NO_OBD_ECU );
 
     time_sleep_ms( 5 );
 

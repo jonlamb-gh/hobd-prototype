@@ -275,9 +275,10 @@ static uint8_t obd_packet_type(
         {
             const uint8_t packet_checksum = buffer[ header->size - 1 ];
 
+            // excludes the checksum byte
             const uint8_t real_checksum = obd_checksum(
                     buffer,
-                    (uint16_t) header->size );
+                    (uint16_t) header->size - 1 );
 
             // check checksum
             if( packet_checksum == real_checksum )
@@ -298,52 +299,88 @@ static uint8_t process_buffer( void )
     uint8_t ret = 0;
     uint32_t rx_timestamp = 0;
     uint16_t rb_data = RING_BUFFER_NO_DATA;
-    uint16_t idx = 0;
 
-    // get the rx timestamp if we have data to process
+    hobd_packet_header_s * const header =
+                (hobd_packet_header_s*) &obd_buffer[ 0 ];
+
+    // initialize header
+    header->type = HOBD_PACKET_TYPE_INVALID;
+    header->size = 0;
+    header->subtype = 0x00;
+
     if( ring_buffer_available( &rx_buffer ) != 0 )
     {
+        // get the rx timestamp if we have data to process
         rx_timestamp = time_get_ms();
-    }
 
-    // fill up the OBD buffer
-    do
-    {
         rb_data = ring_buffer_getc( &rx_buffer );
 
         if( rb_data != RING_BUFFER_NO_DATA )
         {
-            obd_buffer[ idx ] = (uint8_t) (rb_data & 0xFF);
-            idx += 1;
-        }
-
-        if( idx >= OBD_BUFFER_SIZE )
-        {
-            rb_data = RING_BUFFER_NO_DATA;
-            diagnostics_set_error( HOBD_HEARTBEAT_ERROR_OBD_RX_OVERFLOW );
+            header->type = (uint8_t) (rb_data & 0xFF);
         }
     }
-    while( rb_data != RING_BUFFER_NO_DATA );
 
-    // check if a valid packet
-    const uint8_t packet_type = obd_packet_type(
-            &obd_buffer[ 0 ],
-            idx );
-
-    // process response types
-    if( packet_type == HOBD_PACKET_TYPE_RESPONSE )
+    if( header->type == HOBD_PACKET_TYPE_RESPONSE )
     {
-        const hobd_packet_header_s * const header =
-                (hobd_packet_header_s*) &obd_buffer[ 0 ];
+        // wait for next byte
+        while( ring_buffer_available( &rx_buffer ) == 0 );
 
-        if( header->subtype == HOBD_PACKET_SUBTYPE_TABLE_SUBGROUP )
+        rb_data = ring_buffer_getc( &rx_buffer );
+
+        if( rb_data != RING_BUFFER_NO_DATA )
         {
-            const hobd_table_response_s * const response =
-                    (hobd_table_response_s*) &obd_buffer[ 0 ];
+            header->size = (uint8_t) (rb_data & 0xFF);
+        }
 
-            parse_response(
-                    response,
-                    &rx_timestamp );
+        // wait for next byte
+        while( ring_buffer_available( &rx_buffer ) == 0 );
+
+        rb_data = ring_buffer_getc( &rx_buffer );
+
+        if( rb_data != RING_BUFFER_NO_DATA )
+        {
+            header->subtype = (uint8_t) (rb_data & 0xFF);
+        }
+    }
+
+    if(
+            (header->type == HOBD_PACKET_TYPE_RESPONSE) &&
+            (header->subtype == HOBD_PACKET_SUBTYPE_TABLE_SUBGROUP) )
+    {
+        uint8_t idx = (uint8_t) sizeof(*header);
+
+        do
+        {
+            rb_data = ring_buffer_getc( &rx_buffer );
+
+            if( rb_data != RING_BUFFER_NO_DATA )
+            {
+                obd_buffer[ idx ] = (uint8_t) (rb_data & 0xFF);
+                idx += 1;
+            }
+        }
+        while( idx < header->size );
+
+        // check if a valid packet
+        const uint8_t packet_type = obd_packet_type(
+                &obd_buffer[ 0 ],
+                (uint16_t) header->size );
+
+        // process response types
+        if( packet_type == HOBD_PACKET_TYPE_RESPONSE )
+        {
+            if( header->subtype == HOBD_PACKET_SUBTYPE_TABLE_SUBGROUP )
+            {
+                const hobd_table_response_s * const response =
+                        (hobd_table_response_s*) &obd_buffer[ 0 ];
+
+                diagnostics_clear_warn( HOBD_HEARTBEAT_WARN_NO_OBD_ECU );
+
+                parse_response(
+                        response,
+                        &rx_timestamp );
+            }
         }
     }
 

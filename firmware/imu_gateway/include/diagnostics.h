@@ -21,8 +21,8 @@
 #define DIAGNOSTICS_CLEAR_SET_NONE (0x0000)
 
 
-// ms
-#define DIAGNOSTICS_WARN_SET_CLEAR_INTERVAL (5000UL)
+// 60,000 ms == 60 seconds
+#define DIAGNOSTICS_WARN_SET_CLEAR_INTERVAL (60000UL)
 
 
 // error state
@@ -84,8 +84,7 @@ void diagnostics_clear_error(
 
 
 //
-void diagnostics_set_warn_timeout_bits(
-        const uint16_t bits );
+void diagnostics_set_warn_timeout_bits( void );
 
 
 //

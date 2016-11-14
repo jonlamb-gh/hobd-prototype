@@ -146,10 +146,7 @@ static void init( void )
     }
 
     // set the warn clear set, bits that are cleared on a timer
-    diagnostics_set_warn_timeout_bits(
-            HOBD_HEARTBEAT_WARN_CANBUS |
-            HOBD_HEARTBEAT_WARN_IMUBUS |
-            HOBD_HEARTBEAT_WARN_GPSBUS );
+    diagnostics_set_warn_timeout_bits();
 
     // set initial warnings
     diagnostics_set_warn( HOBD_HEARTBEAT_WARN_NO_GPS_FIX );
@@ -182,6 +179,10 @@ int main( void )
 
     //
     diagnostics_set_state( HOBD_HEARTBEAT_STATE_OK );
+
+    // enable/flush
+    imu_enable();
+    gps_enable();
 
     //
     while( 1 )

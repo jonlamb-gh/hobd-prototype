@@ -244,12 +244,23 @@ static uint8_t process_buffer( void )
 //
 static void *xbus_alloc_cb( size_t size )
 {
+    void *memory = NULL;
+
+#ifdef BUILD_TYPE_DEBUG
     if( size > sizeof(xbus_buffer) )
     {
         diagnostics_set_error( HOBD_HEARTBEAT_ERROR_IMU_RX_OVERFLOW );
     }
 
-    return (void*) &xbus_buffer[0];
+    memory = (void*) &xbus_buffer[0];
+#else
+    if( size <= sizeof(xbus_buffer) )
+    {
+        memory = (void*) &xbus_buffer[0];
+    }
+#endif
+
+    return memory;
 }
 
 
@@ -305,8 +316,8 @@ static uint8_t publish_group_c( void )
 
     ret |= canbus_send(
             HOBD_CAN_ID_IMU_UTC_TIME2,
-            (uint8_t) sizeof(imu_data.group_c.utc_time1),
-            (const uint8_t *) &imu_data.group_c.utc_time1 );
+            (uint8_t) sizeof(imu_data.group_c.utc_time2),
+            (const uint8_t *) &imu_data.group_c.utc_time2 );
 
     return ret;
 }
@@ -571,7 +582,6 @@ static void parse_rate_of_turn(
 static void parse_free_accel(
         const struct XbusMessage * const message )
 {
-#warning "USING FreeAcceleration instead of Acceleration"
     float accel[3];
 
     const uint8_t status = XbusMessage_getDataItem(
@@ -717,6 +727,10 @@ static void parse_status_byte(
         if( (status_byte & XS_STATUS_BIT_SELF_TEST) == 0 )
         {
             diagnostics_set_error( HOBD_HEARTBEAT_ERROR_IMU_STATUS );
+        }
+        else
+        {
+            diagnostics_clear_error( HOBD_HEARTBEAT_ERROR_IMU_STATUS );
         }
     }
 }
