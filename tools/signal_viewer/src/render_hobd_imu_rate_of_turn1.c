@@ -62,6 +62,7 @@ void render_hobd_imu_rate_of_turn1(
         const GLdouble base_y )
 {
     char string[512];
+    double value = 0.0;
     GLdouble delta_y = 5.0;
     const GLdouble bound_x = 355.0;
     const GLdouble text_yoff = 15.0;
@@ -73,11 +74,12 @@ void render_hobd_imu_rate_of_turn1(
             base_x + bound_x,
             base_y );
 
+    value = (double) data->x;
     snprintf(
             string,
             sizeof(string),
-            "x                                                : %f",
-            (double) data->x );
+            "x                                                : %lf",
+            value );
 
     render_text_2d(
             base_x + text_xoff,
@@ -93,11 +95,12 @@ void render_hobd_imu_rate_of_turn1(
 
     delta_y += 15.0;
 
+    value = (double) data->y;
     snprintf(
             string,
             sizeof(string),
-            "y                                                : %f",
-            (double) data->y );
+            "y                                                : %lf",
+            value );
 
     render_text_2d(
             base_x + text_xoff,
