@@ -544,10 +544,22 @@ static void parse_orient_quat(
     {
         DEBUG_PUTS( "imu_orient_quat\n" );
 
-        imu_data.group_d.orient_quat1.q1 = quat[ 0 ];
-        imu_data.group_d.orient_quat1.q2 = quat[ 1 ];
-        imu_data.group_d.orient_quat2.q3 = quat[ 2 ];
-        imu_data.group_d.orient_quat2.q4 = quat[ 3 ];
+        memcpy(
+            &imu_data.group_d.orient_quat1.q1,
+            &quat[ 0 ],
+            sizeof(imu_data.group_d.orient_quat1.q1) );
+        memcpy(
+            &imu_data.group_d.orient_quat1.q2,
+            &quat[ 1 ],
+            sizeof(imu_data.group_d.orient_quat1.q2) );
+        memcpy(
+            &imu_data.group_d.orient_quat2.q3,
+            &quat[ 2 ],
+            sizeof(imu_data.group_d.orient_quat2.q3) );
+        memcpy(
+            &imu_data.group_d.orient_quat2.q4,
+            &quat[ 3 ],
+            sizeof(imu_data.group_d.orient_quat2.q4) );
 
         imu_set_group_ready( IMU_GROUP_D_READY );
     }
@@ -569,9 +581,18 @@ static void parse_rate_of_turn(
     {
         DEBUG_PUTS( "imu_rate_of_turn\n" );
 
-        imu_data.group_e.rate_of_turn1.x = gryo[ 0 ];
-        imu_data.group_e.rate_of_turn1.y = gryo[ 1 ];
-        imu_data.group_e.rate_of_turn2.z = gryo[ 2 ];
+        memcpy(
+            &imu_data.group_e.rate_of_turn1.x,
+            &gryo[ 0 ],
+            sizeof(imu_data.group_e.rate_of_turn1.x) );
+        memcpy(
+            &imu_data.group_e.rate_of_turn1.y,
+            &gryo[ 1 ],
+            sizeof(imu_data.group_e.rate_of_turn1.y) );
+        memcpy(
+            &imu_data.group_e.rate_of_turn2.z,
+            &gryo[ 2 ],
+            sizeof(imu_data.group_e.rate_of_turn2.z) );
 
         imu_set_group_ready( IMU_GROUP_E_READY );
     }
@@ -593,9 +614,18 @@ static void parse_free_accel(
     {
         DEBUG_PUTS( "imu_free_accel\n" );
 
-        imu_data.group_f.accel1.x = accel[ 0 ];
-        imu_data.group_f.accel1.y = accel[ 1 ];
-        imu_data.group_f.accel2.z = accel[ 2 ];
+        memcpy(
+            &imu_data.group_f.accel1.x,
+            &accel[ 0 ],
+            sizeof(imu_data.group_f.accel1.x) );
+        memcpy(
+            &imu_data.group_f.accel1.y,
+            &accel[ 1 ],
+            sizeof(imu_data.group_f.accel1.y) );
+        memcpy(
+            &imu_data.group_f.accel2.z,
+            &accel[ 2 ],
+            sizeof(imu_data.group_f.accel2.z) );
 
         imu_set_group_ready( IMU_GROUP_F_READY );
     }
@@ -617,9 +647,18 @@ static void parse_magf(
     {
         DEBUG_PUTS( "imu_magf\n" );
 
-        imu_data.group_g.magf1.x = magf[ 0 ];
-        imu_data.group_g.magf1.y = magf[ 1 ];
-        imu_data.group_g.magf2.z = magf[ 2 ];
+        memcpy(
+            &imu_data.group_g.magf1.x,
+            &magf[ 0 ],
+            sizeof(imu_data.group_g.magf1.x) );
+        memcpy(
+            &imu_data.group_g.magf1.y,
+            &magf[ 1 ],
+            sizeof(imu_data.group_g.magf1.y) );
+        memcpy(
+            &imu_data.group_g.magf2.z,
+            &magf[ 2 ],
+            sizeof(imu_data.group_g.magf2.z) );
 
         imu_set_group_ready( IMU_GROUP_G_READY );
     }
@@ -641,8 +680,14 @@ static void parse_pos_ll(
     {
         DEBUG_PUTS( "imu_pos_ll\n" );
 
-        imu_data.group_h.pos_llh1.latitude = lat_lon[ 0 ];
-        imu_data.group_h.pos_llh1.longitude = lat_lon[ 1 ];
+        memcpy(
+            &imu_data.group_h.pos_llh1.latitude,
+            &lat_lon[ 0 ],
+            sizeof(imu_data.group_h.pos_llh1.latitude) );
+        memcpy(
+            &imu_data.group_h.pos_llh1.longitude,
+            &lat_lon[ 1 ],
+            sizeof(imu_data.group_h.pos_llh1.longitude) );
 
         imu_set_group_ready( IMU_GROUP_H_READY );
     }
@@ -664,7 +709,10 @@ static void parse_pos_h(
     {
         DEBUG_PUTS( "imu_pos_h\n" );
 
-        imu_data.group_i.pos_llh2.height = height;
+        memcpy(
+            &imu_data.group_i.pos_llh2.height,
+            &height,
+            sizeof(imu_data.group_i.pos_llh2.height) );
 
         imu_set_group_ready( IMU_GROUP_I_READY );
     }
@@ -686,9 +734,18 @@ static void parse_vel_ned(
     {
         DEBUG_PUTS( "imu_vel_ned\n" );
 
-        imu_data.group_j.vel_ned1.north = vel[ 0 ];
-        imu_data.group_j.vel_ned1.east = vel[ 1 ];
-        imu_data.group_j.vel_ned2.down = vel[ 2 ];
+        memcpy(
+            &imu_data.group_j.vel_ned1.north,
+            &vel[ 0 ],
+            sizeof(imu_data.group_j.vel_ned1.north) );
+        memcpy(
+            &imu_data.group_j.vel_ned1.east,
+            &vel[ 1 ],
+            sizeof(imu_data.group_j.vel_ned1.east) );
+        memcpy(
+            &imu_data.group_j.vel_ned2.down,
+            &vel[ 2 ],
+            sizeof(imu_data.group_j.vel_ned2.down) );
 
         imu_set_group_ready( IMU_GROUP_J_READY );
     }
