@@ -433,14 +433,14 @@ static uint8_t publish_group_j( void )
     uint8_t ret = 0;
 
     ret |= canbus_send(
-            HOBD_CAN_ID_IMU_VEL_NED1,
-            (uint8_t) sizeof(imu_data.group_j.vel_ned1),
-            (const uint8_t *) &imu_data.group_j.vel_ned1 );
+            HOBD_CAN_ID_IMU_VEL_NWU1,
+            (uint8_t) sizeof(imu_data.group_j.vel_nwu1),
+            (const uint8_t *) &imu_data.group_j.vel_nwu1 );
 
     ret |= canbus_send(
-            HOBD_CAN_ID_IMU_VEL_NED2,
-            (uint8_t) sizeof(imu_data.group_j.vel_ned2),
-            (const uint8_t *) &imu_data.group_j.vel_ned2 );
+            HOBD_CAN_ID_IMU_VEL_NWU2,
+            (uint8_t) sizeof(imu_data.group_j.vel_nwu2),
+            (const uint8_t *) &imu_data.group_j.vel_nwu2 );
 
     return ret;
 }
@@ -735,17 +735,17 @@ static void parse_vel_ned(
         DEBUG_PUTS( "imu_vel_ned\n" );
 
         memcpy(
-            &imu_data.group_j.vel_ned1.north,
+            &imu_data.group_j.vel_nwu1.north,
             &vel[ 0 ],
-            sizeof(imu_data.group_j.vel_ned1.north) );
+            sizeof(imu_data.group_j.vel_nwu1.north) );
         memcpy(
-            &imu_data.group_j.vel_ned1.east,
+            &imu_data.group_j.vel_nwu1.west,
             &vel[ 1 ],
-            sizeof(imu_data.group_j.vel_ned1.east) );
+            sizeof(imu_data.group_j.vel_nwu1.west) );
         memcpy(
-            &imu_data.group_j.vel_ned2.down,
+            &imu_data.group_j.vel_nwu2.up,
             &vel[ 2 ],
-            sizeof(imu_data.group_j.vel_ned2.down) );
+            sizeof(imu_data.group_j.vel_nwu2.up) );
 
         imu_set_group_ready( IMU_GROUP_J_READY );
     }

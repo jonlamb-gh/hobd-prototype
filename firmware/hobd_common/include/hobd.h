@@ -63,8 +63,8 @@
 #define HOBD_CAN_ID_IMU_UTC_TIME2 (0x064)
 #define HOBD_CAN_ID_IMU_POS_LLH1 (0x065)
 #define HOBD_CAN_ID_IMU_POS_LLH2 (0x066)
-#define HOBD_CAN_ID_IMU_VEL_NED1 (0x067)
-#define HOBD_CAN_ID_IMU_VEL_NED2 (0x068)
+#define HOBD_CAN_ID_IMU_VEL_NWU1 (0x067)
+#define HOBD_CAN_ID_IMU_VEL_NWU2 (0x068)
 #define HOBD_CAN_ID_IMU_ORIENT_QUAT1 (0x069)
 #define HOBD_CAN_ID_IMU_ORIENT_QUAT2 (0x06A)
 #define HOBD_CAN_ID_IMU_RATE_OF_TURN1 (0x06B)
@@ -854,10 +854,10 @@ typedef struct
 
 
 /**
- * @brief IMU NED velocity 1 message.
+ * @brief IMU NWU velocity 1 message.
  *
  * Message size (CAN frame DLC): 8 bytes
- * CAN frame ID: \ref HOBD_CAN_ID_IMU_VEL_NED1
+ * CAN frame ID: \ref HOBD_CAN_ID_IMU_VEL_NWU1
  * Transmit rate: TODO ms
  *
  */
@@ -868,15 +868,15 @@ typedef struct
     float north; /*!< Velocity North coordinate. [meters/second] */
     //
     //
-    float east; /*!< Velocity East coordinate. [meters/second] */
-} hobd_imu_vel_ned1_s;
+    float west; /*!< Velocity West coordinate. [meters/second] */
+} hobd_imu_vel_nwu1_s;
 
 
 /**
- * @brief IMU NED velocity 2 message.
+ * @brief IMU NWU velocity 2 message.
  *
  * Message size (CAN frame DLC): 4 bytes
- * CAN frame ID: \ref HOBD_CAN_ID_IMU_VEL_NED2
+ * CAN frame ID: \ref HOBD_CAN_ID_IMU_VEL_NWU2
  * Transmit rate: TODO ms
  *
  */
@@ -884,8 +884,8 @@ typedef struct
 {
     //
     //
-    float down; /*!< Velocity Down coordinate. [meters/second] */
-} hobd_imu_vel_ned2_s;
+    float up; /*!< Velocity Up coordinate. [meters/second] */
+} hobd_imu_vel_nwu2_s;
 
 
 /**

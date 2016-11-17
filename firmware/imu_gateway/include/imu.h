@@ -142,10 +142,10 @@ typedef struct
     {
         //
         //
-        hobd_imu_vel_ned1_s vel_ned1;
+        hobd_imu_vel_nwu1_s vel_nwu1;
         //
         //
-        hobd_imu_vel_ned2_s vel_ned2;
+        hobd_imu_vel_nwu2_s vel_nwu2;
     } group_j;
 } imu_data_s;
 
