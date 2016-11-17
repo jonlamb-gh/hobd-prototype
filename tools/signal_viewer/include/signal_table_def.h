@@ -133,10 +133,10 @@ typedef struct
         hobd_imu_pos_llh2_s imu_pos_llh2;
         //
         //
-        hobd_imu_vel_ned1_s imu_vel_ned1;
+        hobd_imu_vel_nwu1_s imu_vel_nwu1;
         //
         //
-        hobd_imu_vel_ned2_s imu_vel_ned2;
+        hobd_imu_vel_nwu2_s imu_vel_nwu2;
         //
         //
         hobd_imu_orient_quat1_s imu_orient_quat1;
